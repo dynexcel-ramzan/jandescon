@@ -24,9 +24,17 @@ def action_check_expense_warning(warning):
         'company_info': company_info
     }
 
-def expense_page_content(flag = 0, expense=0, categ=0, exception=0):
-    products = request.env['expense.sub.category'].sudo().search([])
-    sheet = 0
+def expense_page_content(flag = 0, expense=0, categ=0, exception=0, subordinate=0, employee=0):
+    products = request.env['expense.sub.category'].sudo().search([])       
+    is_subordinate_expense = False
+    has_subordinate = 0
+    employees = request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))])
+    if employee !=0:
+        employees = request.env['hr.employee'].sudo().search([('id','=',employee)])
+    subordinates = request.env['hr.employee'].sudo().search([('expense_incharge_id','=', employees.id)])
+    if subordinate != 0:
+        is_subordinate_expense = True
+        has_subordinate = 1
     sheet_categ= 0
     is_multi_cost_center = False
     is_editable =False
@@ -34,13 +42,20 @@ def expense_page_content(flag = 0, expense=0, categ=0, exception=0):
     exception_granted = 'no'
     if exception !=0:
         exception_granted =  'yes'   
+    sheet = 0
     if expense != 0:
         sheet = request.env['hr.expense.sheet'].sudo().search([('id','=',expense)])
         sheet_categ = sheet.ora_category_id.id
         if sheet.employee_id.user_id.id==http.request.env.context.get('uid'):
             is_editable =True
+        elif sheet.employee_id.expense_incharge_id.user_id.id==http.request.env.context.get('uid'):
+            is_editable =True
+        managers=sheet.employee_id.parent_id.name
+        employees=sheet.employee_id
+        if sheet.is_deposit==True:
+            is_expense_deposit=True
+            
     managers = request.env['res.users'].sudo().search([('id','=',http.request.env.context.get('uid'))])
-    employees = request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))])
     contract = request.env['hr.contract'].sudo().search([('employee_id','=', employees.id),('state','=','open')], limit=1)
     cost_center_count = 0
     cost_center_list = []
@@ -67,11 +82,7 @@ def expense_page_content(flag = 0, expense=0, categ=0, exception=0):
     vehicles = request.env['vehicle.meter.detail'].sudo().search([('id','=',employees.vehicle_id.id)])
     company_info = request.env['res.users'].sudo().search([('id','=',http.request.env.context.get('uid'))])
     managers=employees.parent_id.name
-    if expense!=0:
-        managers=sheet.employee_id.parent_id.name
-        employees=sheet.employee_id
-        if sheet.is_deposit==True:
-           is_expense_deposit=True
+    
     product_list = []
     if exception==0:
         for exist_prod in products:
@@ -85,6 +96,9 @@ def expense_page_content(flag = 0, expense=0, categ=0, exception=0):
         'is_editable': is_editable,
         'employees' : employees,
         'controllers': controllers,
+        'has_subordinate': has_subordinate,
+        'is_subordinate_expense': is_subordinate_expense,
+        'subordinates': subordinates,
         'is_expense_deposit': is_expense_deposit,
         'vehicles': vehicles,
         'default_analytic': default_analytic,
@@ -121,19 +135,29 @@ class CreateApproval(http.Controller):
     def expense_claim_category_template(self, **kw):
         return request.render("de_portal_expence.create_expense_category",expense_page_content())
     
+    @http.route('/expense/request/subordinate/',type="http", website=True, auth='user')
+    def subordinate_expense_claim_template(self, **kw):
+        return request.render("de_portal_expence.create_expense_category",expense_page_content(subordinate=1))
+    
     
     @http.route('/expense/category/next/',type="http", website=True, auth='user')
     def expense_claim_create_template(self, **kw):
         categ = int(kw.get('expense_category'))
         exception=0
+        employee = 0
         if kw.get('exception'):
             exception=1
-        return request.render("de_portal_expence.create_expense",expense_page_content(categ=categ, exception=exception)) 
+        if kw.get('is_subordinate'):    
+            if kw.get('employee_id'): 
+                employee = int(kw.get('employee_id'))
+        else:
+            employee = request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))]).id
+        return request.render("de_portal_expence.create_expense",expense_page_content(categ=categ, exception=exception, employee=employee)) 
     
     
     @http.route('/my/expense/line/save', type="http", auth="public", website=True)
     def create_expenses(self, **kw):
-        employee=request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))])
+        employee=request.env['hr.employee'].sudo().search([('id','=',int(kw.get('uniq_employee_id')) )], limit=1)
         exception = True if kw.get('ora_exception')=='yes' else False
         ora_category=request.env['ora.expense.category'].sudo().search([('id','=',int(kw.get('ora_category')))], limit=1)
         product = request.env['expense.sub.category'].search([('id','=',int(kw.get('product_id')))], limit=1)
@@ -185,18 +209,25 @@ class CreateApproval(http.Controller):
             warning_message="You are not allowed to make Claim against the selected expense type"
             return request.render("de_portal_expence.expense_submited_validation", action_check_expense_warning(warning_message))
         else:
+            medical_last_amount = request.env['medical.reading'].search([('sub_category_id', '=', product.id), ('employee_id', '=', employee.id)], limit=1)
+
             employee_expenses = request.env['hr.expense'].search(
                 [('sub_category_id', '=', product.id), ('employee_id', '=', employee.id)
-                    , ('state', '!=', 'draft'), ('state', '!=', 'refused'),
+                    , ('state', '!=', 'refused'),
                  ('payment_mode', '=', 'own_account')])
             sum = 0
             for expense in employee_expenses:
                 if (expense.create_date.date() > expense_period_date and expense.create_date.date() <= fields.date.today()):
                     sum = sum + expense.total_amount
-            sum = round(sum, 2)
-            sum_current = sum + float(kw.get('unit_amount'))
+            sum = round(sum, 2)        
+            if  medical_last_amount:
+                limit =  medical_last_amount.limit       
+                sum = round(sum, 2) + medical_last_amount.last_paid
+                
+            sum_current = sum + float(kw.get('unit_amount')) 
             if sum_current > limit and product.ora_unit!='km' and exception!=True:
-                warning_message="You have Already claimed " + str(sum) + " against " + str(product.name) + ". Your Limit is " + str(round(limit)) + ". Cant Process expense request! You are only allow to enter amount: "+str(round(limit-sum))
+                limit_amount = limit-sum
+                warning_message="You have Already claimed " + str(sum) + " against " + str(product.name) + ". Your Limit is " + str(round(limit)) + ". Cant Process expense request! You are only allow to enter amount: "+str(round(limit_amount if limit_amount > 0 else 0))
                 return request.render("de_portal_expence.expense_submited_validation", action_check_expense_warning(warning_message))    
             else:
                 pass   
@@ -228,8 +259,19 @@ class CreateApproval(http.Controller):
                         warning_message='You are entering reading '+str(float(kw.get('meter_reading')))+' less than your last reading is '+str(opening_vehicle_balance)
                         return request.render("de_portal_expence.expense_submited_validation", action_check_expense_warning(warning_message))
         
+        exist_sequence=request.env['ir.sequence'].sudo().search([('code','=','expense.sheet.sequence')], limit=1)
+        if not exist_sequence:
+            seq_vals = {
+                'name': 'Expense Claim Sequence',
+                'code': 'expense.sheet.sequence',
+                'implementation': 'standard',
+                'number_next_actual': 1,
+                'prefix': 'ECV/',
+            }
+            exist_sequence= request.env['ir.sequence'].sudo().create(seq_vals) 
+        expense_name = request.env['ir.sequence'].sudo().next_by_code('expense.sheet.sequence') or _('New')
         expense_val = {
-            'name': 'Expense',
+            'name': expense_name,
             'ora_category_id': int(kw.get('ora_category')),
             'exception':  True if kw.get('ora_exception')=='yes' else False,
             'employee_id': employee.id,
@@ -245,7 +287,7 @@ class CreateApproval(http.Controller):
                     'product_id': int(controller.id),
                     'account_id': controller.property_account_expense_id.id,
                     'analytic_account_id': default_cost_center,
-                    'employee_id': request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))]).id,
+                    'employee_id': employee.id,
                     'date':  fields.date.today(),
         }
         record_line = request.env['hr.expense.sheet.line'].sudo().create(expense_line)
@@ -299,7 +341,7 @@ class CreateApproval(http.Controller):
                     'product_id': int(controller.id),
                     'account_id': controller.property_account_expense_id.id,
                     'analytic_account_id': analytic_line['analytic_account'],
-                    'employee_id': request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))]).id,
+                    'employee_id': employee.id,
                     'date':  fields.date.today(),
             }
             split_line = request.env['hr.expense'].sudo().create(splitted_line)
@@ -357,12 +399,10 @@ class CreateApproval(http.Controller):
         cost_center_count = 0
         contract = request.env['hr.contract'].sudo().search([('employee_id','=', expense_sheet.employee_id.id),('state','=','open')], limit=1)
         for cost_info in contract.cost_center_information_line:
-            cost_center_count += 1
-            
+            cost_center_count += 1    
         analytic_vals_list = []
         analytic_cost_list = []
         total_percentage_amount = 0
-        
         if kw.get('cost_center_distrubute'):
             if kw.get('cost_center_distrubute')=='1':
                 if kw.get('expense_line_vals'):
@@ -405,18 +445,24 @@ class CreateApproval(http.Controller):
             warning_message="You are not allowed to make Claim against the selected expense type"
             return request.render("de_portal_expence.expense_submited_validation", action_check_expense_warning(warning_message))
         else:
+            medical_last_amount = request.env['medical.reading'].search([('sub_category_id', '=', product.id), ('employee_id', '=', employee.id)], limit=1)
             employee_expenses = request.env['hr.expense'].search(
                 [('sub_category_id', '=', product.id), ('employee_id', '=', employee.id)
-                    , ('state', '!=', 'draft'), ('state', '!=', 'refused'),
+                    , ('state', '!=', 'refused'),
                  ('payment_mode', '=', 'own_account')])
             sum = 0
             for expense in employee_expenses:
                 if (expense.create_date.date() > expense_period_date and expense.create_date.date() <= fields.date.today()):
                     sum = sum + expense.total_amount
-            sum = round(sum, 2)
-            sum_current = sum + float(kw.get('unit_amount'))
+            sum = round(sum, 2)        
+            if  medical_last_amount:
+                limit =  medical_last_amount.limit       
+                sum = round(sum, 2) + medical_last_amount.last_paid
+                
+            sum_current = sum + float(kw.get('unit_amount')) 
             if sum_current > limit and product.ora_unit!='km' and expense_sheet.exception!=True:
-                warning_message="You have Already claimed " + str(sum) + " against " + str(product.name) + ". Your Limit is " + str(round(limit)) + ". Cant Process expense request! You are only allow to enter amount: "+str(round(limit-sum))
+                limit_amount = limit-sum
+                warning_message="You have Already claimed " + str(sum) + " against " + str(product.name) + ". Your Limit is " + str(round(limit)) + ". Cant Process expense request! You are only allow to enter amount: "+str(round(limit_amount if limit_amount > 0 else 0))
                 return request.render("de_portal_expence.expense_submited_validation", action_check_expense_warning(warning_message)) 
             else:
                 pass    
@@ -458,7 +504,7 @@ class CreateApproval(http.Controller):
                     'product_id': int(controller.id),
                     'account_id': controller.property_account_expense_id.id,
                     'analytic_account_id': default_cost_center,
-                    'employee_id': request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))]).id,
+                    'employee_id': expense_sheet.employee_id.id,
                     'date':  fields.date.today(),
         }
         record_line = request.env['hr.expense.sheet.line'].sudo().create(line_vals)
@@ -512,7 +558,7 @@ class CreateApproval(http.Controller):
                     'product_id': int(controller.id),
                     'account_id': controller.property_account_expense_id.id,
                     'analytic_account_id': analytic_line['analytic_account'],
-                    'employee_id': request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))]).id,
+                    'employee_id':expense_sheet.employee_id.id,
                     'date':  fields.date.today(),
             }
             split_line = request.env['hr.expense'].sudo().create(split_line_vals)
@@ -594,10 +640,11 @@ class CustomerPortal(CustomerPortal):
     def action_delete_sheet_expense_line(self,line_id , access_token=None, **kw):
         expense_line = request.env['hr.expense.sheet.line'].sudo().search([('id','=', line_id)], limit=1)
         expense = request.env['hr.expense.sheet'].sudo().search([('id','=', expense_line.sheet_id.id)], limit=1)
-        expense_line.unlink()
         hr_expenses = request.env['hr.expense'].sudo().search([('sheet_line_id','=', expense_line.id)])
         for exp in hr_expenses:
-            exp.unlink()    
+            exp.unlink()
+        expense_line.unlink()
+            
         exception = 0
         if expense.exception==True:
             exception = 1    

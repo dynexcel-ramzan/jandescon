@@ -67,7 +67,7 @@ class EmployeeEnhancement(models.Model):
         ('yes', 'Yes'),
         ('no', 'No'),
         ], string='FAC Deduction Applicable', index=True, copy=False, default='yes', track_visibility='onchange')
-    fac_deduction_percentage = fields.Char('FAC Deduction Percentage(%)', size=3)
+    fac_deduction_percentage = fields.Float('FAC Deduction Percentage(%)')
     is_consultant = fields.Selection([
         ('yes', 'Yes'),
         ('no', 'No'),
@@ -215,11 +215,7 @@ class GradeDesignation(models.Model):
 class CostCenterInformations(models.Model):
     _inherit = 'hr.contract'
     
-    expense_account = fields.Selection([
-        ('1', 'Operating Expenses'),
-        ('2', 'Factory Overheads'),
-        ('3', 'Marketing Expenses'),
-        ], string='Expense Head', index=True, copy=False, default='1', track_visibility='onchange')
+    
     cost_center_information_line = fields.One2many('cost.information.line','contract_id',string='Cost Center Lines')
     total_percentage = fields.Float('Total Percentage', compute = 'limit_total_percentage')
 
@@ -232,20 +228,7 @@ class CostCenterInformations(models.Model):
                 count = count + line.percentage_charged
             rec.total_percentage = count
 
-    @api.model
-    def create(self,vals):
-        res = super(CostCenterInformations, self).create(vals)
-        if self.cost_center_information_line.cost_center:
-        	if res.total_percentage != 100:
-        		raise UserError('Total Percentage must be equal 100')
-        return res
-    
-    def write(self, vals):
-        res = super(CostCenterInformations, self).write(vals)
-        if self.cost_center_information_line.cost_center:
-        	if self.total_percentage != 100:
-        		raise UserError('Total Percentage must be equal 100')
-        return res
+
 
 
 class CostCenterInformation(models.Model):
@@ -255,7 +238,7 @@ class CostCenterInformation(models.Model):
     employee_id = fields.Many2one('hr.employee')
     cost_center = fields.Many2one('account.analytic.account')
     percentage_charged = fields.Float('Percentage Charged')
-
+    
     @api.onchange('percentage_charged')
     def limit_percentage_charged(self):
         if self.percentage_charged:

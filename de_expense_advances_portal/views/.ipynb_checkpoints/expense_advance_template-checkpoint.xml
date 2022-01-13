@@ -89,14 +89,20 @@
                                             <i class="badge badge-pill badge-info" >Draft</i>
                                         </t>
                                         <t t-if="_exp_adv_.state == 'waiting'">
-                                            <i class="badge badge-pill badge-info" >Waiting Approval</i>
+                                            <i class="badge badge-pill badge-warning" >To Approve</i>
                                         </t>
                                         <t t-if="_exp_adv_.state == 'approved'">
-                                            <i class="badge badge-pill badge-info" >Approved</i>
+                                            <t t-if="_exp_adv_.payment_entry_ref.is_deposited==True">
+                                             <i class="badge badge-pill badge-success" >Paid</i>
+                                            </t>
+                                            <t t-if="_exp_adv_.payment_entry_ref.is_deposited!=True">
+                                             <i class="badge badge-pill badge-success" >Approved</i>
+                                            </t>
                                         </t>
                                         <t t-if="_exp_adv_.state == 'reject'">
-                                            <i class="badge badge-pill badge-info" >Rejected</i>
+                                            <i class="badge badge-pill badge-danger" >Rejected</i>
                                         </t>
+                                        
                                     </td>
                                     
                                 </tr>
@@ -192,6 +198,47 @@
                       	</div> 
                  	</div>
                    <br/><br/>
+                   <div class="row">
+                        <table id="expenseapporoverTable" class='table tabel-responsive'>
+                         <thead> 
+                            <tr style='background-color:#875A7B; color:white;'>
+                              <th>Approver</th>  
+                              <th>Employee Number</th>
+                              <th>Job Position</th>  
+                              <th>Department</th>  
+                              <th>Status</th>
+                            </tr>
+                         </thead>    
+                        <tbody> 
+                             <t t-foreach="expense_adv.approval_request_id.approver_ids" t-as="approve_line"> 
+                               <tr>    
+                                  <td><t t-esc='approve_line.user_id.name' /></td>
+                                  <td><t t-esc='approve_line.employee_number'/></td>
+                                  <td><t t-esc='approve_line.job_title'/></td>
+                                  <td><t t-esc='approve_line.department_id.name'/></td> 
+                                  <td>
+                                      <t t-if="approve_line.status=='new'"> 
+                                        <i class="badge badge-pill badge-info" >Next</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='pending'"> 
+                                        <i class="badge badge-pill badge-warning" >Pending</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='approved'"> 
+                                        <i class="badge badge-pill badge-success" >Approved</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='refused'"> 
+                                        <i class="badge badge-pill badge-danger" >Refused</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='cancel'"> 
+                                        <i class="badge badge-pill badge-danger" >Cancel</i>  
+                                      </t>
+                                   
+                                   </td>
+                               </tr>    
+                             </t>    
+                        </tbody>
+                      </table>
+                   </div>  
                 </t> 
             </t>
 

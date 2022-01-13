@@ -12,9 +12,12 @@ from odoo.tools import email_split, float_is_zero
 class HrExpenseSheet(models.Model):
     _inherit = 'hr.expense.sheet'
     
+    name = fields.Char(string="Name", required=True, copy=False, readonly=True, index=True,
+                          default=lambda self: _('New'))
     ora_category_id = fields.Many2one('ora.expense.category', string='Expense Category')
     document_received = fields.Boolean(string='Document Received')
     is_deposit = fields.Boolean(string='Deposit')
+    is_deposit_adjusted = fields.Boolean(string='Deposit')
     exception = fields.Boolean(string='Exception')
     employee_number = fields.Char(related='employee_id.emp_number')
     grade = fields.Many2one(related='employee_id.grade_designation')
@@ -22,11 +25,33 @@ class HrExpenseSheet(models.Model):
     expense_sheet_line_ids = fields.One2many('hr.expense.sheet.line', 'sheet_id', string='Expense Sheet Lines', copy=False)
 
     
+    def action_expnese_sequence(self):
+        exist_sequence=self.env['ir.sequence'].sudo().search([('code','=','expense.sheet.sequence')], limit=1)
+        if not exist_sequence:
+            seq_vals = {
+                'name': 'Expense Claim Sequence',
+                'code': 'expense.sheet.sequence',
+                'implementation': 'standard',
+                'number_next_actual': 1,
+                'prefix': 'ECV/',
+            }
+            exist_sequence= self.env['ir.sequence'].create(seq_vals) 
+        expense.name = self.env['ir.sequence'].next_by_code('expense.sheet.sequence') or _('New')
+    
     @api.constrains('state')
     def _check_state(self):
         for expense in self:
-            if expense.state=='done':
-                pass    
+            if  expense.state=='done' and expense.is_deposit==False:
+                expense.update({
+                    'is_deposit_adjusted': True
+                })
+            if expense.state=='post':
+                expense.account_move_id.update({
+                    'expense_id': expense.id, 
+                })
+    
+                
+                
                      
         
     
@@ -36,9 +61,9 @@ class HrExpenseSheet(models.Model):
         for line in self:
             return redirect('/my/expense/%s'%(line.id))
     
-    def refuse_sheet(self):
-        res = super(HrExpenseSheet, self).refuse_sheet('Not Approved')
-        for line in res.expense_sheet_line_ids:
+    
+    def action_refuse_sheet_reading(self):
+        for line in self.expense_sheet_line_ids:
             for vehicle_meter in line.employee_id.vehicle_meter_line_ids:
                 if line.sub_category_id.id == vehicle_meter.sub_category_id.id:
                     vehicle_meter.update({
@@ -50,11 +75,10 @@ class HrExpenseSheet(models.Model):
                     medical.update({
                        'last_paid': total_amount,
                     })
-        return res
     
-    def action_submit_sheet(self):
-        res = super(HrExpenseSheet, self).action_submit_sheet()
-        for line in res.expense_sheet_line_ids:
+    
+    def action_submit_sheet_reading(self):
+        for line in self.expense_sheet_line_ids:
             for vehicle_meter in line.employee_id.vehicle_meter_line_ids:
                 if line.sub_category_id.id == vehicle_meter.sub_category_id.id:
                     line.update({
@@ -72,7 +96,7 @@ class HrExpenseSheet(models.Model):
                     medical.update({
                        'last_paid': total_amount,
                     })
-        return res
+                   
     
     def action_deposit(self):
         for line in self:

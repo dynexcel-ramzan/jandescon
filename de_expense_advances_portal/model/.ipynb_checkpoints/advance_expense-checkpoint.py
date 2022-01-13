@@ -28,6 +28,7 @@ class AdvanceAgainstExpense(models.Model):
         vals = {
             'partner_id': self.partner_id.id,            
             'date': self.date,
+            'journal_id': self.env['account.journal'].search([('company_id','=',self.partner_id.company_id.id),('name','=','Blank Journal')], limit=1).id,
             'amount': self.amount,
             'ref': self.description,
             'payment_type': 'outbound',
@@ -36,6 +37,9 @@ class AdvanceAgainstExpense(models.Model):
         record = self.env['account.payment'].sudo().create(vals)
         self.payment_entry_ref = record.id
         self.state = 'approved'
+        record.move_id.update({
+            'expense_advance_id': self.id,
+        })
     
     
     name = fields.Char(string="Name", required=True, copy=False, readonly=True, index=True,
