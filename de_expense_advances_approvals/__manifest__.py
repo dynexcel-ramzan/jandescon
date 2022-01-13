@@ -20,7 +20,7 @@
     'version': '14.0.0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','approvals','account', 'hr', 'hr_contract', 'de_expense_advances_portal','analytic'],
+    'depends': ['base','approvals','account', 'hr', 'hr_contract', 'de_expense_advances_portal','analytic', 'de_payroll_accounting'],
 
     # always loaded
     'data': [

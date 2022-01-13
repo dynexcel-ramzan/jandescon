@@ -2,4 +2,5 @@
 from . import account_payment
 from . import advance_expense
 from . import advance_amount_approver
+from . import account_move
 

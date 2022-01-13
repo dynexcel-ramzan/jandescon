@@ -3,6 +3,8 @@
 from odoo import models, fields, api, _
 from odoo import models, fields, api, exceptions, _
 from odoo.tools import format_datetime
+from odoo.exceptions import UserError, ValidationError
+
 
 
 class AdvanceAgainstExpenses(models.Model):
@@ -32,10 +34,10 @@ class AdvanceAgainstExpenses(models.Model):
     
     def action_approval_category(self):
         for line in self:
-            expense_category=self.env['approval.category'].search([('name','=','Expense Advances'),('company_id','=', line.employee_id.company_id.id)], limit=1)
+            expense_category=self.env['approval.category'].search([('name','=','Advance against Expense'),('company_id','=', line.employee_id.company_id.id)], limit=1)
             if not expense_category:
                 category = {
-                    'name': 'Expense Claim',
+                    'name': 'Advance against Expense',
                     'company_id': line.employee_id.company_id.id,
                     'is_parent_approver': True,
                 }
@@ -48,11 +50,11 @@ class AdvanceAgainstExpenses(models.Model):
         for line in self:
             line.action_approval_category()
             request_list.append({
-                    'name': str(line.employee_id.name)+ ' Expense Request Ref# '+str(line.name)+' Amount: '+str(line.amount),
+                    'name': str(line.employee_id.name)+ ' Advance Ref# '+str(line.name),
                     'request_owner_id': line.employee_id.user_id.id,
                     'category_id': line.category_id.id,
                     'exp_adv_id': line.id,
-                    'reason': 'Expense Advances',
+                    'reason': 'Advance',
                     'request_status': 'new',
             })
             approval_request_id = self.env['approval.request'].sudo().create(request_list)
@@ -60,18 +62,21 @@ class AdvanceAgainstExpenses(models.Model):
             approval_request_id.action_confirm()
             line.approval_request_id = approval_request_id.id
             contract = self.env['hr.contract'].sudo().search([('employee_id','=', line.employee_id.id),('state','=', 'open')], limit=1)
+            cost_center_approver = 0
             for cost_info in contract.cost_center_information_line:
                 if cost_info.cost_center.approver_ids:
                     for cost_approver in cost_info.cost_center.approver_ids:
-                        already_approver = self.env['approval.approver'].search([('request_id','=',approval_request_id.id),('user_id','=', cost_approver.user_id.id)])
-                        if not already_approver:
-                            if cost_approver.user_id and not cost_approver.user_id.id==line.employee_id.parent_id.id:
-                                vals ={
-                                        'user_id': cost_approver.user_id.id,
-                                        'request_id': approval_request_id.id,
-                                        'status': 'new',
-                                }
-                                approvers=self.env['approval.approver'].sudo().create(vals)
+                        if cost_info.by_default==True:
+                            already_approver = self.env['approval.approver'].search([('request_id','=',approval_request_id.id),('user_id','=', cost_approver.user_id.id)])
+                            if not already_approver:
+                                if cost_approver.user_id and not cost_approver.user_id.id==line.employee_id.parent_id.id:
+                                    vals ={
+                                            'user_id': cost_approver.user_id.id,
+                                            'request_id': approval_request_id.id,
+                                            'status': 'new',
+                                    }
+                                    approvers=self.env['approval.approver'].sudo().create(vals)
+                                    cost_center_approver = cost_approver.user_id.id
 
             if line.employee_id.parent_id.id == line.employee_id.company_id.manager_id.id:
                 pass
@@ -82,6 +87,8 @@ class AdvanceAgainstExpenses(models.Model):
                 if approver_line: 
                     if line.employee_id.parent_id.user_id.id == approver_line.user_id.id:
                         pass
+                    elif cost_center_approver == approver_line.user_id.id:
+                        pass
                     else:
                         vals ={
                                 'user_id': approver_line.user_id.id,
@@ -90,15 +97,8 @@ class AdvanceAgainstExpenses(models.Model):
                         }
                         approvers=self.env['approval.approver'].sudo().create(vals)
                 else:
-                    ext_approver_line = self.env['advance.amount.approver.line'].sudo().search([('end_amount','<=', line.amount),('company_id','=', line.employee_id.company_id.id)], limit=1)
-
+                    ext_approver_line = self.env['advance.amount.approver.line'].sudo().search([('end_amount','<', line.amount),('company_id','=', line.employee_id.company_id.id)], order='end_amount desc', limit=1)
+                    exceeding_limit = 0
                     if ext_approver_line:
-                        if line.employee_id.parent_id.user_id.id == ext_approver_line.user_id.id:
-                            pass
-                        else:
-                            vals ={
-                                    'user_id': ext_approver_line.user_id.id,
-                                    'request_id': approval_request_id.id,
-                                    'status': 'new',
-                            }
-                            approvers=self.env['approval.approver'].sudo().create(vals)    
+                        exceeding_limit = ext_approver_line.end_amount
+                    raise UserError('You Are Not Allow to Enter Amount Greater than '+str(round(exceeding_limit)))    

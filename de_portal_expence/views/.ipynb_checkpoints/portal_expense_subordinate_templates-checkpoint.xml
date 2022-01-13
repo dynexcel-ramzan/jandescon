@@ -40,7 +40,7 @@
           <h3 class="mt16">Manage Your subordinate Expense</h3>
           <div>
                 <t class="col-lg-7 col-md-8" >
-                    <a href="/expense/request/category/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
+                    <a href="/expense/request/subordinate/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
                 </t>
           </div>
           <t t-if="not pages">
@@ -55,7 +55,7 @@
               <table class="table table-hover">
                   <thead>
                     <tr style='background-color:#875A7B; color:white;'>
-                      
+                      <th>Ref#</th> 
                       <th>Type</th>
                       <th>Employee</th>  
                       <th>Date</th>  
@@ -69,8 +69,10 @@
                   <t t-foreach="expenses" t-as="expense">
                       <tr>
                           <td>
-                             <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.ora_category_id.name"/></a> 
-                              
+                            <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.name"/></a>
+                          </td>
+                          <td>
+                             <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.ora_category_id.name"/></a> <t t-if='expense.exception==True'> <p style='color:red;'>(Exception)</p> </t>
                           </td>
                           <td>
                               <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.employee_id.name"/></a> 
@@ -88,9 +90,14 @@
                                    <t t-if="expense.is_deposit==True"> 
                                      <i class="badge badge-pill badge-success" >Paid</i>
                                    </t>
+                                   <t t-if="expense.is_deposit_adjusted==True"> 
+                                     <i class="badge badge-pill badge-success" >Adjusted</i>
+                                   </t> 
                                    <t t-if="expense.is_deposit!=True"> 
+                                     <t t-if="expense.is_deposit_adjusted!=True">  
                                      <i class="badge badge-pill badge-success" >Posted</i>
                                    </t> 
+                                   </t>     
                                 </t>
                                 <t t-if="expense.state == 'submit'">
                                     <i class="badge badge-pill badge-warning" >To Approve</i>

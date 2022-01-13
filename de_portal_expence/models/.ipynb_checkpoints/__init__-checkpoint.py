@@ -12,3 +12,5 @@ from . import ir_attachment
 from . import account_account
 from . import account_payment
 from . import expense_sub_category
+from . import account_move
+

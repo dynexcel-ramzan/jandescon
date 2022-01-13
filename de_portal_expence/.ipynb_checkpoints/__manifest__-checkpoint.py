@@ -43,6 +43,7 @@
         'views/ora_expense_category_views.xml',
         'views/hr_expense_sheet_views.xml',
         'views/hr_employee_views.xml',
+        'views/account_move_views.xml',
         'views/hr_expense_views.xml',
         'views/account_account_views.xml',
         'views/portal_expense_templates.xml',

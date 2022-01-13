@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <odoo>
+    
     <template id="portal_layout" name="Portal layout: expense menu entry" inherit_id="portal.portal_breadcrumbs" priority="25">
         <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
             <li t-if="page_name == 'expense' or expense" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not expense else ''}">
@@ -12,6 +13,7 @@
             </li>
         </xpath>
     </template>
+    
 
     <template id="portal_my_home" name="Show expenses / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="25">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
@@ -65,8 +67,8 @@
               <table class="table table-hover">
                   <thead>
                     <tr style='background-color:#875A7B; color:white;'>
-                      
-                      <th>Type</th>
+                      <th>Ref#</th>
+                      <th>Type</th>  
                       <th>Date</th>  
                       <th>Total Amount</th>  
                       <th>Status</th>
@@ -78,8 +80,14 @@
                   <t t-foreach="expenses" t-as="expense">
                       <tr>
                           <td>
-                             <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.ora_category_id.name"/></a> 
-                              
+                            <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.name"/></a>
+                          </td>
+                          
+                          <td>
+                             <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.ora_category_id.name"/></a>
+                              <t t-if='expense.exception==True'>
+                                 (Exception)
+                              </t>
                           </td>
                            <td><t t-esc='expense.accounting_date' t-options='{"widget": "date"}'/></td>
                            <td><t t-esc="'{0:,}'.format(int(round(expense.total_amount)))"/></td>
@@ -94,9 +102,14 @@
                                    <t t-if="expense.is_deposit==True"> 
                                      <i class="badge badge-pill badge-success" >Paid</i>
                                    </t>
+                                   <t t-if="expense.is_deposit_adjusted==True"> 
+                                     <i class="badge badge-pill badge-success" >Adjusted</i>
+                                   </t> 
                                    <t t-if="expense.is_deposit!=True"> 
+                                     <t t-if="expense.is_deposit_adjusted!=True">  
                                      <i class="badge badge-pill badge-success" >Posted</i>
                                    </t> 
+                                   </t>     
                                 </t>
                                 <t t-if="expense.state == 'submit'">
                                     <i class="badge badge-pill badge-warning" >To Approve</i>
@@ -125,9 +138,7 @@
                               </t>
                           </td>
                       </tr>
-                  </t>
-
-                  
+                  </t> 
               </table>
           </div>
                   
@@ -143,10 +154,15 @@
     <div id="wrap" class="oe_structure oe_empty">
     <section class="s_quotes_carousel_wrapper o_colored_level" data-vxml="001" data-vcss="001" data-snippet="s_quotes_carousel" data-name="Quotes" style="">
     <div class="s_card card bg-white w-100" data-snippet="s_card" data-name="Card">   
+        <t t-set="o_portal_fullwidth_alert"  >
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <span t-esc='warning_message' />
+                </t> 
+            </t>
         <div class="card-header" style="height:50px;">
         
                        <t t-if='expense.state=="draft"'>
-                         <t t-if='expense.employee_id.user_id.id==uid'>
+                         <t t-if='expense.employee_id.user_id.id==uid or expense.employee_id.expense_incharge_id.user_id.id==uid'>
                               <a t-attf-href="/action/submit/expense/#{expense.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; margin-left:5px;color:white;">Submit</div> </a> 
                              
                           
@@ -217,7 +233,9 @@
              
         </div>
        <div class="card-body container border rounded shadow" style='box-shadow:3px;'>
+           <p class='pull-left'><span t-esc='expense.name'/></p>
         <p class="card-text">
+            
         <br/>
                <div class="s_website_form_rows row s_col_no_bgcolor">
                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
@@ -316,6 +334,7 @@
                                 </div>
                             </div>
                           </div>
+                          
                           <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
                             <div class="row s_col_no_resize s_col_no_bgcolor">
                                 <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="reference">
@@ -507,8 +526,12 @@
                                  <tr>
                                     <td class='cost_center'><span t-esc='cost_center.cost_center.name'/></td>
                                     <td class='percentage'> 
-                                        <input id='percent' type="integer" class="form-control s_website_form_input" name="percentage" multiple='1'  t-att-value='cost_center.percentage_charged'/>   
+                                        <input id='percent' type="integer" class="form-control s_website_form_input" name="percentage" multiple='1'  t-att-value='round(cost_center.percentage_charged)'/>   
                                     </td>
+                                    <td class='control_account'> 
+                                       <span t-esc='cost_center.controlled_id.name'/> 
+                                       (<span t-esc='cost_center.controlled_id.code'/> ) 
+                                    </td> 
                                  </tr>    
                              </t>    
                             </tbody>            
@@ -596,9 +619,9 @@
                  <table id="expenselineTable" class='table tabel-responsive'>
                     <thead> 
                     <tr style='background-color:#875A7B; color:white;'>
-                      <th>Expense Date</th>  
                       <th>Expense Type</th>
                       <th>Bill Reference</th>
+                      <th>Remarks</th>  
                       <t t-if='expense.ora_category_id.has_dependent in ("optional","required")'>    
                         <th>Dependent</th>
                       </t>    
@@ -618,9 +641,9 @@
                     <tbody> 
                         <t t-foreach="expense.expense_sheet_line_ids" t-as="sheet_line"> 
                            <tr>    
-                              <td><t t-esc='sheet_line.date' t-options='{"widget": "date"}'/></td>
                               <td><t t-esc='sheet_line.sub_category_id.name'/></td>
                               <td><t t-esc='sheet_line.reference'/></td>
+                              <td><t t-esc='sheet_line.name'/></td> 
                               <t t-if='expense.ora_category_id.has_dependent in ("optional","required")'>  
                                 <td>
                                   <t t-if='sheet_line.member_id'>  
@@ -641,8 +664,7 @@
                               <t t-if='expense.ora_category_id.is_attachment in ("optional","required")'>
                                   <td><a t-attf-href="/web/content/#{sheet_line.attachment_id.ids}?download=true" title="Download"><i class="fa fa-download"></i></a></td>
                                </t>  
-                              <td><t t-esc="'{0:,}'.format(int(round(sheet_line.total_amount)))"/></td>
-                                
+                              <td><t t-esc="'{0:,}'.format(int(round(sheet_line.total_amount)))"/></td> 
                                <td class="action_delete">
                                  <t t-if='expense.state=="draft"'>
                                    <t t-if='is_editable==True'>  
@@ -698,8 +720,95 @@
                     </div>
                </div>
             
+                
+               <t t-if='expense.state!="draft"'>
+                        <table id="expenseapporoverTable" class='table tabel-responsive'>
+                         <thead> 
+                            <tr style='background-color:#875A7B; color:white;'>
+                              <th>Approver</th>  
+                              <th>Employee Number</th>
+                              <th>Job Position</th>  
+                              <th>Department</th>  
+                              <th>Status</th>
+                            </tr>
+                         </thead>    
+                        <tbody> 
+                             <t t-foreach="expense.approval_request_id.approver_ids" t-as="approve_line"> 
+                               <tr>    
+                                  <td><t t-esc='approve_line.user_id.name' /></td>
+                                  <td><t t-esc='approve_line.employee_number'/></td>
+                                  <td>
+                                      <t t-esc='approve_line.job_title'/>
+                                   </td>
+                                  <td><t t-esc='approve_line.department_id.name'/></td> 
+                                  <td>
+                                      <t t-if="approve_line.status=='new'"> 
+                                        <i class="badge badge-pill badge-info" >Next</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='pending'"> 
+                                        <i class="badge badge-pill badge-warning" >Pending</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='approved'"> 
+                                        <i class="badge badge-pill badge-success" >Approved</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='refused'"> 
+                                        <i class="badge badge-pill badge-danger" >Refused</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='cancel'"> 
+                                        <i class="badge badge-pill badge-danger" >Cancel</i>  
+                                      </t>
+                                   </td>
+                               </tr>    
+                             </t>    
+                        </tbody>
+                      </table>
+                     </t>   
+               
+               
             
-                 <t t-if='is_multi_cost_center==True'>    
+                 <t t-if='is_multi_cost_center==True'> 
+                     <script src="/de_portal_expence/static/src/js/jquery_min.js"></script> 
+                      <script type="text/javascript">
+                        $(function () { 
+                                var costcenter = $( "#costcenterdistribution" ).val();
+                                if ( costcenter === "0" ) {
+                                    $("#cost_center_detail").hide();
+                                  }
+                                if ( costcenter === "1" ) {
+                                    $("#cost_center_detail").show();
+                                  }
+                                var costcentersplit = $( "#costcentersplit" ).val();
+                                if ( costcentersplit === "0" ) {
+                                    $("#splitted_table").hide();
+                                  }
+                                if ( costcentersplit === "1" ) {
+                                    $("#splitted_table").show();
+                                  }
+                            }); 
+                            $(document).ready(function(){
+                            $("#costcentersplit").change(function(){
+                                var costcentersplit = $( "#costcentersplit" ).val();
+                                if ( costcentersplit === "0" ) {
+                                    $("#splitted_table").hide();
+                                  }
+                                if ( costcentersplit === "1" ) {
+                                    $("#splitted_table").show();
+                                  }
+                            });
+                          $("#costcenterdistribution").change(function(){
+                                var costcenter = $( "#costcenterdistribution" ).val();
+                                if ( costcenter === "0" ) {
+                                    $("#cost_center_detail").hide();
+                                  }
+                                if ( costcenter === "1" ) {
+                                    $("#cost_center_detail").show();
+                                  }
+                            });
+                        });   
+                          
+                       
+                      </script> 
+            
                             <div class="s_website_form_rows row">
                              <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
                                 <div class="row s_col_no_resize">
@@ -720,7 +829,8 @@
                               </div>
                           </div> 
                            
-                        
+                  
+                       
                  
             
                 <div id='splitted_table'> 
@@ -890,6 +1000,29 @@
 	                                   </div>
 	                               </div>
                                 
+                                <input type="hidden" class="form-control s_website_form_input" name="is_subordinate"  id='is_subordinate'  t-att-value='has_subordinate'/>
+                                
+                                <t t-if='is_subordinate_expense==True'>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+	                                <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+	                                       <div class="row s_col_no_resize s_col_no_bgcolor">
+	                                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity2">
+	                                               <span class="s_website_form_label_content">Employee</span>
+	                                           </label>
+	                                           <div class="col-sm">
+	                                               <select class="form-control  o_website_form_input" name="employee_id" readonly="1">
+                                                       
+	                                                   <t t-foreach="subordinates" t-as="subordinate">
+	                                                       <option t-att-value="subordinate.id">
+	                                                           <t t-esc="subordinate.name"    />
+	                                                       </option>
+	                                                   </t>
+	                                               </select>
+	                                           </div>
+	                                       </div>
+	                                   </div>
+	                               </div>
+                                  </t>
                                 
 
                                 <div class="s_website_form_rows row s_col_no_bgcolor">
@@ -1123,6 +1256,8 @@
                              </div>
                           </t>    
                         </div>
+                         
+                        <input type="hidden" class="form-control s_website_form_input" name="uniq_employee_id"  id='uniq_employee_id'  t-att-value='employees.id'/>  
                               
                         <div class="s_website_form_rows row s_col_no_bgcolor">
                           <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
@@ -1254,6 +1389,10 @@
                                     <td class='cost_center'><span t-esc='cost_center.cost_center.name'/></td>
                                     <td class='percentagea'> 
                                         <input id='percent' type="integer" class="form-control s_website_form_input" name="percentage" multiple='1'  t-att-value='round(cost_center.percentage_charged)'/>   
+                                    </td>
+                                     <td class='control_account'> 
+                                       <span t-esc='cost_center.controlled_id.name'/> 
+                                        (<span t-esc='cost_center.controlled_id.code'/> ) 
                                     </td>
                                  </tr>   
                              </t>    

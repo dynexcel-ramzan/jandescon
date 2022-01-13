@@ -53,7 +53,7 @@ class HrExpenseSheet(models.Model):
                     'request_owner_id': line.employee_id.user_id.id,
                     'category_id': line.category_id.id,
                     'expense_id': line.id,
-                    'reason': str(line.ora_category_id.name), 
+                    'reason': str(line.ora_category_id.name) +' ('+'Exception'+')', 
                     'request_status': 'new',
                 })
                 approval_request_id = self.env['approval.request'].create(request_list)
@@ -95,7 +95,7 @@ class HrExpenseSheet(models.Model):
                     'request_owner_id': line.employee_id.user_id.id,
                     'category_id': line.category_id.id,
                     'expense_id': line.id,
-                    'reason': line.employee_id.name + ' Has Expense Request on ' + str(line.accounting_date.strftime('%d/%b/%y'))+ ' For Amount ' + str(line.total_amount) + ' Expense Category# ' +' ' + str(line.ora_category_id.name), 
+                    'reason': str(line.ora_category_id.name), 
                     'request_status': 'new',
                 })
                 approval_request_id = self.env['approval.request'].create(request_list)
@@ -117,7 +117,7 @@ class HrExpenseSheet(models.Model):
                         'request_owner_id': line.employee_id.user_id.id,
                         'category_id': line.category_id.id,
                         'expense_id': line.id,
-                        'reason': line.employee_id.name + ' Has Expense Request on ' + str(line.accounting_date.strftime('%d/%b/%y'))+ ' For Amount ' + str(line.total_amount) + ' Expense Category# ' +' ' + str(line.ora_category_id.name), 
+                        'reason': str(line.ora_category_id.name),
                         'request_status': 'new',
                     })
                     approval_request_id = self.env['approval.request'].create(request_list)
