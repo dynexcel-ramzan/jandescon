@@ -1,0 +1,64 @@
+<odoo>
+    <data>
+        <record id="stage_first_data" model="hr.recruitment.stage">
+              <field name="name">First Interview</field>
+              <field name="is_non_fixed_stage">True</field>
+              <field name="sequence">4</field>
+        </record>
+
+        <record id="stage_second_data" model="hr.recruitment.stage">
+              <field name="name">Second Interview</field>
+              <field name="is_non_fixed_stage">True</field>
+                <field name="sequence">5</field>
+        </record>
+
+        <record id="stage_third_data" model="hr.recruitment.stage">
+              <field name="name">Third Interview</field>
+              <field name="is_non_fixed_stage">True</field>
+              <field name="sequence">6</field>
+        </record>
+
+        <record id="stage_fourth_data" model="hr.recruitment.stage">
+              <field name="name">Fourth Interview</field>
+              <field name="is_non_fixed_stage">True</field>
+              <field name="sequence">7</field>
+        </record>
+
+        <record id="stage_fifth_data" model="hr.recruitment.stage">
+              <field name="name">Fifth Interview</field>
+              <field name="is_non_fixed_stage">True</field>
+              <field name="sequence">8</field>
+        </record>
+
+        <record id="stage_first_test" model="hr.recruitment.stage">
+              <field name="name">First Test</field>
+              <field name="is_non_fixed_stage">True</field>
+              <field name="sequence">1</field>
+        </record>
+
+        <record id="stage_second_test" model="hr.recruitment.stage">
+              <field name="name">Second Test</field>
+              <field name="is_non_fixed_stage">True</field>
+                <field name="sequence">2</field>
+        </record>
+        <record id="stage_third_test" model="hr.recruitment.stage">
+              <field name="name">Third Test</field>
+              <field name="is_non_fixed_stage">True</field>
+                <field name="sequence">3</field>
+        </record>
+
+        <record id="stage_medical" model="hr.recruitment.stage">
+              <field name="name">Medical Clearance</field>
+              <field name="is_non_fixed_stage">True</field>
+                <field name="sequence">20</field>
+        </record>
+
+        <record id="stage_refusel" model="hr.recruitment.stage">
+              <field name="name">Refused</field>
+              <field name="is_non_fixed_stage">False</field>
+              <field name="sequence">50</field>
+        </record>
+
+
+    </data>
+</odoo>

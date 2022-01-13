@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_request_form" model="ir.ui.view">
+        <field name="name">hr.request.form</field>
+        <field name="model">hr.request</field> <!-- table name = model name -->
+        <field name="arch" type="xml">
+            <form string="Employee Requests">
+                <header>
+                    <!-- type will either object/ action -->
+                    <button name='action_submit' string="Submit" type="object" states='draft'
+                            class='oe_highlight'/>
+                    <button name='action_approved' string="Approved" type="object" states='submitted'
+                            class='oe_highlight'/>
+                    <button name='action_refused' string="Refused" type="object" states='submitted,confirmed,approved'
+                            class='oe_highlight'/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,refused"/>
+                </header>
+                <sheet>
+                    <h3>
+                        <field name="name" readonly="1"/>
+                        <br/>
+                    </h3>
+                    <group>
+                        <group string="Employee's Info">
+                            <field name="employee_id" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="user_id" />
+                            <field name="grade" />
+                            <field name="position"/>
+                            <field name="department_id"/>
+                            <field name="date_of_joining"/>
+                        </group>
+                        <group string="Manager's Info">
+                            <field name="manager_name"/>
+                            <field name="designation" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="request_type_id" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="category"/>
+                            <br></br>
+                            <field name="description"/>
+                            <field name="best_before_date"/>
+                        </group>
+                        <group>
+                            <field name="company_id" attrs="{'readonly': [('state','!=','draft')]}"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_hr_request_tree" model="ir.ui.view">
+        <field name="name">Employee Request</field>
+        <field name="model">hr.request</field>
+        <field name="arch" type="xml">
+            <tree string="Employee Request">
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="date_of_joining"/>
+                <field name="position"/>
+                <field name="request_type_id"/>
+                <field name="category"/>
+                <field name="best_before_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_hr_request_search" model="ir.ui.view">
+        <field name="name">hr.request.search</field>
+        <field name="model">hr.request</field>
+        <field name="arch" type="xml">
+            <search string="Employee Request Search">
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="request_type_id"/>
+                <field name="category"/>
+                <field name="best_before_date"/>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="action_hr_request_view" model="ir.actions.act_window">
+        <field name="name">Employee Requests</field>
+        <field name="res_model">hr.request</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="search_view_id" ref="view_hr_request_search"/>
+        <field name="view_id" ref="view_hr_request_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create Employee Request Here.......
+            </p>
+        </field>
+    </record>
+
+</odoo>

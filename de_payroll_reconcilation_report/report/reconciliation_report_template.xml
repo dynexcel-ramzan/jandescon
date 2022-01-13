@@ -1,0 +1,216 @@
+<odoo>
+  <data>
+  <template id="reconcilation_summary_report">
+    <t t-call="web.html_container">
+    <t t-call="web.external_layout">
+        <div class="page" style="font-size:12px">
+            <div class="oe_structure"/>
+            <div class='pull-left' style='color:blue;'>
+                <h5>Payroll Reconciliation Report</h5>
+                 periods  <span t-esc="datetime.datetime.strptime(str(docs.date_from), '%Y-%m-%d').strftime('%B-%y')"/>, and 
+                         <span t-esc="datetime.datetime.strptime(str(docs.date_to), '%Y-%m-%d').strftime('%B-%y')"/>   
+            </div>
+            <div  class='pull-right' style="max-width: 250px;height: 20px; color:blue;">
+               <strong>Printed On:</strong>
+               <span  t-esc="datetime.datetime.strptime(str(datetime.datetime.now()+ relativedelta(hours =+ 5)), '%Y-%m-%d %H:%M:%S.%f').strftime('%d-%b-%y %H:%M %p')"/> <br/>
+               <strong>Printed By:</strong>
+               <span  t-esc="user.name"/> 
+            </div>
+            
+            <br/>
+            <table class="table table-sm table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style='color:blue;'>Description</th>
+                        <th style='color:blue;'>Amount</th>
+                    </tr>
+                </thead>     
+                    <tbody class="reconcilation_tbody">
+                        
+                            <tr>
+                                <td>
+                                    Net salary of <span t-esc="'{0:,}'.format(int(round(previous_employees)))"/> employees for <span t-esc="datetime.datetime.strptime(str(docs.date_from), '%Y-%m-%d').strftime('%b-%y')"/>
+                                </td>
+                                <td>
+                                   <span t-esc="'{0:,}'.format(int(round(previous_net_amount)))" />
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    Net salary of <span t-esc="'{0:,}'.format(int(round(current_employees)))"/> employees for <span t-esc="datetime.datetime.strptime(str(docs.date_to), '%Y-%m-%d').strftime('%b-%y')"/>
+                                </td>
+                                 <td>
+                                   <span t-esc="'{0:,}'.format(int(round(current_net_amount)))" />
+                                </td> 
+                             </tr>
+                             <tr>
+                                <td>
+                                    Net Change: Increase / (Decrease)
+                                </td>
+                                 <td>
+                                   <t t-if='current_net_amount &gt;= previous_net_amount'>  
+                                    <span t-esc="'{0:,}'.format(int(round(current_net_amount - previous_net_amount)))" />
+                                   </t> 
+                                   <t t-if='previous_net_amount &gt; current_net_amount'>  
+                                    <span t-esc="'{0:,}'.format(int(round(previous_net_amount - current_net_amount)))" />
+                                   </t>   
+                                </td> 
+                             </tr>
+                    </tbody>
+            </table>
+             <p style='color:blue;'>Reasons of change in Net Salary Payable</p>
+            <table class="table table-sm table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style='color:blue;'>Compensation</th>
+                        <th style='color:blue;'><span t-esc="datetime.datetime.strptime(str(docs.date_from), '%Y-%m-%d').strftime('%b-%y')"/></th>
+                        <th style='color:blue;'><span t-esc="datetime.datetime.strptime(str(docs.date_to), '%Y-%m-%d').strftime('%b-%y')"/></th>
+                        <th style='color:blue;'>Curr-Prev</th>
+                    </tr>
+                </thead>  
+                    <t t-set='total_comansation_previous'  t-value='0' />
+                    <t t-set='total_comansation_current'  t-value='0' />
+                    <t t-set='total_curr_pre'  t-value='0' />
+                    <tbody class="reconcilation_tbody">
+                         <t t-foreach="compansation_list" t-as="comp">  
+                            <tr>
+                                 <td>
+                                     <t t-esc="comp['name']" /> 
+                                </td>
+                                <td>
+                                    <t t-esc="'{0:,}'.format(int(round(comp['previous_month_amount'])))" />
+                                    <t t-set='total_comansation_previous'  t-value="total_comansation_previous + round(comp['previous_month_amount'])" />
+                                </td>
+                                <td>
+                                    <t t-esc="'{0:,}'.format(int(round(comp['current_month_amount'])))" />
+                                    <t t-set='total_comansation_current'  t-value="total_comansation_current+round(comp['current_month_amount'])" />
+                                </td>
+                                 <td>
+                                  
+                                     <t t-esc="'{0:,}'.format(int(round(int(comp['current_month_amount'])-int(comp['previous_month_amount']))))" />
+                                     <t t-set='total_curr_pre'  t-value="total_curr_pre+round(int(comp['current_month_amount'])-int(comp['previous_month_amount']))" />  
+                                </td>
+                               
+                            </tr>
+                        </t>
+                         <tr>
+                            <td ></td>
+                            <td><t t-esc="'{0:,}'.format(int(round(total_comansation_previous)))"/></td>
+                            <td><t t-esc="'{0:,}'.format(int(round(total_comansation_current)))"/></td>
+                            <td style='color:blue;'>Total A: <t t-esc="'{0:,}'.format(int(round(total_curr_pre)))"/></td>
+                        </tr>
+                       
+                    </tbody>
+            </table>
+            <br/>
+            
+            <br/>
+            <table class="table table-sm table-striped table-bordered">
+                <tr>
+                        <th style='color:blue;'>Deductions</th>
+                        <th style='color:blue;'><span t-esc="datetime.datetime.strptime(str(docs.date_from), '%Y-%m-%d').strftime('%b-%y')"/></th>
+                        <th style='color:blue;'><span t-esc="datetime.datetime.strptime(str(docs.date_to), '%Y-%m-%d').strftime('%b-%y')"/></th>
+                        <th style='color:blue;'>Curr-Prev</th>
+                    </tr>
+                <tbody class="reconcilation_tbody"> 
+                           <t t-set='total_deduction_previous'  t-value='0' />
+                           <t t-set='total_deduction_current'  t-value='0' />
+                           <t t-set='total_ded_curr_pre'  t-value='0' />
+                    
+                            <t t-foreach="deduction_list" t-as="ded">  
+                            <tr>
+                                 <td>
+                                     <t t-esc="ded['name']" /> 
+                                </td>
+                                <td>
+                                    <t t-esc="'{0:,}'.format(int(round(ded['previous_month_amount'])))" />
+                                    <t t-set='total_deduction_previous'  t-value="total_deduction_previous + round(ded['previous_month_amount'])" />
+                                </td>
+                                <td>
+                                    <t t-esc="'{0:,}'.format(int(round(ded['current_month_amount'])))" /> 
+                                    <t t-set='total_deduction_current'  t-value="total_deduction_current+round(ded['current_month_amount'])" />
+                                </td>
+                                 <td>
+                                     <t t-esc="'{0:,}'.format(int(round(int(ded['current_month_amount'])-int(ded['previous_month_amount']))))" />
+                                     <t t-set='total_ded_curr_pre'  t-value="total_ded_curr_pre+round(int(ded['current_month_amount'])-int(ded['previous_month_amount']))" />  
+                                </td>
+                               
+                            </tr>
+                        </t>  
+                        <tr>
+                            <td></td>
+                            <td><t t-esc="'{0:,}'.format(int(round(total_deduction_previous)))"/></td>
+                            <td><t t-esc="'{0:,}'.format(int(round(total_deduction_current)))"/></td>
+                            <td style='color:blue;'>Total B: <t t-esc="'{0:,}'.format(int(round(total_ded_curr_pre)))"/></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style='color:blue;'>Total A - Total B: 
+                                <t t-if='total_ded_curr_pre &lt; 0'>
+                                  <t t-esc="'{0:,}'.format(int(round(total_curr_pre - (-total_ded_curr_pre))))"/>
+                                </t>
+                                <t t-if='total_ded_curr_pre &gt; 0'>
+                                  <t t-esc="'{0:,}'.format(int(round(total_curr_pre - (total_ded_curr_pre))))"/>
+                                </t>
+                            </td>
+                        </tr>
+                       
+                    </tbody>
+            </table>
+            
+            <br/>
+            <table class="table table-sm table-striped table-bordered">
+                
+                        <tr>
+                            <td style='color:blue;'>Total Bank Transferable for <span t-esc="datetime.datetime.strptime(str(docs.date_to), '%Y-%m-%d').strftime('%b-%y')"/>:</td>
+                            <td></td>
+                            <td></td>
+                            <td><t t-esc="'{0:,}'.format(int(round(current_net_amount)))"/></td>
+                        </tr>
+                        
+            
+            </table>
+            
+           
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <table class="table table-sm table-striped table-bordered">
+                <tr>
+                    <th style="max-width:100px; word-wrap:break-word;padding-left:5px;"></th>
+                    
+                    <th style="border-top: 1px solid black;padding:5px;text-align:center;"> Prepared By</th>
+                    <th style="max-width:100px; word-wrap:break-word;padding:5px;"> </th>
+                    <th style="border-top: 1px solid black;padding:5px;text-align:center;">Verify By</th>
+                    <th style="max-width:70px; word-wrap:break-word;padding:5px;"> </th>
+                    <th style="border-top: 1px solid black;padding:5px;text-align:center;">Approved By</th>
+                    <th style="max-width:100px; word-wrap:break-word;padding-left:5px;"> </th>
+                    <th style="border-top: 1px solid black;padding:5px;text-align:center;">Approved By</th>
+                </tr>
+            </table>
+            
+          </div>
+    </t>
+    </t>
+</template>
+      
+      <template id="reconcilation_report">
+    <t t-call="web.html_container">
+        <t t-foreach="wizarddocs" t-as="docs">
+            <t t-call="de_payroll_reconcilation_report.reconcilation_summary_report" />
+        </t>
+        <t t-foreach="wizarddocs" t-as="docs">
+            <t t-call="de_payroll_reconcilation_report.reconcilation_detail_report" />
+        </t>
+        
+    </t>
+</template>
+    
+    
+  </data>
+</odoo>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<record id="view_advance_against_expense_form" model="ir.ui.view">
+		<field name="name">advance.against.expense.form</field>
+		<field name="model">advance.against.expense</field>
+		<field name="arch" type="xml">
+			<form string="Advance Against Expense">
+				<header>
+					<button name='send_for_approval' string="Send For Approval" type="object" states='draft'
+						class='oe_highlight' />
+					
+					<button name='action_approve' string="Approve" type="object" states='waiting'
+						class='oe_danger'   />
+						
+					<button name='action_reject' string="Reject" type="object" states='draft,waiting'
+						class='oe_danger'  />
+				
+				
+					<field name="state" widget="statusbar"
+						statusbar_visible="draft,waiting,approved,reject" />
+				</header>
+
+				<sheet>
+					<div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+					<group>
+						<group>
+							<field name="employee_id" attrs="{'readonly': [('state','!=','draft')]}"/>
+							<field name="partner_id" />
+						</group>
+						<group>
+							<field name="amount" attrs="{'readonly': [('state','!=','draft')]}"/>
+							<field name="date" attrs="{'readonly': [('state','!=','draft')]}"/>
+							<field name="description" attrs="{'readonly': [('state','!=','draft')]}"/>
+							<field name="payment_entry_ref" readonly="True"/>
+						</group>
+					</group>
+					
+				</sheet>
+				<div class="oe_chatter">
+	                <field name="message_follower_ids"/>
+	                <field name="activity_ids"/>
+	                <field name="message_ids"/>
+	            </div>
+			</form>
+		</field>
+	</record>
+
+
+	<record id="view_advance_against_expense_tree" model="ir.ui.view">
+		<field name="name">advance.against.expense.tree</field>
+		<field name="model">advance.against.expense</field>
+		<field name="arch" type="xml">
+			<tree string="Advance Against Expense Tree">
+				<field name="name" />
+				<field name="partner_id" />
+				<field name="date" />
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_advance_against_expense_search" model="ir.ui.view">
+		<field name="name">advance.against.expense.search</field>
+		<field name="model">advance.against.expense</field>
+		<field name="arch" type="xml">
+			<search string="Advance Against Expense search">
+				<field name="name" />
+				<field name="partner_id" />
+				<field name="date" /> 
+                <field name="state" />    
+			</search>
+		</field>
+	</record>
+
+
+	<record id="action_advance_against_expense_view" model="ir.actions.act_window">
+		<field name="name">Advance Against Expense</field>
+		<field name="res_model">advance.against.expense</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[]</field>
+		<field name="context">{}</field>
+		<field name="search_view_id" ref="view_advance_against_expense_search" />
+		<field name="view_id" ref="view_advance_against_expense_tree" />
+		<field name="help" type="html">
+			<p class="o_view_nocontent_smiling_face">
+				Create Advance Against Expense Records Here.......
+			</p>
+		</field>
+	</record>
+
+
+	<menuitem id="menu_hr_expense_advance_against_exp" sequence="1" parent="hr_expense.menu_hr_expense_my_expenses" action="action_advance_against_expense_view" name="Advances Against Expense"/>
+	
+	
+</odoo>
+
+

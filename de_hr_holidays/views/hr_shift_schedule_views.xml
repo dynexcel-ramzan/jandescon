@@ -1,0 +1,40 @@
+<odoo>
+    <data>
+        
+      <data noupdate="0">
+           <record id="hr_generate_leave_server_action" model="ir.actions.server">
+                          <field name="name">Ganerate Timeoff</field>
+                          <field name="model_id" ref="de_employee_shift.model_hr_shift_schedule"/>
+                          <field name="binding_model_id" ref="de_employee_shift.model_hr_shift_schedule"/>            
+                          <field name="binding_view_types">list</field>
+                          <field name="state">code</field>
+                          <field name="code">action = records.action_generate_leave() </field>
+            </record>
+
+     </data>
+        
+     <record id="hr_shift_schedule_form_view" model="ir.ui.view">
+			<field name="name">hr.shift.schedule.form.view</field>
+			<field name="model">hr.shift.schedule</field>
+			<field name="inherit_id" ref="de_employee_shift.hr_shift_schedule_view_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='schedule_line_ids']//tree//field[@name='rest_day']" position="before">
+					<field name="leave_created" invisible="1"/>
+				</xpath>
+                <xpath expr="//field[@name='schedule_line_ids']//tree//field[@name='rest_day']" position="attributes">
+                    <attribute name="attrs">{"readonly": [['leave_created','=',True]]}</attribute>
+				</xpath>
+                <xpath expr="//field[@name='schedule_line_ids']//tree//field[@name='date']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+				</xpath>
+                <xpath expr="//field[@name='schedule_line_ids']//tree//field[@name='day']" position="attributes">
+                    <attribute name="readonly">1</attribute>
+				</xpath>
+				
+			</field>
+		</record>   
+        
+
+ 
+    </data>
+</odoo>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<data>
+		<record model="ir.ui.view" id="hr_attendance_process_wizard_form_view">
+			<field name="name">Attendance Device Synchronization wizard process</field>
+			<field name="model">process.attendance.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Synchronize Data">
+					<div>
+						This wizard will process Attendance
+						<br />
+						
+					</div>
+					<group>
+						<group>
+							<field name="process_number" />
+						</group>
+						
+					</group>
+					<footer>
+						<button name="action_process_attendace_odoo" type="object"
+							string="Process Attendance" class="oe_highlight" />
+						
+						<button special="cancel" string="Cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<act_window id="action_sync_oracle_process_Attendace_attendance" name="process Synchronize Data"
+			res_model="process.attendance.wizard" view_mode="form" target="new" />
+
+		
+
+	</data>
+</odoo>

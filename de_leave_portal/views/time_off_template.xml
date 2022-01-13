@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+<odoo>
+
+    
+    
+    
+    <template id="portal_layout" name="Portal layout: timeoff menu entry" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'timeoffs' or timeoff" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not timeoff else ''}">
+                <a t-if="timeoff" t-attf-href="/my/timeoffs?{{ keep_query() }}">Leaves</a>
+                <t t-else="">Leaves</t>
+            </li>
+            <li t-if="timeoff" class="breadcrumb-item active text-truncate col-8 col-lg-10">
+                <t t-esc="timeoff.name"/>
+            </li>
+        </xpath>
+    </template>
+
+    
+    
+    
+
+    
+    <template id="portal_my_home" name="Show timeoffs / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Time Off</t>
+                <t t-set="url" t-value="'/my/timeoffs'"/>
+                <t t-set="placeholder_count" t-value="'timeoff_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    
+    
+    
+    
+    <template id="portal_my_timeoffs" name="My timeoffs">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Leaves</t>
+            </t>
+            <t t-if="not grouped_timeoffs">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no time off.
+                </div>
+            </t>
+            
+            <t t-if="grouped_timeoffs">
+                <t t-call="portal.portal_table">
+                    <t t-foreach="grouped_timeoffs" t-as="all_timeoffs">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left">#</th>
+                                <th class="text-left">Ref</th>
+                                <th class="text-left">Employee</th>
+                                <th class="text-left">Time off Type</th>
+                                <th class="text-left">Description</th>
+                                
+                                <th class="text-left">Start Date</th>
+                                <th class="text-left">End Date</th>
+                               <th class="text-left">Status</th>
+<!--                                 <th class="text-left">Action</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="all_timeoffs" t-as="_timeoff_">
+                             
+                                
+                                <tr>
+<!--                                     <td class="text-left">
+                                        <span t-esc="uid"/>
+                                    </td> -->
+                                    <td class="text-left">
+                                        #<span t-esc="_timeoff_.id"/>
+                                    </td>
+                                     <td>
+                                        <a t-attf-href="/my/timeoff/#{_timeoff_.id}?{{ keep_query() }}"><span t-field="_timeoff_.employee_id.name"/></a>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_timeoff_.holiday_status_id.name" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_timeoff_.name"/>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_timeoff_.date_from"/>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_timeoff_.date_to"/>
+                                    </td>
+                                    <td class="text-left">
+                                        
+                                      
+                                        
+                                        <t t-if="_timeoff_.state == 'draft'">
+                                            <i class="badge badge-pill badge-info" >To Submit</i>
+                                        </t>
+                                        <t t-if="_timeoff_.state == 'cancel'">
+                                            <i class="badge badge-pill badge-info" >Cancelled</i>
+                                        </t>
+                                        <t t-if="_timeoff_.state == 'confirm'">
+                                            <i class="badge badge-pill badge-info" >To Approve</i>
+                                        </t>
+                                        <t t-if="_timeoff_.state == 'refuse'">
+                                            <i class="badge badge-pill badge-info" >Refused</i>
+                                        </t>
+                                        <t t-if="_timeoff_.state == 'validate1'">
+                                            <i class="badge badge-pill badge-info" >Second Approved</i>
+                                        </t>
+                                        <t t-if="_timeoff_.state == 'validate'">
+                                            <i class="badge badge-pill badge-info" >Approved</i>
+                                        </t>
+                                        
+                                    
+                                        
+                                        
+<!--                                         <span  class="badge badge-pill badge-info"  t-esc="_timeoff_.state"/> -->
+                                    </td>
+                                    
+<!--                                     <td class="text-left">
+                                        <span t-esc="_timeoff_.partner_id.name"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-pill badge-info" title="Current stage of the timeoff is " t-esc="_timeoff_.request_status" />
+                                    </td>	 -->
+<!--                                    <td>   -->
+                                       
+                                       
+<!--                                        <t t-esc="uid">#</t> -->
+<!--                                  <t t-foreach="_timeoff_.approver_ids" t-as="lines"> -->
+                                    
+<!--                                         <t t-if="_timeoff_.request_status != 'approved' "> -->
+<!--                                     <t t-if="_timeoff_.request_status !=   'refused'"> -->
+<!--                                        <t t-if="_timeoff_.state == 'confirm'">
+                                         <a t-attf-href="/timeoff/accept/#{_timeoff_.id}?" title="Approve"><div class="btn btn-primary"><i class="fa fa-check"></i></div></a>
+                                        <a t-attf-href="/timeoff/reject/#{_timeoff_.id}?" title="Refuse"><div class="btn btn-warning"><i class="fa fa-times"></i></div></a> 
+                                    </t> -->
+                                      
+<!--                                      </t>    -->
+<!--                                 </t>  -->
+                                       
+                                       
+                                       
+                                       
+<!--                                      <t t-if="_timeoff_.request_status != pending"> -->
+                                                              
+<!--                                        </t> -->
+<!--                                        </t> -->
+<!--                                     <t t-else="">
+                                            <t t-if="_timeoff_.request_status == approved">
+                                               <div class="btn btn-success"><i class="fa fa-thumbs-up"></i></div>
+                                           </t>
+                                           <t t-if="_timeoff_.request_status == refused">
+                                               <div class="btn btn-warning"><i class="fa fa-thumbs-down"></i></div>
+                                          </t>
+                                           <t t-else="">
+                                               <div class="btn"><i class="fa fa-stumbleupon"></i></div>
+                                          </t>
+                                    </t> -->
+<!--                                         <a t-attf-href="/my/approval_update/#{_timeoff_.id}?{{ keep_query() }}"><i class="fa fa-edit"></i></a> 
+                                        <a t-attf-href="/approval/delete/#{_timeoff_.id}?"   > <i class="fa fa-trash"></i></a> -->
+                                       
+<!--                                        onclick="setTimeout(location.reload.bind(location), 1)"  -->
+                                       
+<!--                                     </td> -->
+                                </tr>
+                            </t>
+                            <tr>
+                                <div>
+                                    <t class="col-lg-7 col-md-8" >
+                                        <a href="/timeoff/create/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
+                                    </t>
+                                </div>
+                            </tr>   
+                        </tbody>
+                    </t>
+                </t>
+            </t>   
+            
+        </t>
+    </template>
+
+    <template id="portal_my_timeoff" name="My Time Off">
+        <t t-call="portal.portal_layout">
+             <t t-set="o_portal_fullwidth_alert" groups="de_leave_portal.group_time_off">
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#model=hr.leave&amp;id=%s&amp;view_type=form' % (timeoff.id)"/>
+                </t>
+            </t>
+            <div id="optional_placeholder"></div>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                  <div id="optional_placeholder"></div>
+                    <div class="container">
+                      <div class="card">
+                        <div class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-12">
+                            <h5 class="d-flex mb-1 mb-md-0 row">
+                                <span t-field="timeoff.name" class="col-7 text-truncate"/>
+                                <small class="text-muted d-none d-md-inline"> (#<span t-field="timeoff.id"/>)</small>
+                                <div class="col-md-3  text-right">
+                                    <small class="text-right">Stage:</small>
+                                    <span t-field="timeoff.state" class=" badge badge-pill badge-info" title="Current stage of this Timeoff"/>
+                                </div>
+                                
+                                 <div class="col-md-1  text-right">
+                                        <t t-if="pre_id">
+                                            <a role="button"  t-attf-href="/timeoff/pre/#{timeoff.id}?" ><i style="margin-right:10px; align:right" class="fa fa-chevron-left" role="img" aria-label="Previous" title="Previous"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="margin-right:10px; align:right; color:#B8B7B0" class="fa fa-chevron-left" aria-label="Previous" title="Previous"></i></a>
+
+                                        </t>
+                                        <t t-if="next_id">
+                                            <a role="button" t-attf-href="/timeoff/next/#{timeoff.id}?" ><i class="fa fa-chevron-right" role="img" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="color:#B8B7B0" class="fa fa-chevron-right" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                </div>
+                                    </h5>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </t>
+               <t t-set="card_body">          
+                  
+                     
+                        <div class="row">
+                                <div class="col-md-6"> <strong>Employee : </strong>
+                                    <t t-if="timeoff.name">
+                                        <span t-esc="timeoff.employee_id.name"/>
+                                    </t>
+                                </div>
+                            
+                                 <div class="col-md-6"> 
+                                    <strong>Leave Type : </strong>
+                                    <t t-if="timeoff.id">
+                                        <span t-esc="timeoff.holiday_status_id.name"/>
+                                    </t>
+                                </div>  
+                        </div>       
+                    
+                        <br/><br/>
+                   <div class="row"> 
+                                  
+                             <div class="col-md-6"> <strong>Start Date : </strong>
+                                <t t-if="timeoff.name">
+                                     <span t-esc="timeoff.date_from"/>
+                                 </t>
+                             </div>
+                            
+                                        
+                                <div class="col-md-6"> <strong>End Date : </strong>
+                                    <t t-if="timeoff.id">
+                                        <span t-esc="timeoff.date_to"/>
+                                    </t>
+                                </div>
+                            </div>
+                   
+                    <div class="row"> 
+                        <div t-attf-class="col-12 col-lg-12  mb-md-0 ">
+                            <hr class="mb-1"/>
+                            <div class="d-flex my-2">
+                                <strong>Description</strong>
+                            </div>
+                            <t t-if="timeoff.name">                                        
+                                <div class="py-1 px-2 bg-100 small" t-field="timeoff.name"/>
+                            </t>
+                        </div> 
+                    </div>
+<!--                    <div class="row"> 
+                       <t t-if = "timeoff.state == 'confirm'">
+
+                        <div class="offset-md-10 col-md-1">
+                            <a t-attf-href="/timeoff/ccpt/#{timeoff.id}?"><i  class="btn btn-primary">Approve</i></a>
+                        </div>                  
+                        <div class="col-md-1">
+                            <a t-attf-href="/timeoff/rjct/#{timeoff.id}?"><i class="btn btn-warning">Refuse</i></a>                   
+                        </div>
+                            
+                         </t>
+                      
+                    </div> -->
+                </t> 
+            </t>
+
+            <div class="mt32">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="timeoff"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+            </div>
+        </t>
+    </template>
+
+
+    <template id="create_timeoff" name="My creat">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+        
+                <t t-call="portal.portal_table">
+                    <thead>
+                            <tr>
+                                <th class="text-left">Create Time Off from here. Good Luck</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                  
+                                <div class="container">
+                                        <div class="row">
+                                            <div class="col-md-8 col-xs-12 col-md-offset-2 sell-page-contact">
+                                                <form id="TimeOffForm" data-toggle="validator" action="/my/timeoff/save" class="mt32">
+                                                    
+                                                    <div class="form-group row form-field o_website_form_custom o_website_form_required_custom">
+                                                        <div  class="col-xl">
+                                                                <strong class="d-block mb-2">Leave Type:</strong>
+                                                                 <select class="form-control  o_website_form_input" name="leave_type_id">
+                                                                    <t t-foreach="leave_type" t-as="type">
+                                                                        <option t-att-value="type.id">
+                                                                            <t t-esc="type.name"/>
+                                                                        </option>
+                                                                    </t>
+                                                                </select>  
+                                                        </div>
+                                                        <div style="float:right;"  class="col-xl">
+                                                                <strong class="d-block mb-2">Employee:</strong>
+                                                                 <select class="form-control  o_website_form_input" name="employee_id">
+                                                                    <t t-foreach="employees" t-as="emp">
+                                                                        <option t-att-value="emp.id">
+                                                                            <t t-esc="emp.name"/>
+                                                                        </option>
+                                                                    </t>
+                                                                </select> 
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="form-group row form-field o_website_form_custom o_website_form_required_custom">
+                                                        <div  class="col-xl">
+                                                                <strong class="d-block mb-2">Date start:</strong>
+                                                                <input name="date_start" type="date" required="required" class="form-control o_website_form_input"/>
+                                                        </div>
+                                                        <div style="float:right;"  class="col-xl">
+                                                                <strong class="d-block mb-2">Date End:</strong>
+                                                            <input name="date_end" type="date" required="required" class="form-control o_website_form_input"/>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="form-group">
+                                                        <label for="environment">Description:</label>
+                                                            <input name="descr" type="text" class="form-control o_website_form_input"/>
+                                                    </div>
+                                                    
+                                                    <div class="form-group row form-field o_website_form_custom o_website_form_required_custom">
+                                                        <div class="col-md-2">
+                                                            <button type="submit"  class="btn btn-primary pull-left">Create</button>
+                                                        </div>
+                                                        <div class="col-md-7">
+                                                            <t t-if="success_flag" t-call="portal.portal_docs_entry">
+                                                                <t t-set="title">Your Time off hass been Saved Successfully</t>
+                                                            </t>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <a href="/my/timeoffs"><div class="btn btn-warning pull-right" style="float:right; height:35px;line-height:100%;">All Timeoffs</div></a> 
+                                                        </div>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                            </td>
+                        </tr>
+                      
+                    </tbody>
+                </t>
+            </t>
+       
+    </template> 
+
+</odoo>
+
+

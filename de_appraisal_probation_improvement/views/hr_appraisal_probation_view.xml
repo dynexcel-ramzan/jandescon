@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="appraisal_probation_form" model="ir.ui.view">
+        <field name="name">Appraisal Probation</field>
+        <field name="model">hr.appraisal.probation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name='action_confirmed' string="Confirm" type="object" class='oe_highlight' 
+                            states='draft'/>
+                    
+                    <button name='action_waiting' string="Sent To Employee Review" 
+                            type="object" class='oe_highlight' states='confirmed'/>
+                    
+                    <button name='action_review' string="Reviewed By Employee" type="object" class='oe_highlight' 
+                            states='employee_waiting'/>
+                    
+                    <button name='action_hr_review' string="HR Review"
+                            type="object" class='oe_highlight' 
+                            states='employee_review'/>
+                    
+                    <button name='action_done' string="Done"
+                            type="object" class='oe_highlight' 
+                            states='hr_review'/>
+                    
+                    <field name="state" widget="statusbar" clickable="True"/>
+                </header>
+                <sheet>
+                    <h2>
+                    <field name='name'/>
+                    </h2>
+                    <group>
+                        <group string="Employee Info" name="Employee Info">
+                            <field name="employee_id" required="1"
+                                   attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="position" readonly="1"/>
+                            <field name="department_id" readonly="1"/>
+                            <field name="date_of_joining" readonly="1"/>
+                            <field name="expiry" readonly="1"/>
+                            <field name="target_Year" readonly="1"/>
+                        </group>
+                        <group string="Manager Info" name="Manager Info">
+                            <field name="manager_name" readonly="1"/>
+                            <field name="designation" readonly="1" />
+                        </group>
+                    </group>
+                    <group string="Areas To Review" name="Areas to Review">
+                        <field name="reviewed_employee" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="knowledge" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="productivity" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="quality_of_work" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="technical_skills" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="analytical_skills" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="creativity" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="team_player" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="hardwork" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="communication_skills" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="dependability" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="initiative" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="meet_deadline" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="discipline" widget="radio" options="{'horizontal': true}"
+                               attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                        <br/>
+                        <field name="overall_evaluation"/>
+                    </group>
+                    <group>
+                        <field name="employee_can_excel"
+                               attrs="{'readonly': ['|',('state','=','employee_review'),
+                                      ('state','=','done')]}"/>
+                        <br/>
+                        <field name="improvement_is_required"
+                               attrs="{'readonly': ['|',('state','=','employee_review'),
+                                      ('state','=','done')]}"/>
+                    </group>
+                    
+                    <group string="Confirmation Status" name="Confirmation Status">
+                        <field name="confirmation_status" widget="radio" options="{'horizontal': false}"/>
+                        <field name="gross_salary"
+                               attrs="{'invisible': [('confirmation_status','!=','confirm')],
+                                      'required': [('confirmation_status','=','confirm')],
+                                      'readonly': ['|',('state','!=','draft'),('state','!=','confirmed')
+                                      ,('state','!=','employee_waiting')]}"/>
+                        <field name="grade"
+                               attrs="{'invisible': [('confirmation_status','!=','confirm')],
+                                      'required': [('confirmation_status','=','confirm')],
+                                      'readonly': ['|',('state','!=','draft'),('state','!=','confirmed')
+                                      ,('state','!=','employee_waiting')]}"/>
+                        <field name="with_from"
+                               attrs="{'invisible': [('confirmation_status','!=','confirm')],
+                                      'required': [('confirmation_status','=','confirm')],
+                                      'readonly': [('state','!=','draft'),('state','!=','confirmed')
+                                      ,('state','!=','employee_waiting')]}"/>
+                        <br/>
+                        <field name="probation_extension_period"
+                               attrs="{'invisible': [('confirmation_status','!=','extend')],
+                                      'readonly': ['|',('state','=','employee_review'),
+                                      ('state','=','hr_review'),('state','=','done')]}"/>
+                    </group>
+                    
+                    <group string="HOD Comments" name="HOD Comments">
+                        <field name="comments"
+                               attrs="{'readonly': [('state','!=','hr_review')]}"/>
+                    </group>
+                    <group string="Employee Comments" name="Employee Comments">
+                        <field name="employee_comment"
+                               attrs="{'readonly': [('state','!=','employee_waiting')]}"/>
+                    </group>
+                    <group string="HR Comments" name="HR Comments">
+                        <field name="hr_comments"
+                               attrs="{'readonly': [('state','!=','employee_review')]}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_appraisal_probation_tree" model="ir.ui.view">
+        <field name="name">hr.appraisal.probation.tree</field>
+        <field name="model">hr.appraisal.probation</field>
+        <field name="arch" type="xml">
+            <tree string="HR Appraisal Probation">
+                <field name="employee_id"/>
+                <field name="grade"/>
+                <field name="position"/>
+                <field name="department_id"/>
+                <field name="date_of_joining"/>
+                <field name="expiry"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_appraisal_probation_action" model="ir.actions.act_window">
+        <field name="name">Appraisal Probation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.appraisal.probation</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create Records Here.......
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="probation_appraisal"
+              name="Probation"
+              parent="hr_appraisal.menu_hr_appraisal_root"
+              action="de_appraisal_probation_improvement.action_appraisal_probation_action"
+              sequence="6"/>
+
+</odoo>

@@ -1,0 +1,7 @@
+<odoo>
+	<data noupdate="0">
+		<menuitem id="auto_employee_appraisal" name="Auto Employee Appraisal" parent="hr_appraisal.menu_hr_appraisal_configuration"
+			action="action_employee_appraisal_plan"
+			sequence="99" />	
+	</data>
+</odoo>

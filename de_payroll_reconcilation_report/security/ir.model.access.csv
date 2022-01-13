@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_reconciliation_wizard,access.reconciliation.wizard,model_reconciliation_wizard,,1,1,1,1
+access_reconciliation_detail_wizard,access.reconciliation.detail.wizard,model_reconciliation_detail_wizard,,1,1,1,1

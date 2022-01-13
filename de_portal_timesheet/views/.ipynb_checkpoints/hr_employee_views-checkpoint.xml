@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+
+    <data noupdate="0">
+       <record id="project_timesheet_incharge_server_action" model="ir.actions.server">
+                  <field name="name">Timesheet Incharge</field>
+                  <field name="model_id" ref="de_portal_timesheet.model_hr_employee"/>
+                  <field name="binding_model_id" ref="de_portal_timesheet.model_hr_employee"/>
+                  <field name="binding_view_types">list</field>
+                  <field name="state">code</field>
+                  <field name="code">action = records.action_assign_timesheet_incharge() </field>
+    </record>
+
+  </data>
+
+         <record id="hr_employee_form_view_project_timesheet" model="ir.ui.view">
+			<field name="name">hr.employee.form.view.timesheet</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr.view_employee_form"/>
+			<field name="arch" type="xml">
+                <xpath expr="//group[@name='managers']" position="before">
+                     <group name="project_timesheet_managers" string="Project Timesheet" class="hide-group-if-empty">
+                         <field name="timesheet_incharge_id" />
+                         <field name="timesheet_categ_id" />
+                      </group>
+				</xpath>
+            </field>
+		</record>
+           <record id="hr_employee_tree_view_project_timesheet" model="ir.ui.view">
+			<field name="name">hr.employee.tree.view.timesheet</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr.view_employee_tree"/>
+			<field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                         <field name="timesheet_incharge_id" optional='hide'/>
+				</xpath>
+            </field>
+		</record>
+        
+    </data>
+</odoo>

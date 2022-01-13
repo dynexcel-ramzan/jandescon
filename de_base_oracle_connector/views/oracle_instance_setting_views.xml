@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+         
+
+        
+        <record model="ir.ui.view" id="oracle_instance_setting_form_view">
+            <field name="name">oracle_instance_setting_form</field>
+            <field name="model">oracle.instance.setting</field>
+            <field name="arch" type="xml">
+                <form string="Whatsapp Credentials">
+                    <header>
+                        <button name="try_connection" states="draft" class="oe_highlight" string="Connect" type="object"/>
+                         
+                        <field name="state" widget="statusbar" statusbar_visible="draft,active,close" clickable="1" />
+                    </header>
+                    <sheet>
+                        <div class="oe_title pr-0">
+                        <h1 class="d-flex flex-row justify-content-between">
+                            <field name="name" class="o_task_name text-truncate"  placeholder="Instance..."/>
+                        </h1>
+                    </div>
+                        <group>
+                            <group>
+                               
+                                <field name="host"/>
+                                <field name="port"/>
+                                <field name="db_name"/>
+                    
+                            </group>
+                            <group>
+
+                               <field name="user"/>
+                                <field name="password"/>
+
+                            </group>
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="oracle_instance_setting_tree_view">
+            <field name="name">oracle_instance_setting_tree</field>
+            <field name="model">oracle.instance.setting</field>
+            <field name="arch" type="xml">
+                <tree string="Oracle">
+                    <field name="name"/>
+                    <field name="host" />
+                </tree>
+            </field>
+        </record>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+        
+       
+        <record model="ir.actions.act_window" id="oracle_instance_setting_action">
+            <field name="name">Instance</field>
+            <field name="res_model">oracle.instance.setting</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <menuitem id="oracle_instance_setting_view" name="Oracle" parent="base.menu_administration"  sequence="8"/>
+      <menuitem id="submenu_oracle_instance_setting_view" name="Instance" parent="oracle_instance_setting_view" action="oracle_instance_setting_action" sequence="1"/>
+
+ </data>
+</odoo>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="grade_designation_form_inherit">
+        <field name="name">grade.designation.form.inherit</field>
+        <field name="model">grade.designation</field>
+        <field name="inherit_id" ref="de_employee_enhancement.view_designation_type_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/group" position="after">
+                <notebook>
+                    <page name="Expense" string="Expense Claim">
+                        <field name="grade_line_ids">
+                            <tree editable="bottom">
+                                <field name="expense_type"/>
+                                <field name="limit"/>
+                                <field name="period"/>
+                                <field name="funds_request_limit"/>
+                                <field name="funds_request_period"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+</odoo>

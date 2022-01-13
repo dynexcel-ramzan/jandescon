@@ -1,0 +1,18 @@
+<odoo>
+  <data>
+  <record id="account_account_form_view_portal" model="ir.ui.view">
+			<field name="name">account.account.form.view.portal</field>
+			<field name="model">account.account</field>
+			<field name="inherit_id" ref="account.view_account_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//group[@name='security_group']" position="after">
+                   <group string="Portal" name="portal_group">
+                      <field name="is_publish"/>
+                      <field name="publish_name" attrs="{'invisible': [('is_publish', '=', False)],'required': [('is_publish', '=', True)],}"/>
+                    </group>
+				</xpath>
+				
+			</field>
+		</record>
+  </data>
+</odoo>

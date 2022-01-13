@@ -1,0 +1,36 @@
+<odoo>
+  <data>
+      
+       <record id="hr_attendance_oracle_action" model="ir.actions.server">
+                  <field name="name">Post to Oracle</field>
+                  <field name="model_id" ref="hr_attendance.model_hr_attendance"/>
+                  <field name="binding_model_id" ref="hr_attendance.model_hr_attendance"/>            
+                  <field name="binding_view_types">list</field>
+                  <field name="state">code</field>
+                  <field name="code">action = records.action_send_wfh_attendance_data() </field>
+                 </record>
+
+        <record id="hr_attendance_oracle_fetch_action" model="ir.actions.server">
+                  <field name="name">View Oracle Data</field>
+                  <field name="model_id" ref="hr_attendance.model_hr_attendance"/>
+                  <field name="binding_model_id" ref="hr_attendance.model_hr_attendance"/>            
+                  <field name="binding_view_types">list</field>
+                  <field name="state">code</field>
+                  <field name="code">action = records.action_view_wfh_attendance_data() </field>
+                 </record>
+      
+      
+      <record id="ir_cron_scheduler_whf_post_to_oracle" model="ir.cron">
+			<field name="name">Attendance WFH To Oracle</field>
+			<field name="model_id" ref="model_hr_attendance" />
+			<field name="user_id" ref="base.user_root" />
+			<field name="state">code</field>
+			<field name="interval_number">12</field>
+			<field name="interval_type">hours</field>
+			<field name="numbercall">-1</field>
+			<field eval="False" name="doall" />
+			<field name="code">model.action_send_wfh_attendance_data()</field>
+		</record>
+ 
+  </data> 
+</odoo>

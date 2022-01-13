@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="0">
+        <record id="view_hr_appraisal_probation_sequence" model="ir.sequence">
+            <field name="name">hr.appraisal.probation.name</field>
+            <field name="code">hr.appraisal.probation.name</field>
+            <field name="prefix">Prob/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="id" eval="False"/>
+        </record>
+        <record id="view_hr_appraisal_improvement_sequence" model="ir.sequence">
+            <field name="name">hr.appraisal.improvements.name</field>
+            <field name="code">hr.appraisal.improvements.name</field>
+            <field name="prefix">PIP/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="id" eval="False"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,103 @@
+<odoo>
+    <record id="view_test_training_form" model="ir.ui.view">
+        <field name="name">employee.request.form</field>
+        <field name="model">employee.request</field>
+        <field name="arch" type="xml">
+            <form string="Employee Request">
+                <header>
+                    <button name="action_approved" string="Approve" type="object" states='submitted'
+                            class='oe_highlight'/>
+                    <field name="state" widget="statusbar"/>
+                    <button name="action_submitted" string="Submit" type="object" states='draft'
+                            class='oe_highlight'/>
+                    <button name="action_refused" string="Refuse" type="object" states='submitted'
+                            class='oe_highlight'/>
+                    <button name="send_to_session" string="Convert To Session" type="object" states='approved'
+                            class='oe_highlight'/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="emp_req" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name" attrs="{'readonly': [('state','=','approved')]}"/>
+                            <field name="hr_remarks" groups="de_employee_training.group_hr_remarks_on_request"/>
+                            <field name="company_id"/>
+                        </group>
+                        <group>
+                            <br></br>
+                            <br></br>
+                            <br></br>
+                            <field name="reason" attrs="{'readonly': [('state','=','approved')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Employee">
+                            <field name='participants_ids' attrs="{'readonly': [('state','=','approved')]}"/>
+                        </page>
+<!--                        <page string="Employee Requests">-->
+<!--                            <field name='employee_request_lines' attrs="{'readonly': [('state','=','approved')]}">-->
+<!--                                <tree editable='bottom'>-->
+<!--                                    <field name='name'/>-->
+<!--                                    &lt;!&ndash;                                    <field name='emp_number'/>&ndash;&gt;-->
+<!--                                    <field name='designation'/>-->
+<!--                                    <field name='department'/>-->
+<!--                                    &lt;!&ndash;                                    <field name='date_of_joining'/>&ndash;&gt;-->
+<!--                                    &lt;!&ndash;                                    <field name='position'/>&ndash;&gt;-->
+<!--                                </tree>-->
+<!--                            </field>-->
+<!--                        </page>-->
+                        <page name='Training Info' string="Training Info">
+                            <group string="Course Info">
+                                <field name='course' options="{'horizontal': true}" attrs="{'readonly': [('state','=','approved')]}"/>
+                            </group>
+                            <group string="Institute">
+                                <field name='institute' options="{'horizontal': true}" attrs="{'readonly': [('state','=','approved')]}"/>
+                            </group>
+                            <group string="Training Date">
+                                <field name='training_date' options="{'horizontal': true}" attrs="{'readonly': [('state','=','approved')]}"/>
+                            </group>
+                            <group string="Training Cost">
+                                <field name="training_cost" options="{'horizontal': true}" attrs="{'readonly': [('state','=','approved')]}"/>
+                            </group>
+                            <group string="Areas of Improvement">
+                                <field name='areas_of_improve' options="{'horizontal': true}" attrs="{'readonly': [('state','=','approved')]}"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_employee_request_tree" model="ir.ui.view">
+        <field name="name">employee.request.tree</field>
+        <field name="model">employee.request</field>
+        <field name="arch" type="xml">
+            <tree string="Employee Request Tree">
+                <field name="emp_req"/>
+                <field name="name"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_employee_request_view" model="ir.actions.act_window">
+        <field name="name">Requests</field>
+        <field name="res_model">employee.request</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_employee_request_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create Records Here.......
+            </p>
+        </field>
+    </record>
+
+
+
+</odoo>
+

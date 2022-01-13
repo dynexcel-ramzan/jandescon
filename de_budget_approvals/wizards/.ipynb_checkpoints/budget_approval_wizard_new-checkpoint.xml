@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="view_hr_recruitment_wizard_new" model="ir.ui.view">
+			<field name="name">hr.recruitment.wizard.new</field>
+			<field name="model">hr.recruitment.wizard.new</field>
+			<field name="arch" type="xml">
+				<form string="Recruitment wizard">
+
+					<group>
+						<field name="req_new_recruits"/>
+						<field name="appr_new_recruits" />
+					</group>
+					
+				
+					<footer>
+						<button name="action_done_new_job" type="object" string="Validate" class="oe_highlight" />
+                        <button string="Cancel" class="oe_link" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_recruitment_wizard_new" model="ir.actions.act_window">
+			<field name="name">New Recruitment</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">hr.recruitment.wizard.new</field>
+			<field name="view_id" ref="view_hr_recruitment_wizard_new" />
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+		</record>
+
+    </data>
+</odoo>

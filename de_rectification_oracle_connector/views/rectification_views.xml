@@ -1,0 +1,15 @@
+<odoo>
+  <data>
+            <record id="hr_attendance_rectification_form_view" model="ir.ui.view">
+			<field name="name">hr.attendance.rectification.form.view.inherit</field>
+			<field name="model">hr.attendance.rectification</field>
+			<field name="inherit_id" ref="de_hr_attendance_approvals.view_hr_attendance_rectification_form"/>
+			<field name="arch" type="xml">
+                    <xpath expr="//field[@name='state']" position="after">	                     
+                       <field name="is_posted" readonly="0"/>                     
+		     </xpath>      
+                 </field>
+		</record>
+      
+  </data>
+</odoo>

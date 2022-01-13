@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<odoo>
+    
+    <record model="ir.ui.view" id="view_employee_appraisal_plan_tree">
+        <field name="name">hr.appraisal.plan.tree</field>
+        <field name="model">hr.appraisal.autoplan</field>
+        <field name="arch" type="xml">
+            <tree string="Appraisal Plan" editable="bottom">
+                <field name="run_date" required="True"/>
+                <field name="mid_year_date" required="True"/>
+                <field name="end_year_date" required="True"/>
+                <field name="target_year" />
+                <field name="concerned_person_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_employee_appraisal_plan" model="ir.actions.act_window">
+        <field name="name">Auto Employee Appraisal</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.appraisal.autoplan</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+</odoo>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hremployee_form_view_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.form.view.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='work_email']" position="after">
+                <field name="probation_leaves_allocated"/>
+            </xpath>
+            <xpath expr="//field[@name='coach_id']" position="after">
+                <field name="pro_rate_leaves_allocated"/>
+                <field name="pro_rate_annual_leaves_allocated"/>
+            </xpath>
+        </field>
+    </record>
+
+<!--    <record id="button_hr_leave_type_form_view_inherit" model="ir.ui.view">-->
+<!--        <field name="name">hr.employee.form.view.inherit</field>-->
+<!--        <field name="model">hr.employee</field>-->
+<!--        <field name="inherit_id" ref="hr.view_employee_form"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <xpath expr="/form/*" position="before">-->
+<!--                <header>-->
+<!--                    <button class='oe_highlight' name="schedular_probation" string="Probation Schedular" type="object"/>-->
+<!--                    <button class='oe_highlight' name="schedular_confirmation" string="Confirmation Schedular"-->
+<!--                            type="object"/>-->
+<!--                    <button class='oe_highlight' name="schedular_pro_rate_annual_leaves" string="Pro Rate Annual Schedular"-->
+<!--                            type="object"/>-->
+<!--                </header>-->
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
+</odoo>

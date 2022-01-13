@@ -1,0 +1,95 @@
+<odoo>
+  <data>
+       
+      <record id="hr_employee_form_view_portal" model="ir.ui.view">
+			<field name="name">hr.employee.form.view.portal</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr.view_employee_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='user_id']" position="replace">
+                    <field name="user_id" string="Related User" />
+                    
+				</xpath>
+                
+                <xpath expr="//field[@name='parent_id']" position="after">
+                    <field name="line_manager"  invisible='0'/>
+                    
+				</xpath>
+               
+				
+				
+			</field>
+		</record>
+      
+      
+      <template id="portal_main_layout" name="portal_main_layout_inherit" customize_show="True" inherit_id="portal.portal_layout" priority="41">
+        <xpath expr="//div[hasclass('o_my_sidebar')]" position="replace">
+           
+        </xpath>          
+    </template>
+
+   <template id="portal_main_home_layout" name="portal_main_layout_inherit" customize_show="True" inherit_id="portal.portal_my_home" priority="41">
+        <xpath expr="//h3" position="replace">
+          
+                <h3>Request/Approvals</h3>
+                
+        </xpath>          
+    </template>
+      
+      
+    <template id="portal_footer_layout_inherit" name="portal_main_layout_inherit" customize_show="True" inherit_id="web.frontend_layout" priority="42">
+       
+          
+        <xpath expr="//div[hasclass('o_footer_copyright')]" position="replace">
+           <footer id="inner_bottom" data-anchor="true" class="bg-light o_footer">
+                    <div id="footer"></div>
+                    <div class="o_footer_copyright">
+                        <div class="container py-3">
+                            <div class="row">
+                                <div class="col-sm text-center text-sm-left text-muted">
+                                    
+        
+    
+                                    <span class="o_footer_copyright_name mr-2">
+<!--                                         <t t-esc="company_info.company_id.name"/> -->
+                                    </span>
+            
+        
+        
+        
+    
+        
+                                </div>
+                                <div class="col-sm text-center text-sm-right">
+                                    
+        <div class="o_brand_promotion">
+            
+        
+        
+        Powered by 
+            <a target="_blank" class="badge badge-light" href="https://dynexcel.com/">
+                Dynexcel
+            </a>
+        
+    
+        </div>
+    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+        </xpath>  
+          
+    </template>  
+      
+      
+ 
+      
+      
+      
+      
+ 
+      
+  </data>
+</odoo>

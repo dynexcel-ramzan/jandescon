@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_appraisal_probation,hr_appraisal_probation,model_hr_appraisal_probation,base.group_user,1,1,1,1
+access_hr_appraisal_improvements,hr_appraisal_improvements,model_hr_appraisal_improvements,base.group_user,1,1,1,1
+access_hr_appraisal_improvements_line,hr_appraisal_improvements_line,model_hr_appraisal_improvements_line,base.group_user,1,1,1,1

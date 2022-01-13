@@ -1,0 +1,17 @@
+<odoo>
+  <data>
+  
+   <record id="edit_holiday_status_form_inherit_report" model="ir.ui.view">
+		<field name="name">edit.holiday.status.form.report</field>
+		<field name="model">hr.leave.type</field>
+		<field name="inherit_id" ref="hr_holidays.edit_holiday_status_form" />
+		<field name="arch" type="xml">
+           
+            <xpath expr="//field[@name='request_unit']" position="after">
+                  <field name="is_rest_day"  />
+                 
+            </xpath>
+       </field>
+    </record>
+  </data>
+</odoo>

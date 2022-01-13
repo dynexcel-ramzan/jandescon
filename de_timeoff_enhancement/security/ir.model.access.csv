@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_automatic_leave_allocation_manager,hr.automatic.leave.allocation.manager,model_automatic_leave_allocation,hr_holidays.group_hr_holidays_manager,1,1,1,1
+access_hr_automatic_leave_allocation_user,hr.automatic.leave.allocation.user,model_automatic_leave_allocation,hr_holidays.group_hr_holidays_user,1,1,1,1
+access_employee_timeoff_type,employee.timeoff.type,model_employee_timeoff_type,,1,1,1,1
+access_fiscal_year,access.fiscal.year,model_fiscal_year,,1,1,1,1

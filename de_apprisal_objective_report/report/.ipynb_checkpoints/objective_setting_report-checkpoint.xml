@@ -1,0 +1,9 @@
+<odoo>
+     <report id="apprisal_report_xlx"
+            model="hr.appraisal.objective"
+            string="Objective Setting Report"
+            report_type="xlsx"
+            name="de_apprisal_objective_report.apprisal_report_xlx"
+            file="de_apprisal_objective_report.apprisal_report_xlx"
+    />
+</odoo>

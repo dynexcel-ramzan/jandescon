@@ -1,0 +1,12 @@
+<odoo>
+  <data>
+       <report 
+            id="open_payroll_reconciliation_detail_action"
+            string="Reconciliation Detail Report"
+            model="report.de_payroll_reconcilation_report.detail_report"
+            report_type="qweb-pdf"
+            file="de_payroll_reconcilation_report.detail_report"
+            name="de_payroll_reconcilation_report.detail_report"
+        />
+  </data>
+</odoo>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem name="Request" id="de_employee_request_menu_root"
+              groups="de_employee_requests.group_hr_request_manager"
+              web_icon="de_employee_requests,static/description/request.png"
+              />
+
+    <menuitem id="employee_request" name="Request" parent="de_employee_request_menu_root"
+              action="de_employee_requests.action_hr_request_view"
+              sequence="1"/>
+
+    <menuitem id="hr_request_config_menuitem" name="Configurations" parent="de_employee_request_menu_root"
+              action="de_employee_requests.action_hr_request_config_view"
+              sequence="2"/>
+
+<!--    <menuitem id="employee_sessions" name="Sessions" parent="de_employee_training_menu_root"-->
+<!--              action="de_employee_training.action_employee_sessions_view"-->
+<!--              sequence="1"/>-->
+
+
+</odoo>

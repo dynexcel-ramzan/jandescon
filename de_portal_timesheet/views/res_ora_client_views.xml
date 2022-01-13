@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="view_res_ora_client_form" model="ir.ui.view">
+            <field name="name">res.ora.client.form</field>
+            <field name="model">res.ora.client</field>
+            <field name="arch" type="xml">
+                <form string="Timesheet Attendance">
+                    <sheet>    
+                        <group>
+                          <group><field name='name' /></group>
+                            
+                           <group> <field name='code' /> </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_res_ora_client_timesheet_tree">
+            <field name="name">res.ora.client.tree</field>
+            <field name="model">res.ora.client</field>
+            <field name="arch" type="xml">
+                <tree string="Timesheet Report">
+                    <field name="name"/>
+                    
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_res_ora_client_timesheet" model="ir.actions.act_window">
+            <field name="name">Client</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.ora.client</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="view_res_ora_client_timesheet_tree"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create Records Here.......
+                </p>
+            </field>
+        </record>
+        
+     
+        <menuitem id="res_ora_client_menuitem"
+                  name="Client"
+                  parent="hr_timesheet.menu_hr_time_tracking"
+                  action="action_res_ora_client_timesheet"
+                  sequence="2"/>
+        
+    </data>
+</odoo>

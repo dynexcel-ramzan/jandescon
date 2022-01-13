@@ -1,0 +1,12 @@
+<odoo>
+  <data>
+  
+    <menuitem
+        id="hr_attendance_report_menu"
+        name="Attendance Report"
+        parent="hr_attendance.menu_hr_attendance_manage_attendances"
+        sequence="4"
+        action="open_hr_attendance_report_wizard_action"
+    />
+  </data>
+</odoo>

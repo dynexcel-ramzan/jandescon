@@ -1,0 +1,18 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="view_hr_recruitment_stage_inh">
+            <field name="name">hr.recruitment.stage.inherit</field>
+            <field name="model">hr.recruitment.stage</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_recruitment_stage_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='job_ids']" position="after">
+                    <field name="is_non_fixed_stage" string="Non-Fixed Stage"/>
+                    <field name="is_show_employee_button" string="Show Create Employee Button"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+<odoo>   
+     <record id="hr_expense_form_view_portal" model="ir.ui.view">
+			<field name="name">hr.expense.form.view.portal</field>
+			<field name="model">hr.expense</field>
+			<field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//button[@name='action_submit_expenses']" position="after">
+                  <button name="action_draft" string="Reset To Draft" type="object" class="oe_highlight" 
+                          states="refused"/>
+				</xpath>
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name='member_id' attrs="{'invisible': [('member_id', '==', False)]}"/>
+                    <field name='sub_category_id' />
+                    <field name='sheet_line_id' invisible='1'/>
+                    <field name='meter_reading'   attrs="{'invisible': [('meter_reading', '==', 0)]}"/>
+                    <field name='fleet_id'   attrs="{'invisible': [('fleet_id', '==', False)]}"/>
+                    <field name="attachment_id"  widget="many2many_binary"  ></field>
+
+				</xpath>
+			</field>
+		</record> 
+    
+    <record id="hr_expense_tree_view_portal" model="ir.ui.view">
+			<field name="name">hr.expense.tree.view.portal</field>
+			<field name="model">hr.expense</field>
+			<field name="inherit_id" ref="hr_expense.view_my_expenses_tree"/>
+			<field name="arch" type="xml">
+                <xpath expr="//field[@name='total_amount']" position="before">
+                    <field name='member_id' optional='hide'/>
+                    <field name='sub_category_id' optional='hide'/>
+                    <field name='meter_reading'   optional='hide'/>
+                    <field name='fleet_id'   optional='hide'/>
+				</xpath>
+			</field>
+		</record> 
+  
+
+</odoo>
+
+

@@ -1,0 +1,9 @@
+<odoo>
+     <report id="apprisal_absent_report_xlx"
+            model="hr.appraisal.objective"
+            string="Absent Objective Report"
+            report_type="xlsx"
+            name="de_apprisal_ab_objective_report.apprisal_ab_rept_xlx"
+            file="de_apprisal_ab_objective_report.apprisal_ab_rept_xlx"
+    />
+</odoo>

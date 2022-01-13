@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="view_employee_onboarding_tree" model="ir.ui.view">
+			<field name="name">Employee OnBoarding Tree</field>
+			<field name="model">hr.employee.onboarding</field>
+			<field name="arch" type="xml">
+                <tree string="Employee OnBoarding" create="false">
+<!--                    <field name="employee_id" />-->
+                    <field name="summary" readonly="1"/>
+                    <field name="status" widget="badge"/>
+                </tree>
+            </field>
+        </record>
+
+    <record id="view_employee_offboarding_tree" model="ir.ui.view">
+			<field name="name">Employee OffBoarding Tree</field>
+			<field name="model">hr.employee.offboarding</field>
+			<field name="arch" type="xml">
+                <tree string="Employee OnBoarding" create="false">
+<!--                    <field name="employee_id" />-->
+                    <field name="summary" readonly="1"/>
+                    <field name="status" widget="badge"/>
+                </tree>
+            </field>
+        </record>
+
+    <record id="action_offboarding_button_tree_view" model="ir.actions.act_window">
+            <field name="name">OffBoarding Lines</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee.offboarding</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('employee_id','=',active_id)]</field>
+<!--            <field name="context">{'search_default_employee_id': active_id}</field>-->
+            <field name="view_id" ref="view_employee_offboarding_tree"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                No OffBoarding Plan Found. Let's Launch a plan!
+              </p>
+            </field>
+        </record>
+
+    <record id="action_onboarding_button_tree_view" model="ir.actions.act_window">
+            <field name="name">OnBoarding Lines</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.employee.onboarding</field>
+            <field name="view_mode">tree</field>
+            <field name="domain">[('employee_id','=',active_id)]</field>
+<!--            <field name="context">{'search_default_employee_id': active_id}</field>-->
+            <field name="view_id" ref="view_employee_onboarding_tree"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                No Onboarding Activities. Let's Launch a plan!
+              </p>
+            </field>
+        </record>
+
+        <record id="hr_employee_onboarding_form_view" model="ir.ui.view">
+                <field name="name">hr.employee.form.inherit</field>
+                <field name="model">hr.employee</field>
+                <field name="inherit_id" ref="hr.view_employee_form"/>
+                <field name="arch" type="xml">
+                    <xpath expr="//sheet/div[@name='button_box']" position='inside'>
+                        <button class="oe_stat_button"  icon="fa-plane" type="action" name="%(de_employee_onboarding_offboarding.action_onboarding_button_tree_view)d">
+                                <span>OnBoarding</span>
+                        </button>
+
+                         <button class="oe_stat_button"  icon="fa-question" type="action" name="de_employee_onboarding_offboarding.action_offboarding_button_tree_view">
+                                <span>OffBoarding</span>
+                        </button>
+                    </xpath>
+
+                        <xpath expr="//page[@name='hr_settings']" position='after'>
+                                <page string="Onboarding">
+                                        <field name="onboarding_lines">
+                    						<tree create="false" name="board_lines">
+<!--                                                 <field name="employee_id" />-->
+                                                <field name="summary" readonly="1"/>
+<!--                                                <field name="activity_id" readonly="1"/>-->
+                                                <field name="status" widget="badge"/>
+                    						</tree>
+                                         </field>
+                                 </page>
+
+                            <page string="Offboarding">
+                                <field name="offboarding_lines">
+            						<tree create="false">
+<!--                                         <field name="employee_id" />-->
+                                        <field name="summary" readonly="1"/>
+<!--                                        <field name="activity_id" readonly="1"/>-->
+                                        <field name="status" widget="badge"/>
+            						</tree>
+            					</field>
+                            </page>
+                        </xpath>
+
+                        <xpath expr="//group/field[@name='coach_id']" position='after'>
+                                <field name="progress" widget="progressbar"/>
+                        </xpath>
+                </field>
+        </record>
+
+    <record id="hr_employee_onboarding_tree_view" model="ir.ui.view">
+                <field name="name">hr.employee.tree.inherit</field>
+                <field name="model">hr.employee</field>
+                <field name="inherit_id" ref="hr.view_employee_tree"/>
+                <field name="arch" type="xml">
+                    <xpath expr="//field[@name='parent_id']" position='after'>
+                        <field name="progress" widget="progressbar"/>
+                    </xpath>
+                </field>
+    </record>
+</odoo>

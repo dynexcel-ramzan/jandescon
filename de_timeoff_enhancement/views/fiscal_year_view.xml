@@ -1,0 +1,54 @@
+<odoo>
+   
+    <!-- Form view of Automatic Leave Allocations -->
+    <record id="view_auto_fiscal_year_form" model="ir.ui.view">
+        <field name="name">view.fiscal.year.form</field>
+        <field name="model">fiscal.year</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <h1>
+                        <field name="name" required="1"/>
+                    </h1>
+                    <group name="grp_main" >
+                        <group>
+                           
+                        </group>
+                        <group>
+                           
+                        </group>   
+                    </group>
+                  
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree view of Automatic Leave Allocations -->
+    <record id="view_auto_fiscal_year_tree" model="ir.ui.view">
+        <field name="name">view.fiscal.year.tree</field>
+        <field name="model">fiscal.year</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+
+            </tree>
+        </field>
+    </record>
+
+  
+
+    <!-- Action of Automatic Leave Allocation -->
+    <record id="action_auto_fiscal_year" model="ir.actions.act_window">
+        <field name="name">Fiscal Year</field>
+        <field name="res_model">fiscal.year</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu for Automatic Leave Allocation -->
+    <menuitem id="menu_auto_fiscal_year"
+              action="action_auto_fiscal_year"
+              parent="hr_holidays.menu_hr_holidays_configuration"
+              groups="hr_holidays.group_hr_holidays_manager"/>
+
+</odoo>

@@ -1,0 +1,12 @@
+<odoo>
+  <data>
+       <report 
+            id="open_tax_computation_action"
+            string="Tax Computation Report"
+            model="report.de_payroll_tax_reports.computation_report"
+            report_type="qweb-pdf"
+            file="de_payroll_tax_reports.computation_report"
+            name="de_payroll_tax_reports.computation_report"
+        />
+  </data>
+</odoo>

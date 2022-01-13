@@ -1,0 +1,221 @@
+<odoo>
+  <data>
+  <template id="detail_report">
+    <t t-call="web.html_container">
+    <t t-call="web.external_layout">
+
+       
+          <div class="page" style="font-size:12px">
+            <div class="oe_structure"/>
+            <div class='pull-left' style='color:blue;'>
+                <h4>Payroll Reconciliation detail</h4>
+                 For the periods of <span t-esc="datetime.datetime.strptime(str(docs.date_from), '%Y-%m-%d').strftime('%B-%y')"/>, and 
+                         <span t-esc="datetime.datetime.strptime(str(docs.date_to), '%Y-%m-%d').strftime('%B-%y')"/>   
+            </div>
+            <div  class='pull-right' style="max-width: 250px;height: 20px; color:blue;">
+               <strong>Printed On:</strong>
+               <span  t-esc="datetime.datetime.strptime(str(datetime.datetime.now()+ relativedelta(hours =+ 5)), '%Y-%m-%d %H:%M:%S.%f').strftime('%d-%b-%y %H:%M %p')"/> <br/>
+               <strong>Printed By:</strong>
+               <span  t-esc="user.name"/> 
+            </div>
+            <br/>  
+                  <div style="color:blue" width="400">
+                  <p1 style="border: 1px solid black;"> Payroll Register wise Salary Comparison</p1>
+                    </div>
+                  <table class="table table-sm">
+                            <tr style="color:blue">
+                                <th style="border: 1px solid black;" scope="col" width="50">Sr #</th>
+                                <th style="border: 1px solid black;" scope="col" width="100">Emp. Code</th>
+                                <th  style="border: 1px solid black;" scope="col" width="250">Name:</th>
+                                <th style="border: 1px solid black;" scope="col" width="150">Previous</th>
+                                <th style="border: 1px solid black;" scope="col" width="150">Current</th>
+                                <th style="border: 1px solid black;" scope="col" width="150">Difference :</th>
+                      </tr>
+                         <t t-set='sr_no' t-value='0'/>
+                         <t t-set='current_amount_total' t-value='0'/>
+                         <t t-set='previs_amount_total' t-value='0'/>
+                         <t t-set='absent_previs_amount_total' t-value='0'/>
+                         <t t-set='absent_curr_amount_total' t-value='0'/>
+
+                        <t t-foreach="request.env['hr.employee'].sudo().search([('company_id','=',docs.company_id.ids),('active','in',(False,True))])"  t-as="emp">     
+                          <t t-foreach="request.env['hr.payslip'].search([('employee_id','=',emp.id),('fiscal_month','=',docs.date_from.month),('state','!=','cancel')])" t-as="pre_pay">
+                                <t t-foreach="pre_pay.line_ids"  t-as="pre_rule">
+                                      <t t-if='pre_rule.code=="ABNT"'>   
+                                           <t t-set='absent_previs_amount_total' t-value='absent_previs_amount_total + pre_rule.amount'/>
+                                      </t>  
+                                      <t t-if='pre_rule.salary_rule_id.id==rule.id'>   
+                                           <t t-set='previs_amount_total' t-value='previs_amount_total + pre_rule.amount'/>
+                                      </t>                                                                                                   
+                                  </t>
+                            </t>
+                                  <t t-foreach="request.env['hr.payslip'].search([('employee_id','=',emp.id),('fiscal_month','=',docs.date_to.month),('state','!=','cancel')])"  t-as="curr_pay">
+                                     <t t-foreach="curr_pay.line_ids"  t-as="cur_rule">
+                                      <t t-if='cur_rule.code=="ABNT"'>   
+                                           <t t-set='absent_curr_amount_total' t-value='absent_curr_amount_total + cur_rule.amount'/>
+                                      </t>
+                                      <t t-if='cur_rule.salary_rule_id.id==rule.id'>  
+                                           <t t-set='current_amount_total' t-value='current_amount_total + cur_rule.amount'/>
+                                      </t>     
+                                    </t>     
+                                  </t>
+                     
+                  </t>
+                        
+                      <t t-if='round(current_amount_total - previs_amount_total)!= 0'> 
+                        <tr>    
+                         <td style="color:blue" ><t t-esc="rule.name"/></td>
+                         <td></td>
+                         <td></td>
+                         <td style="color:blue" >
+                              <t t-if='rule.code=="BASIC"'>
+                                 <t t-esc="'{0:,}'.format(int(round((previs_amount_total-absent_previs_amount_total))))"/>
+                              </t> 
+                              <t t-if='rule.code!="BASIC"'>
+                                 <t t-esc="'{0:,}'.format(int(round(previs_amount_total)))"/>
+                              </t>  
+                          </td>
+                         <td style="color:blue" >
+                              <t t-if='rule.code=="BASIC"'>
+                                 <t t-esc="'{0:,}'.format(int(round((current_amount_total-absent_curr_amount_total))))"/>
+                              </t>
+                              <t t-if='rule.code!="BASIC"'>
+                                 <t t-esc="'{0:,}'.format(int(round((current_amount_total))))"/>
+                              </t>
+                          </td>
+
+                         <td style="color:blue" >
+                            <t t-if='rule.code=="BASIC"'>
+                               <t t-esc="'{0:,}'.format(int(round((current_amount_total -absent_curr_amount_total) - (previs_amount_total- absent_previs_amount_total))))"/>
+                            </t>
+                            <t t-if='rule.code!="BASIC"'>
+                               <t t-esc="'{0:,}'.format(int(round((current_amount_total) - (previs_amount_total))))"/>
+                            </t> 
+                         </td>
+                        </tr>
+                      </t>
+                       <t t-foreach="request.env['hr.employee'].sudo().search([('company_id','=',docs.company_id.ids),('active','in',(False,True))])"  t-as="emp">
+                            <t t-set='current_amount' t-value='0'/>
+                            <t t-set='previs_amount' t-value='0'/>
+                            <t t-set='absent_current_amount' t-value='0'/>
+                            <t t-set='absent_previs_amount' t-value='0'/>
+                           
+                           <t t-foreach="request.env['hr.payslip'].search([('employee_id','=',emp.id),('fiscal_month','=',docs.date_from.month),('state','!=','cancel')])" t-as="pre_pay">
+                                     <t t-foreach="pre_pay.line_ids"  t-as="pre_rule">
+                                       <t t-if='pre_rule.code=="ABNT"'>   
+                                           <t t-set='absent_current_amount' t-value='absent_current_amount + pre_rule.amount'/>
+                                       </t>
+                                      <t t-if='pre_rule.salary_rule_id.id==rule.id'>   
+                                      
+                                           <t t-set='previs_amount' t-value='previs_amount + pre_rule.amount'/>
+                                      </t>     
+                                    </t>     
+                                  </t>
+                           
+                           <t t-foreach="request.env['hr.payslip'].search([('employee_id','=',emp.id),('fiscal_month','=',docs.date_to.month),('state','!=','cancel')])"  t-as="curr_pay">
+                                     <t t-foreach="curr_pay.line_ids"  t-as="cur_rule">
+                                      <t t-if='cur_rule.code=="ABNT"'>   
+                                           <t t-set='absent_current_amount' t-value='absent_current_amount + cur_rule.amount'/>
+                                      </t>
+                                      <t t-if='cur_rule.salary_rule_id.id==rule.id'>  
+                                       
+                                           <t t-set='current_amount' t-value='current_amount + cur_rule.amount'/>
+                                      </t>     
+                                    </t>     
+                                  </t>
+                           
+                           
+                           <!--  Previous Amount Greater than 0-->
+                           
+                           
+                           
+                           <t t-if='round(current_amount - previs_amount) != 0'>
+                             <t t-set='sr_no' t-value='sr_no + 1'/>
+                            <tr>
+                                <td ><t t-esc="sr_no"/></td>
+                                <td  scope="col" width="100"> <t t-esc="emp.emp_number"/></td>
+                                <td  scope="col" width="150"> <t t-esc="emp.name"/></td>
+                                <td  scope="col" width="150">
+                                    <t t-if='rule.code=="BASIC"'> 
+                                      <t t-esc="'{0:,}'.format(int(round((previs_amount-absent_current_amount))))"/>
+                                    </t>
+                                    <t t-if='rule.code!="BASIC"'> 
+                                      <t t-esc="'{0:,}'.format(int(round(previs_amount)))"/>
+                                    </t>
+                                </td>
+                                <td  scope="col" width="150">
+                                    <t t-if='rule.code=="BASIC"'>
+                                      <t t-esc="'{0:,}'.format(int(round((current_amount-absent_current_amount))))"/>
+                                    </t>
+                                    <t t-if='rule.code!="BASIC"'>
+                                      <t t-esc="'{0:,}'.format(int(round(current_amount)))"/>
+                                    </t> 
+                                   
+                                </td>
+                                <td  scope="col" width="150">
+                                  <t t-if='rule.code=="BASIC"'>
+                                    <t t-esc="'{0:,}'.format(int(round((current_amount-absent_current_amount) - (previs_amount-absent_current_amount))))"/>
+                                  </t>
+                                  <t t-if='rule.code!="BASIC"'>
+                                    <t t-esc="'{0:,}'.format(int(round((current_amount) - (previs_amount))))"/>
+                                  </t>
+                                </td>
+                            </tr>
+                              </t>
+                            </t>
+                    
+                    
+
+                    </table>
+            
+            
+            
+          </div>
+       
+    </t>
+    </t>
+</template>
+
+
+<template id="reconcilation_detail_report">
+    <t t-call="web.html_container">
+        <t t-foreach="request.env['hr.salary.rule'].search([('reconcilation_details','=',True)])"  t-as="rule"> 
+
+           <t t-set='sr_no' t-value='0'/>
+                         <t t-set='current_amount_total' t-value='0'/>
+                         <t t-set='previs_amount_total' t-value='0'/>
+                         <t t-set='absent_previs_amount_total' t-value='0'/>
+                         <t t-set='absent_curr_amount_total' t-value='0'/>
+
+                        <t t-foreach="request.env['hr.employee'].sudo().search([('company_id','=',docs.company_id.ids),('active','in',(False,True))])"  t-as="emp">     
+                          <t t-foreach="request.env['hr.payslip'].search([('employee_id','=',emp.id),('fiscal_month','=',docs.date_from.month),('state','!=','cancel')])" t-as="pre_pay">
+                                <t t-foreach="pre_pay.line_ids"  t-as="pre_rule">
+                                      <t t-if='pre_rule.code=="ABNT"'>   
+                                           <t t-set='absent_previs_amount_total' t-value='absent_previs_amount_total + pre_rule.amount'/>
+                                      </t>  
+                                      <t t-if='pre_rule.salary_rule_id.id==rule.id'>   
+                                           <t t-set='previs_amount_total' t-value='previs_amount_total + pre_rule.amount'/>
+                                      </t>                                                                                                   
+                                  </t>
+                            </t>
+                                  <t t-foreach="request.env['hr.payslip'].search([('employee_id','=',emp.id),('fiscal_month','=',docs.date_to.month),('state','!=','cancel')])"  t-as="curr_pay">
+                                     <t t-foreach="curr_pay.line_ids"  t-as="cur_rule">
+                                      <t t-if='cur_rule.code=="ABNT"'>   
+                                           <t t-set='absent_curr_amount_total' t-value='absent_curr_amount_total + cur_rule.amount'/>
+                                      </t>
+                                      <t t-if='cur_rule.salary_rule_id.id==rule.id'>  
+                                           <t t-set='current_amount_total' t-value='current_amount_total + cur_rule.amount'/>
+                                      </t>     
+                                    </t>     
+                                  </t>
+                     
+                  </t>
+           <t t-if='round(current_amount_total - previs_amount_total)!= 0'>   
+            <t t-call="de_payroll_reconcilation_report.detail_report" />
+           </t>
+        </t>
+    </t>
+</template>
+    
+    
+  </data>
+</odoo>

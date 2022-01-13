@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <record id="hr_shift_attendance_view_pivot" model="ir.ui.view">
+        <field name="name">hr.attendance.pivot</field>
+        <field name="model">hr.attendance</field>
+        <field name="arch" type="xml">
+            <pivot string="Attendance" sample="1">
+                <field name="employee_id" type="row"/>
+                <field name="check_in" type="col"/>
+                <field name="worked_hours" type="measure" widget="float_time"/>
+            </pivot>
+        </field>
+    </record>
+
+   
+        <record id="hr_attendance_graph_view_inherit" model="ir.ui.view">
+			<field name="name">hr.attendance.graph.form.view</field>
+			<field name="model">hr.attendance</field>
+			<field name="inherit_id" ref="hr_attendance.hr_attendance_view_graph"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='worked_hours']" position="after">
+					<field name="shift_type_id"  />
+				</xpath>
+                
+			</field>
+		</record> 
+        
+        
+        
+        
+        <record id="hr_attendance_pivot_view_inherit" model="ir.ui.view">
+			<field name="name">hr.attendance.pivot.form.view</field>
+			<field name="model">hr.attendance</field>
+			<field name="inherit_id" ref="hr_attendance.hr_attendance_view_pivot"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='worked_hours']" position="after">
+					<field name="shift_type_id"  />
+				</xpath>
+                
+			</field>
+		</record>
+        
+        
+        <menuitem id="menu_hr_shift_attendance_report" name="Reporting" parent="menu_shift" sequence="30"  action="hr_attendance.hr_attendance_action_graph"/>
+    </data>
+</odoo>

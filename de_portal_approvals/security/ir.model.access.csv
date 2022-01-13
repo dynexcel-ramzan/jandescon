@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_res_partner,access.res.partner,model_res_partner,,1,1,1,1
+access_approval_category,access.approval.category,model_approval_category,,1,1,1,1
+access_approval_request,access.approval.request,model_approval_request,,1,1,1,1
+access_res_users,access.res.users,model_res_users,,1,1,1,1

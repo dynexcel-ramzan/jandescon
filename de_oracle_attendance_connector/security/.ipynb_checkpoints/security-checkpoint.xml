@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+	    <record id="group_oracle_attendance" model="res.groups">
+	        <field name="name">Oracle Attendance</field>
+	    </record>
+        
+<!--     <record id="res_user_attendance_comp_rule" model="ir.rule">
+        <field name="name">Oracle Attendance</field>
+        <field name="model_id" ref="model_hr_user_attendance"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+    </record> -->
+
+	</data>
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		
+		<record id="hr_request_config_form_view" model="ir.ui.view">
+			<field name="name">hr.request.config.form.inherit</field>
+			<field name="model">hr.request.config</field>
+			<field name="inherit_id" ref="de_employee_requests.view_hr_request_config_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//form/sheet/group" position="after">
+					<group name="Request Approval" string="Request Approval">
+						<field name="approval_category_id" readonly="0" />
+					</group>
+				</xpath>
+			</field>
+		</record>
+
+
+	</data>
+</odoo>

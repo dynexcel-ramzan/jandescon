@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="de_project_task_overdue" model="ir.ui.view">
+            <field name="name">hr.employee.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+
+                <notebook position="inside">
+                    <page string="Dependent">
+                    <field name="employee_family_ids">
+                        <tree editable="bottom">
+                            <field name="name" />
+                            <field name="mobile"  />
+                            <field name="phone" />
+                            <field name="email"/>
+                            <field name="relation_ship" />
+                            <field name="date_of_birth" />
+                        </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,16 @@
+<odoo>
+  <data>
+      
+       <record id="hr_payslip_views_controlled_account" model="ir.ui.view">
+			<field name="name">hr.payslip.controlled.account</field>
+			<field name="model">hr.payslip</field>
+			<field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+			<field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button string="Create Entry" name="action_generate_entry" type="object" states="verify" class="oe_highlight" />
+  
+				</xpath>
+            </field>
+		</record>
+  </data>
+</odoo>

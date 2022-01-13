@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_appraisal_objective,access.hr.appraisal.objective,model_hr_appraisal_objective,,1,1,1,1
+access_hr_appraisal_objective_line,access.hr.appraisal.objective.line,model_hr_appraisal_objective_line,,1,1,1,1
+access_hr_appraisal_values,access.hr.appraisal.values,model_hr_appraisal_values,,1,1,1,1
+access_hr_appraisal_values_line,access.hr.appraisal.values.line,model_hr_appraisal_values_line,,1,1,1,1
+access_hr_appraisal_feedback,access.hr.appraisal.feedback,model_hr_appraisal_feedback,,1,1,1,1
+access_hr_appraisal_feedback_objective_line,access.hr.appraisal.feedback.objective.line,model_hr_appraisal_feedback_objective_line,,1,1,1,1
+access_hr_appraisal_feedback_values_line,access.hr.appraisal.feedback.values.line,model_hr_appraisal_feedback_values_line,,1,1,1,1
+access_hr_appraisal_feedback_promotion_line,access.hr.appraisal.feedback.promotion.line,model_hr_appraisal_feedback_promotion_line,,1,1,1,1
+access_hr_appraisal_feedback_training_line,access.hr.appraisal.feedback.training.line,model_hr_appraisal_feedback_training_line,,1,1,1,1
+access_hr_appraisal_feedback_values_appraisee_line,access.hr.appraisal.feedback.values.appraisee.line,model_hr_appraisal_feedback_values_appraisee_line,,1,1,1,1
+access_hr_appraisal_feedback_objective_appraisee_line,access.hr.appraisal.feedback.objective.appraisee.line,model_hr_appraisal_feedback_objective_appraisee_line,,1,1,1,1
+access_hr_objective_category,access.hr.objective.category,model_hr_objective_category,,1,1,1,1
+access_hr_objective_status,access.hr.objective.status,model_hr_objective_status,,1,1,1,1

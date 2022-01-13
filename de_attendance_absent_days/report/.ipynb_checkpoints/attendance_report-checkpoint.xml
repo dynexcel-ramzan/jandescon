@@ -1,0 +1,9 @@
+<odoo>
+     <report id="attendance_report_xlx"
+            model="attendance.model"
+            string="Absent report"
+            report_type="xlsx"
+            name="de_attendance_absent_days.attendance_report_xlx"
+            file="de_attendance_absent_days.attendance_report_xlx"
+    />
+</odoo>

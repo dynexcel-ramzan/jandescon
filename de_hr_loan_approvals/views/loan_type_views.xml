@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Tags -->
+        <record id="hr_loan_type_form_view_inherit" model="ir.ui.view">
+			<field name="name">hr.loan.type.form.view</field>
+			<field name="model">hr.loan.type</field>
+			<field name="inherit_id" ref="de_employee_loan.hr_loan_type_form_view"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='code']" position="after">
+                    
+                              <field name="category_id" />
+                              <field name="color" invisible="1" />
+                           
+				</xpath>
+				
+			</field>
+		</record>
+
+      
+
+    </data>
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+	  <record model="ir.module.category" id="module_category_human_resources_rectification">
+        <field name="name">Attendance Rectification</field>
+        <field name="description">Helps you manage your Rectification.</field>
+        <field name="sequence">19</field>
+    </record>
+
+    <record id="group_hr_rectification_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_human_resources_rectification"/>
+    </record>
+
+    <record id="group_hr_rectification_manager" model="res.groups">
+        <field name="name">Administrator</field>
+        <field name="category_id" ref="module_category_human_resources_rectification"/>
+    </record>
+	</data>
+</odoo>

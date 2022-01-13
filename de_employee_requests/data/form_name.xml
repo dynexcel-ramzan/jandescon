@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+<!--    <data noupdate="0">-->
+<!--        <record id="view_employee_session_seq" model="ir.sequence">-->
+<!--            <field name="name">employee.session.emp_seq</field>-->
+<!--            <field name="code">employee.session.emp_seq</field>-->
+<!--            <field name="prefix">SESS/%(year)s/</field>-->
+<!--            <field name="padding">5</field>-->
+<!--            <field name="id" eval="False"/>-->
+<!--        </record>-->
+<!--    </data>-->
+<!--    <data noupdate="0">-->
+<!--        <record id="view_employee_training_seq" model="ir.sequence">-->
+<!--            <field name="name">employee.training.emp_training</field>-->
+<!--            <field name="code">employee.training.emp_training</field>-->
+<!--            <field name="prefix">TRN/%(year)s/</field>-->
+<!--            <field name="padding">5</field>-->
+<!--            <field name="id" eval="False"/>-->
+<!--        </record>-->
+<!--    </data>-->
+    <data noupdate="0">
+        <record id="view_hr_request_config_seq" model="ir.sequence">
+            <field name="name">hr.request.config.name</field>
+            <field name="code">hr.request.config.name</field>
+            <field name="prefix">HR/REQ/CONF/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="id" eval="False"/>
+        </record>
+    </data>
+    <data noupdate="0">
+        <record id="view_hr_request_seq" model="ir.sequence">
+            <field name="name">hr.request.name</field>
+            <field name="code">hr.request.name</field>
+            <field name="prefix">EMP/REQ/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="id" eval="False"/>
+        </record>
+    </data>
+
+</odoo>
+
+
+
+
+
+

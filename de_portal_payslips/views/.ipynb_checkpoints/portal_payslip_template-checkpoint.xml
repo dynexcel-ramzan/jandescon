@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <template id="portal_layout" name="Portal layout: payslip menu entry" inherit_id="portal.portal_breadcrumbs" priority="25">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'payslip' or payslip" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not payslip else ''}">
+                <a t-if="payslip" t-attf-href="/my/payslips?{{ keep_query() }}">Payslip</a>
+                <t t-else="">Payslips</t>
+            </li>
+            <li t-if="payslip" class="breadcrumb-item active text-truncate col-8 col-lg-10">
+                <t t-esc="payslip.name"/>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home" name="Show Payslips / Payroll" customize_show="True" inherit_id="portal.portal_my_home" priority="25">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry" groups='de_portal_payslips.group_payslips_access'>
+                <t t-set="title">Payslips</t>
+                <t t-set="url" t-value="'/my/payslips'"/>
+                <t t-set="placeholder_count" t-value="'payslip_count'"/>
+            </t>
+        </xpath>  
+    </template>
+
+    <template id="portal_my_payslips" name="My Payslips">
+         <t t-set="foo" t-value="2 + 1"/>
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Payslip</t>
+            </t>
+            <t t-if="not grouped_payslips">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no Payslips.
+                </div>
+            </t>
+            <t t-if="grouped_payslips">
+                <t t-call="portal.portal_table">
+                    <t t-foreach="grouped_payslips" t-as="payslips">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left">No#</th>
+                                <th class="text-left">Employee</th>
+                                <th class="text-left">Reference</th>
+                                <th class="text-left">Batch Name</th>
+                                <th class="text-left">From</th>
+                                <th class="text-left">To</th>
+                                <th class="text-left">Basic Wage</th>
+                                <th class="text-center">Net Wage</th>
+                                <th class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="payslips" t-as="payslip">       
+                                <tr>
+                                    <td class="text-left">
+                                          <a t-attf-href="/my/payslip/#{payslip.id}?{{ keep_query() }}">#<span t-field="payslip.id"/></a>
+                                    </td>
+                                     <td>
+                                        <a t-attf-href="/my/payslip/#{payslip.id}?{{ keep_query() }}"><span t-field="payslip.employee_id.name"/></a>
+                                    </td>
+                                     <td class="text-left">
+                                        <span t-esc="payslip.number" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="payslip.payslip_run_id.name" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="payslip.date_from" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="payslip.date_to" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="payslip.basic_wage" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="payslip.net_wage" />
+                                    </td>
+                              
+
+
+                                    <td class="text-center">
+                                  
+                                                <t t-if="payslip.state == 'draft'">
+                                                    <i class="badge badge-pill badge-info" >Draft</i>
+                                                </t>
+                                                <t t-if="payslip.state == 'verify'">
+                                                    <i class="badge badge-pill badge-info" >Waiting</i>
+                                                </t>
+                                                <t t-if="payslip.state == 'done'">
+                                                    <i class="badge badge-pill badge-info" >Done</i>
+                                                </t>
+                                                <t t-if="payslip.state == 'cancel'">
+                                                    <i class="badge badge-pill badge-info" >Rejected</i>
+                                                </t>
+                                             
+
+                                    </td>	
+
+                                </tr>
+                            </t>
+                            <tr>
+
+                            </tr>   
+                        </tbody>
+                    </t>
+                </t>
+            </t>   
+        </t>
+    </template>
+    
+    <template id="portal_my_payslip" name="My Payslip">
+        <t t-call="portal.portal_layout">
+             <t t-set="o_portal_fullwidth_alert" >
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#model=hr.payslip&amp;id=%s&amp;view_type=form' % (payslip.id)"/>
+                </t> 
+            </t>
+          
+            <div id="optional_placeholder"></div>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                    <div id="optional_placeholder"></div>
+                    <div class="container">
+                      <div class="card">
+                        <div class="card-header">
+                                <div class="row">
+                                    <div class="col-lg-11">
+                                        <h5 class="d-flex mb-1 mb-md-0 row">
+                                            <span t-field="payslip.employee_id.name" class="col-8 text-truncate"/>
+                                            <small class="text-muted d-none d-md-inline"> (#<span t-field="payslip.id"/>)</small>
+                                            <div class="col-3 col-md-3 text-left">
+                                              <small class="text-right">State:</small>
+
+                                                    <span t-field="payslip.state" class=" badge badge-pill badge-info" title="Current stage of this Payslip"/>
+
+                                            </div>
+                                        </h5>
+                                    </div>
+                                    <t t-set="prev_record" t-value="1" /> 
+                                    <t t-set="next_record" t-value="2" /> 
+                                    <div style="float:right; text-align:right; width:0ox; margin-right:0px;" class=" btn-group col-lg-1" role="group">
+                                    <h5>  
+                                        <t t-if="pre_id">
+                                            <a role="button"  t-attf-href="/payslip/pre/#{payslip.id}?" ><i style="margin-right:10px; align:right" class="fa fa-chevron-left" role="img" aria-label="Previous" title="Previous"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="margin-right:10px; align:right; color:#B8B7B0" class="fa fa-chevron-left" aria-label="Previous" title="Previous"></i></a>
+
+                                        </t>
+                                        <t t-if="next_id">
+                                            <a role="button" t-attf-href="/payslip/next/#{payslip.id}?" ><i class="fa fa-chevron-right" role="img" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="color:#B8B7B0" class="fa fa-chevron-right" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                    </h5>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </t>
+               <t t-set="card_body">          
+                    <div class="row mb-5">
+                        <div class="col-12 col-md-6 mb-1">
+                            <span t-field="payslip.name" />
+                        </div>
+                        <div class="col-12 col-md-6" t-if="payslip.id">
+                            <strong>Contract:</strong> <span t-field="payslip.contract_id.name" />
+                        </div>
+                    </div>
+                     <div class="row mb-12">
+                         <div class="col-12 col-md-12 pb-2">
+                            <div class="row">
+                                <div class="col-md-5"> <strong>Structure : </strong>
+                                    <t t-if="payslip.struct_id">
+                                        <span t-esc="payslip.struct_id.name"/>
+                                    </t>
+                                </div>
+                                <div class="col-md-7"> <strong>Period : </strong>
+                                    <t t-if="payslip.date_from">
+                                        <span t-esc="payslip.date_from"/> 
+                                    </t>
+                                    To 
+                                    <t t-if="payslip.date_to">
+                                        <span t-esc="payslip.date_to"/>
+                                    </t>
+                                </div>
+                            </div>
+                             <div class="row"> 
+                                <table class="table-striped table">
+                                <thead style="font-size:12px;">
+                                    <tr>
+                                        <h4>
+                                            <b>
+                                        <th class="text-left">Name</th>
+                                        <th class="text-left">Category</th>
+                                        <th class="text-left">Amount</th>
+                                        <th class="text-left">Total</th>
+                                        
+                                            </b>
+                                        </h4>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="payslip.line_ids" t-as="paylip_line">
+
+
+                                        <tr>
+                                            <td><span t-esc="paylip_line.name"/></td>
+                                            <td><span t-esc="paylip_line.category_id.name"/></td>
+                                            <td><span t-esc="paylip_line.amount"/></td>
+                                            <td><span t-esc="paylip_line.total"/></td>
+                                        </tr>
+
+                                    </t>
+                                </tbody>
+                            </table>   
+                                 
+                                
+                            </div>
+                        </div>
+                       
+                    </div> 
+                   
+                  
+                        
+                    <div class="row"> 
+                        <div t-attf-class="col-12 col-lg-12  mb-md-0 ">
+                            <hr class="mb-1"/>
+                            <div class="d-flex my-2">
+                                <strong>Reference</strong>
+                            </div>
+                            <t t-if="payslip.number">                                        
+                                <div class="py-1 px-2 bg-100 small" t-field="payslip.number"/>
+                            </t>
+                        </div> 
+                    </div>
+
+                </t> 
+            </t>
+            <div class="mt32">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="payslip"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+            </div>
+        </t>
+    </template>
+    
+
+     <template id="create_payslip" name="My Create">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+                <t t-call="portal.portal_table">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Now you can also create new Payslips from here. Good Luck</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>  
+                                <div class="container">
+                                        <div class="row">
+                                            <div class="col-md-8 col-xs-12 col-md-offset-2 sell-page-contact">
+                                                <form id="saleForm" data-toggle="validator" action="/my/payslip/save" class="mt32">
+                                                    <div class="form-group row form-field o_website_form_custom o_website_form_required_custom">
+                                                        <div  class="col-xl">
+                                                                <strong class="d-block mb-2">Payslip Name:</strong>
+                                                                <input name="payslip_name" type="text" class="form-control o_website_form_input"/>
+                                                        </div>
+                                                        <div style="float:right;"  class="col-xl">
+                                                                <strong class="d-block mb-2">Reference:</strong>
+                                                            <input name="payslip_number" type="text" class="form-control o_website_form_input"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row form-field o_website_form_custom o_website_form_required_custom">
+                                                        <div  class="col-xl">
+                                                                <strong class="d-block mb-2">Date start:</strong>
+                                                                <input name="date_start" type="date" required="required" class="form-control o_website_form_input"/>
+                                                        </div>
+                                                        <div style="float:right;"  class="col-xl">
+                                                                <strong class="d-block mb-2">Date End:</strong>
+                                                            <input name="date_end" type="date" required="required" class="form-control o_website_form_input"/>
+                                                        </div>
+                                                    </div>
+                                        <div class="form-group row form-field o_website_form_custom o_website_form_required_custom">
+                                                        <div  class="col-xl">
+                                                          <label for="environment">Employee:</label>
+                                                              <select class="form-control" name="payslip_emp_id">
+                                                                    <t t-foreach="emps" t-as="emp">
+                                                                        <option t-att-value="emp.id">
+                                                                            <t t-esc="emp.name"/>
+                                                                        </option>
+                                                                    </t>
+                                                            </select>
+                                                    </div>
+                                                     <div style="float:right;"  class="col-xl">
+                                                          <label for="environment">Structure:</label>
+                                                              <select class="form-control" name="payslip_structure_id">
+                                                                    <t t-foreach="structure" t-as="struct">
+                                                                        <option t-att-value="struct.id">
+                                                                            <t t-esc="struct.name"/>
+                                                                        </option>
+                                                                    </t>
+                                                            </select>
+                                                    </div>
+                                        </div>
+                                                    <div class="form-group row form-field o_website_form_custom o_website_form_required_custom">
+                                                        <div class="col-md-2">
+                                                            <button type="submit"  class="btn btn-primary pull-left">Save</button>
+                                                        </div>
+                                                        <div class="col-md-7">
+                                                            <t t-if="success_flag" t-call="portal.portal_docs_entry">
+                                                                <t t-set="title" style="color:green">Approval has been Saved Success fully</t>
+                                                            </t>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <a href="/my/payslips"><div class="btn btn-warning pull-right" style="float:right; height:35px;line-height:100%;">Back To All Payslips</div></a> 
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </t>
+                </t>
+        </template> 
+
+</odoo>
+
+
+
