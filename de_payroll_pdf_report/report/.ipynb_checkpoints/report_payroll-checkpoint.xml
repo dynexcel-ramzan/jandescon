@@ -1,0 +1,267 @@
+<odoo>
+    <template id="payroll_new_report">
+        <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <div class="article o_report_layout_standard" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id">
+                        <t t-call="de_payroll_pdf_report.pdf_report_layout"/>
+                     <div class="page">
+                         <strong><span t-field="o.name" style="color:blue"/></strong>
+                         <br/>
+                         <div class="row">
+                             <div class="col-6" >
+                                 <table style="border: 1px solid black;" width="400">
+                                     <tbody style="color:blue">
+                                         <tr>
+                                             <td  style="border: 1px solid black;">Emp.Code:</td>
+                                             <td  style="border: 1px solid black;"><span t-field="o.employee_id.emp_number"/></td>
+                                         </tr>
+                                          <tr>
+                                             <td  style="border: 1px solid black;">Joining Date:</td>
+                                             <td  style="border: 1px solid black;"><span t-field="o.employee_id.date"/></td>
+                                         </tr>
+                                         <tr>
+                                             <td  style="border: 1px solid black;">EOBI#</td>
+                                             <td  style="border: 1px solid black;"><span t-field= "o.employee_id.eobi_member"/></td>
+                                         </tr>
+                                         <tr>
+                                             <td  style="border: 1px solid black;">Position:</td>
+                                             <td  style="border: 1px solid black;"><span t-field= "o.employee_id.job_title"/></td>
+                                         </tr>
+                                         <tr>
+                                             <td  style="border: 1px solid black;">Section:</td>
+                                             <td  style="border: 1px solid black;"><span t-field= "o.employee_id.section"/></td>
+                                         </tr>
+                                         <tr>
+                                             <td  style="border: 1px solid black;">Department:</td>
+                                             <td  style="border: 1px solid black;"><span t-field= "o.employee_id.department_id"/></td>
+                                         </tr>
+                
+                                         <tr>
+                                             <td  style="border: 1px solid black;">Location:</td>
+                                             <td  style="border: 1px solid black;"><span t-field= "o.employee_id.work_location_id"/></td>
+                                         </tr>
+                                         <tr>
+                                             <td  style="border: 1px solid black;">Company:</td>
+                                             <td  style="border: 1px solid black;"><span t-field= "o.employee_id.company_id"/></td>
+                                         </tr>
+                                     </tbody>
+                                 </table>
+                             </div>
+                             <div class="col-6">
+                                 <table  style="border: 1px solid black;" width="300">
+                                     <tbody style="color:blue">
+                                         <tr>
+                                             <td colspan="2" style="background-color:#d4d4d4;">Salary &#38; Allowances</td>
+                                         </tr>
+                                         <tr>
+                                            <td style="border: 1px solid black;">Base Salary</td>
+                                             <td style="border: 1px solid black;"><span t-field= "o.contract_id.wage"/></td>
+                                         </tr>
+                                          <tr>
+                                            <td style="border: 1px solid black;background-color:#d4d4d4;">Gross Pay</td>
+                                             <td  style="border: 1px solid black;background-color:#d4d4d4;"><span t-esc="o.line_ids.filtered(lambda line: line.code == 'BASIC').total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_id.currency_id}"/></td>
+                                         </tr>
+                                           <tr>
+                                            <td colspan="2" style="background-color:#d4d4d4;">Others</td>
+                                           </tr>
+                                     </tbody>
+                                 </table>
+                                 
+                             </div>
+                         </div>
+                         <div class="row">
+                             <div class="col-6">
+                                 <table>
+                                     <tbody style="color:blue">
+                                         <tr>
+                                             <td>Bank Account:</td>
+                                             <td ><span t-field= "o.employee_id.bank_account_id.bank_id.name"/><br/><span t-field= "o.employee_id.bank_account_id"/>
+                                             </td>
+                                        </tr>
+                                     </tbody>
+                                 </table>
+                                </div>
+                             <div class="col-6">
+                                 <table style="border: 1px solid black;" width="300">
+                                     <tbody style="color:blue">
+                                    <tr>
+                                        <td colspan="2" style="background-color:#d4d4d4;">Deductions</td>
+                                        <td colspan="2" style="background-color:#d4d4d4;"></td>
+                                    </tr>
+                                    <tr>
+                                  <span t-foreach="o.line_ids.filtered(lambda line: line.appears_on_payslip)" t-as="line">
+                                  <t t-if='line.code != "BASIC"'>  
+                                   <t t-if='line.code != "OT100"'>  
+                                    <t t-if='line.code != "GROSS"'>
+                                    <t t-set="line_style"/>
+                                    <t t-set="line_class"/>
+                                    <t t-if="line.code == 'NET'">
+                                    </t>
+                          
+                                    <t t-if="(line.code == 'BASIC') or (line.code == 'GROSS')">
+<!--                                        <t t-set="line_style" t-value="'color:#00A09D;'"/> -->
+<!--                                         <t t-set="line_class" t-value="'o_subtotal o_border_bottom'"/> --> -->
+                                    </t>
+                                    <tr>
+                                        <td style="border: 1px solid black;"><span t-field="line.name"/></td>
+                                        <td  style="border: 1px solid black;"><span t-if="line.quantity &gt; 1" t-esc="line.quantity"/></td>
+                                        
+                                        <td  style="border: 1px solid black;"><span t-esc="line.total" t-options="{&quot;widget&quot;: &quot;monetary&quot;,&quot;display_currency&quot;: o.company_id.currency_id}"/></td>
+                                    </tr>
+                                    </t> 
+                                    </t>  
+                                    </t>
+                                </span>
+                                              
+                                    </tr>
+                                         
+                                     </tbody>
+                                 </table>
+                                 
+                             </div>
+                             
+                         </div>
+                           <div class ="row">
+                             <div class="col-6">
+                                 <table style="border: 1px solid black;" width="300">
+                                     <tbody style="color:blue">
+                                          <tr>
+                                              <td style="border: 1px solid black;">Working days</td>
+                                              <td><t t-set='work_days' t-value='0'/>
+                                                 <t t-foreach="o.worked_days_line_ids" t-as="workday">
+                                                    <t t-set='work_days' t-value='work_days + workday.number_of_days'/>
+                                                  </t>
+                                                    <span t-esc='work_days'/>
+                                              </td>
+                                          </tr>
+                                         <tr>
+                                        <td style="border: 1px solid black;">Payable Days</td>
+                                        <td style="border: 1px solid black;"><t t-set='payable_work_days' t-value='0'/>
+                                             <t t-foreach="o.worked_days_line_ids" t-as="payableday">
+                                                <t t-if='payableday.work_entry_type_id.code != "ABSENT100"'>       
+                                                  <t t-set='payable_work_days' t-value='payable_work_days + payableday.number_of_days'/>
+                                                 </t>    
+                                            </t>
+                                              <span t-esc='work_days'/>
+                                           
+                                        </td>
+                                         </tr>
+                                         <tr>
+                                        <td style="border: 1px solid black;">OT Hrs Breakup</td>
+                                        <td  style="border: 1px solid black;"><t t-set='overtime_work_days' t-value='0'/>
+                                             <t t-foreach="o.worked_days_line_ids" t-as="payableday">
+                                                <t t-if='payableday.work_entry_type_id.code in ("Normal OT","Gazetted OT","Rest Day OT")'>       
+                                                  <t t-set='overtime_work_days' t-value='overtime_work_days + payableday.number_of_hours'/>
+                                                 </t>    
+                                            </t>
+                                              <span t-esc='overtime_work_days'/>
+    
+                                        </td>
+                                         </tr>
+                                         <tr>
+                                            <td style="border: 1px solid black;">OT Amount Breakup</td>
+                                        <td  style="border: 1px solid black;"><t t-set='overtime_amount_days' t-value='0'/>
+                                             <t t-foreach="o.worked_days_line_ids" t-as="payableday">
+                                                <t t-if='payableday.work_entry_type_id.code in ("Normal OT","Gazetted OT","Rest Day OT")'>       
+                                                  <t t-set='overtime_amount_days' t-value='overtime_amount_days + payableday.amount'/>
+                                                 </t>    
+                                            </t>
+                                              <span t-esc='overtime_amount_days'/>
+    
+                                        </td>
+                                         </tr>
+                                     </tbody>
+                                 </table>
+                             </div>
+                          </div>
+                                 
+                    
+<!--                     <t t-set="is_ipnvalid" t-value="o._is_invalid()"/>
+                    <t t-if="is_invalid">
+                        <strong><t t-esc="is_invalid"/></strong>
+                    </t>
+
+                    <table class="table table-sm">
+                        <tr>
+                            <td class="w-25"><strong>Basic Salary</strong></td>
+                            <td style="color:#875A7B" class="w-25">
+                                <span t-esc="o.line_ids.filtered(lambda line: line.code == 'BASIC').total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_id.currency_id}"/>
+                            </td>
+                            <td class="w-25"/>
+                            <td class="w-25"/>
+                        </tr>
+                    </table>
+                    <div id="total">
+                        <table class="table table-sm">
+                            <thead class="o_black_border">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Number of Hours</th>
+                                    <th>Number of Days</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <span t-foreach="o.worked_days_line_ids" t-as="worked_days">
+                                    <t t-if="worked_days.code != 'OUT'">
+                                        <tr style="color:none">
+                                            <td>
+                                                <span t-field="worked_days.name"/>
+                                            </td>
+                                            <td><span t-field="worked_days.number_of_hours"/></td>
+                                            <td><span t-field="worked_days.number_of_days"/></td>
+                                            c
+                                        </tr>
+                                    </t>
+                                </span>
+                                <span t-foreach="o.line_ids.filtered(lambda line: line.appears_on_payslip)" t-as="line">
+                                    <t t-set="line_style"/>
+                                    <t t-set="line_class"/>
+                                    <t t-if="line.code == 'NET'">
+                                        <t t-set="line_style" t-value="'color:#875A7B;'"/>
+                                        <t t-set="line_class" t-value="'o_total o_border_bottom'"/>
+                                    </t>
+                                    <t t-if="(line.code == 'BASIC') or (line.code == 'GROSS')">
+                                        <t t-set="line_style" t-value="'color:#00A09D;'"/>
+                                        <t t-set="line_class" t-value="'o_subtotal o_border_bottom'"/>
+                                    </t>
+                                    <tr t-att-class="line_class" t-att-style="line_style">
+                                        <td><span t-field="line.name"/></td>
+                                        <td/>
+                                        <td><span t-if="line.quantity &gt; 1" t-esc="line.quantity"/></td>
+                                        <td><span t-esc="line.total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.company_id.currency_id}"/></td>
+                                    </tr>
+                                </span>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p t-if="o.net_wage &gt;= 0">Total to pay on <td><span t-field="o.employee_id.bank_account_id"/></td>, bank account of <span t-field="o.employee_id"/>: <td><span t-field="o.net_wage"/></td></p>
+                    <p t-if="o.net_wage &lt; 0">The net amount will be recovered from the first positive remuneration established after this.</p>
+
+                    <table name="contract-infos" class="table table-sm table-bordered">
+                        <tr>
+                            <td class="w-25"><strong>Contract Start Date</strong></td>
+                            <td class="w-25"><strong>Working Schedule</strong></td>
+                            <td class="w-25" name="company-car-title"/>
+                        </tr>
+                        <tr>
+                            <td><span t-field="o.employee_id.first_contract_date"/></td>
+                            <td><span t-field="o.employee_id.contract_id.hours_per_week"/></td>
+                            <td class="w-25" name="company-car-model"/>
+                        </tr>
+                    </table>
+                    <p class="text-center">Made by dynaxel</p> -->
+                    </div>
+                    </div>
+                </t>
+            </t>
+    </template>
+
+    <report id="_new_report_data"
+            model="hr.payslip"
+            string="Payroll report"
+            report_type="qweb-pdf"
+            name="de_payroll_pdf_report.payroll_new_report"
+            file="de_payroll_pdf_report.payroll_new_report"
+    />
+</odoo>

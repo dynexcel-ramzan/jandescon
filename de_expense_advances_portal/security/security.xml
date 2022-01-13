@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+	    <record id="group_expense_advances_portal" model="res.groups">
+	        <field name="name">Allow Expense Advances Portal</field>
+	    </record>
+
+	</data>
+</odoo>

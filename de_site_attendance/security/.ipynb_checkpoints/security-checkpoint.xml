@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="0">
+
+	    <record id="group_site_attendance_reset_state_access" model="res.groups">
+	        <field name="name">Allow Reset Site Attendance State</field>
+	    </record>
+        <record id="group_site_attendance_portal" model="res.groups">
+	        <field name="name">Allow Portal Site Attendance</field>
+	    </record>
+
+	</data>
+</odoo>

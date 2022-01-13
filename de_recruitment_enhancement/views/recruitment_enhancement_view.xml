@@ -1,0 +1,222 @@
+<odoo>
+  <data>
+
+      <record model="ir.actions.act_window" id="hr_recruitment.crm_case_categ0_act_job">
+        <field name="name">Applications</field>
+        <field name="res_model">hr.applicant</field>
+        <field name="view_mode">tree,form,pivot,graph,calendar,activity</field>
+        <field name="view_id" eval="False"/>
+        <field name="search_view_id" ref="hr_recruitment.hr_applicant_view_search_bis"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_empty_folder">
+            No applications yet
+          </p><p>
+            Odoo helps you track applicants in the recruitment
+            process and follow up all operations: meetings, interviews, etc.
+          </p><p>
+            Applicants and their attached CV are created automatically when an email is sent.
+            If you install the document management modules, all resumes are indexed automatically,
+            so that you can easily search through their content.
+          </p>
+        </field>
+    </record>
+
+      <record model="ir.ui.view" id="view_hr_job_kanban_inh">
+            <field name="name">hr.job.kanban.inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr_recruitment_survey.view_hr_job_kanban_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//a[@name='action_print_survey']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+      </record>
+
+    <record model="ir.ui.view" id="view_hr_job_inh">
+            <field name="name">hr.job.form.inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr.view_hr_job_form"/>
+            <field name="arch" type="xml">
+            	<xpath expr="//notebook/page[3]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//sheet/div[@class='oe_title']" position="after">
+                    <group col="4">
+                        <field name="position_type" attrs="{'readonly' : [('is_head_count_readonly', '=', False)]}"/>
+                        <field name="grade" attrs="{'readonly' : [('is_head_count_readonly', '=', False)]}"/>
+                        <field name="head_approved_count_bug" string="Head Count Approved (Budgeted)" attrs="{'readonly' : [('is_head_count_readonly', '=', False)]}"/>
+                        <field name="head_approved_count_unbug" string="Head Count Approved (Un-Budgeted)" attrs="{'readonly' : [('is_head_count_readonly', '=', False)]}"/>
+                        <field name="short_code" required="1"/>
+                        <field name="is_head_count_readonly" invisible="1"/>
+                    </group>
+                </xpath>
+<!--expr="//notebook/page/group/group[@name='recruitment']"-->
+                <xpath expr="//notebook/page/group/group[@name='recruitment']" position="before">
+                    <group string="Assessment Tests">
+                        <field name="test_count" placeholder="Assessment Steps 1-3"/>
+<!--                        <field name="is_assessment_test"/>-->
+
+                        <label string="Assessment Test 1" for="test_id_1" attrs="{'invisible' : [('test_bool_a', '=', False)]}"/>
+                        <div class="o_row">
+                            <field name="test_id_1" string="Test 1" attrs="{'invisible' : [('test_bool_a', '=', False)], 'required' : [ ('test_bool_a', '=', True)]}"/>
+                        </div>
+                        <label string="Assessment Test 2" for="test_id_2" attrs="{'invisible' : [('test_bool_b', '=', False)]}"/>
+                        <div class="o_row">
+                            <field name="test_id_2" string="Test 2" attrs="{'invisible' : [('test_bool_b', '=', False)], 'required' : [ ('test_bool_b', '=', True)]}"/>
+                        </div>
+                        <label string="Assessment Test 3" for="test_id_3" attrs="{'invisible' : [('test_bool_c', '=', False)]}"/>
+                        <div class="o_row">
+                            <field name="test_id_3" string="Test 3" attrs="{'invisible' : [('test_bool_c', '=', False)], 'required' : [ ('test_bool_c', '=', True)]}"/>
+                        </div>
+                        <field name="test_bool_a" invisible="1"/>
+                        <field name="test_bool_b" invisible="1"/>
+                        <field name="test_bool_c" invisible="1"/>
+                    </group>
+
+                    <group string="Interviews">
+                        <field name="interview_count" placeholder="Interview Steps 1-5"/>
+
+                        <label string="Interview 1" for="survey_id_1" attrs="{'invisible' : [('survey_bool_a', '=', False)]}"/>
+                        <div class="o_row">
+                            <field name="survey_id_1" string="Interview 1" attrs="{'invisible' : [ ('survey_bool_a', '=', False)], 'required' : [ ('survey_bool_a', '=', True)]}"/>
+                            <field name="partner_id_a" string="Interview 1" attrs="{'invisible' : [('survey_bool_a', '=', False)], 'required' : [ ('survey_bool_a', '=', True)]}"/>
+                        </div>
+                        <label string="Interview 2" for="survey_id_2" attrs="{'invisible' : [('survey_bool_b', '=', False)]}"/>
+                        <div class="o_row">
+                            <field name="survey_id_2" string="Interview 2" attrs="{'invisible' : [('survey_bool_b', '=', False)], 'required' : [ ('survey_bool_b', '=', True)]}"/>
+                            <field name="partner_id_b" string="Interview 2" attrs="{'invisible' : [('survey_bool_b', '=', False)], 'required' : [ ('survey_bool_b', '=', True)]}"/>
+                        </div>
+                        <label string="Interview 3" for="survey_id_3" attrs="{'invisible' : [ ('survey_bool_c', '=', False)]}"/>
+                        <div class="o_row">
+                            <field name="survey_id_3" string="Interview 3" attrs="{'invisible' : [('survey_bool_c', '=', False)], 'required' : [ ('survey_bool_c', '=', True)]}"/>
+                            <field name="partner_id_c" string="Interview 3" attrs="{'invisible' : [('survey_bool_c', '=', False)], 'required' : [ ('survey_bool_c', '=', True)]}"/>
+                        </div>
+                        <label string="Interview 4" for="survey_id_4" attrs="{'invisible' : [('survey_bool_d', '=', False)]}"/>
+                        <div class="o_row">
+                            <field name="survey_id_4" string="Interview 4" attrs="{'invisible' : [('survey_bool_d', '=', False)], 'required' : [ ('survey_bool_d', '=', True)]}"/>
+                            <field name="partner_id_d" string="Interview 4" attrs="{'invisible' : [ ('survey_bool_d', '=', False)], 'required' : [ ('survey_bool_d', '=', True)]}"/>
+                        </div>
+                        <label string="Interview 5" for="survey_id_5" attrs="{'invisible' : [('survey_bool_e', '=', False)]}"/>
+                        <div class="o_row">
+                            <field name="survey_id_5" string="Interview 5" attrs="{'invisible' : [('survey_bool_e', '=', False)], 'required' : [ ('survey_bool_e', '=', True)]}"/>
+                            <field name="partner_id_e" string="Interview 5" attrs="{'invisible' : [('survey_bool_e', '=', False)], 'required' : [ ('survey_bool_e', '=', True)]}"/>
+                        </div>
+                        <field name="survey_bool_a" invisible="1"/>
+                        <field name="survey_bool_b" invisible="1"/>
+                        <field name="survey_bool_c" invisible="1"/>
+                        <field name="survey_bool_d" invisible="1"/>
+                        <field name="survey_bool_e" invisible="1"/>
+                    </group>
+                </xpath>
+            </field>
+    </record>
+
+      <record model="ir.ui.view" id="view_hr_applicant_inh">
+            <field name="name">hr.applicant.form.inherit</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='source_id']" position="after">
+                    <field name="is_medical_certficate_sub" string="Medical Certificate Submitted"/>
+                </xpath>
+
+                <xpath expr="//field[@name='type_id']" position="after">
+                    <field name="show_quick_promt" invisible="1"/>
+                    <field name="gender"/>
+                    <label string="CNIC" for="cnic"/>
+                    <div class="o_row">
+                        <field name="cnic"/>
+                            <div class="alert alert-danger" role="alert" attrs="{'invisible' : [('show_quick_promt', '=', False)]}">
+                                CNIC Already Exists
+                        </div>
+                    </div>
+                    <field name="age"/>
+                    <field name="experience"/>
+                    <field name="is_show_employee_button" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//button[@name='action_makeMeeting']" position="after">
+                    <button class="oe_stat_button" icon="fa-user" type="object" name="action_recruitment_survey" >
+                        <field name="interviews_count" widget="statinfo" string="Interview(s)"/>
+                    </button>
+                </xpath>
+
+                <xpath expr="//button[@name='action_makeMeeting']" position="after">
+                    <button class="oe_stat_button" icon="fa-user" type="object" name="action_recruitment_survey_assessment">
+                        <field name="assessment_count" widget="statinfo" string="Test Assessment(s)"/>
+                    </button>
+                </xpath>
+
+                <xpath expr="//header/field[@name='stage_id']" position="attributes">
+                    <attribute name="domain">['|',('is_non_fixed_stage', '=', False),('job_ids', '=', job_id)]</attribute>
+                    <attribute name="clickable">0</attribute>
+                </xpath>
+
+                <xpath expr="//header/button[@name='create_employee_from_applicant']" position="attributes">
+                    <attribute name="attrs">{'invisible' : [('is_show_employee_button', '=', False)]}</attribute>
+                </xpath>
+
+                <xpath expr="//header/button[@name='archive_applicant']" position="after">
+                    <button string="Next" name="action_next_stage" type="object"/>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_name']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_mobile']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='cnic']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='salary_expected']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='job_id']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+
+            </field>
+    </record>
+
+      <record model="ir.ui.view" id="view_hr_applicant_survey_inh">
+            <field name="name">hr.applicant.survey.form.inherit</field>
+            <field name="model">hr.applicant</field>
+            <field name="inherit_id" ref="hr_recruitment_survey.hr_applicant_view_form_inherit"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//button[@name='action_start_survey']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='action_print_survey']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+            </field>
+    </record>
+
+      <record model="ir.ui.view" id="view_hr_recruitment_survey_inh">
+            <field name="name">hr.job.survey.form.inherit</field>
+            <field name="model">hr.job</field>
+            <field name="inherit_id" ref="hr_recruitment_survey.hr_job_survey_inherit"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//div[@class='o_row']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//label[@for='survey_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+            </field>
+      </record>
+
+  </data>
+</odoo>

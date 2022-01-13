@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+	    <record id="group_payslips_access" model="res.groups">
+	        <field name="name">Allow Portal Payslips</field>
+	    </record>
+
+	</data>
+</odoo>

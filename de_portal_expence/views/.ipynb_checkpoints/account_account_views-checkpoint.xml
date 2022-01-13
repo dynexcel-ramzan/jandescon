@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>   
+    
+<!--      <record id="account_account_form_view_cost_center" model="ir.ui.view">
+        <field name="name">account.account.form.view.cost.center</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='group_id']" position="after">
+                  <field name="cost_center_code"/>
+                  <field name="account_head"/>
+            </xpath>
+        </field>
+    </record> -->
+
+</odoo>
+
+

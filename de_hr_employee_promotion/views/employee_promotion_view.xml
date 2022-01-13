@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    
+    
+	<record id="view_employee_promotion_form" model="ir.ui.view">
+		<field name="name">employee.promotion.form</field>
+		<field name="model">hr.employee.promotion</field>
+		<field name="arch" type="xml">
+			
+			<form string="Employee Promotion"  edit="0" delete="0">
+				<sheet>
+                    <h3>Promotion Form</h3>
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="contract_id"/>
+                            <field name="previous_wage" widget="monetary"/>
+                            <field name="pre_job_id"/> 
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="promotion_type"/>
+                            <field name="new_wage"  widget="monetary"/>
+                            <field name="new_job_id"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        
+                        <group> 
+                            <field name="old_department_id"/>
+                            <field name="loc_show_hide"/>
+                            <field name="old_location_id" attrs="{'invisible': [('loc_show_hide', '=', False)]}"/>
+                            <field name="period" readonly='1'/>
+                        </group>
+                        <group>
+                            <field name="new_department_id"/>
+                            <field name="description"/>
+                            <field name="new_location_id" attrs="{'invisible': [('loc_show_hide', '=', False)]}"/>
+                            <field name="tax_year" readonly='1'/>
+                        </group>
+                  
+                    </group>
+				</sheet>
+			</form>
+			
+		</field>
+	</record>
+	
+	<record id="view_employee_promotion_tree" model="ir.ui.view">
+		<field name="name">employee.promotion.tree</field>
+		<field name="model">hr.employee.promotion</field>
+		<field name="arch" type="xml">
+			
+			<tree string="Employee Promotion" delete="0" edit="0">
+                <field name="employee_id"/>
+                <field name="contract_id"/>
+                <field name="previous_wage" widget="monetary"/>
+                <field name="pre_job_id"/>
+                <field name="description"/>
+                <field name="date"/>
+                <field name="promotion_type"/>
+                <field name="new_wage"/>
+                <field name="new_job_id"/>
+			</tree>
+			
+		</field>
+	</record>
+
+	<record id="view_employee_promotion_search" model="ir.ui.view">
+		<field name="name">employee.promotion.search</field>
+		<field name="model">hr.employee.promotion</field>
+		<field name="arch" type="xml">
+			
+			<search string="Employee Promotion">
+                <field name="employee_id"/>
+                <field name="contract_id"/>
+                <field name="previous_wage" widget="monetary"/>
+                <field name="pre_job_id"/>
+                <field name="description"/>
+                <field name="date"/>
+                <field name="promotion_type"/>
+                <field name="new_wage"/>
+                <field name="new_job_id"/>
+			</search>
+			
+		</field>
+	</record>
+
+	<record id="action_employee_promotion_view" model="ir.actions.act_window">
+		<field name="name">Employee Promotion</field>
+		<field name="res_model">hr.employee.promotion</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[]</field>
+		<field name="context">{}</field>
+		<field name="search_view_id" ref="view_employee_promotion_search" />
+		<field name="view_id" ref="view_employee_promotion_tree" />
+		<field name="help" type="html">
+			<p class="o_view_nocontent_smiling_face">
+				Add Employee Promotions Here !
+			</p>
+		</field>
+	</record>
+
+    <record id="hr_employee_form_inherit" model="ir.ui.view">
+		<field name="name">hr.employee.form.inherit</field>
+		<field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+		<field name="arch" type="xml">
+			<xpath expr="//page[@name='hr_settings']" position='after'>
+				 <page string="Transfer and Promotion">
+					<field name="promotion_ids">
+                        <tree>
+                            <field name="employee_id"/>
+                            <field name="previous_wage" string="Previous Salary" widget="monetary"/>
+                            <field name="pre_job_id"/>
+                             <field name="old_department_id"/>
+                            <field name="new_department_id"/>
+                            <field name="new_wage"/>
+                            <field name="new_job_id"/>
+                            <field name="old_location_id"/>
+                            <field name="new_location_id"/>
+                        </tree>
+					</field>
+				 </page>
+            </xpath>
+        </field>
+    </record>
+    
+    	<menuitem id="employee_promotion_menu" name="Promotion" parent="hr.menu_hr_employee_payroll"
+			action="de_hr_employee_promotion.action_employee_promotion_view"
+			sequence="9" />
+
+</odoo>
+
+

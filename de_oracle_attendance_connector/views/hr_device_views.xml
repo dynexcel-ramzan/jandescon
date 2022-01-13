@@ -1,0 +1,82 @@
+<odoo>
+    <data> 
+         <record id="hr_device_attendance_view_filter" model="ir.ui.view">
+        <field name="name">hr_device_attendance_view_filter</field>
+        <field name="model">hr.device.attendance</field>
+        <field name="arch" type="xml">
+            <search string="Hr Attendance device Search">
+                <field name="device_id"/>
+                <separator/>
+                <filter string="Company" name="company_id" 
+						help="Show Attendance Device" />
+               
+                <group expand="0" string="Group By">
+                    <filter string="Company" name="company_id" context="{'group_by': 'company_id'}"/>
+                    
+                </group>
+            </search>
+        </field>
+    </record>
+        
+      <record id="hr_device_attendance_view_form" model="ir.ui.view">
+        <field name="name">hr.device.attendance.form</field>
+        <field name="model">hr.device.attendance</field>
+        <field name="arch" type="xml">
+            <form string="Device attendances" edit="0">
+                <sheet>
+                    <div class="oe_title pr-0">
+                        <h1 class="d-flex flex-row justify-content-between">
+                            <field name="name" class="o_task_name text-truncate"  placeholder="Device..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id"/>
+                            <field name="device_id"/>
+                        </group>
+                        <group>
+                            <field name="mode"/>
+                        </group>
+                    </group>    
+                </sheet>
+            </form>
+        </field>
+    </record>   
+      
+     
+      
+    <record id="view_hr_device_attendance_tree" model="ir.ui.view">
+        <field name="name">hr.device.attendance.tree</field>
+        <field name="model">hr.device.attendance</field>
+        <field name="arch" type="xml">
+            <tree string="Employee attendances"  create="true"  edit="true">
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="device_id"  />
+                <field name="mode"/>
+            </tree>
+        </field>
+    </record>  
+      
+      
+      
+    <record id="hr_device_attendance_attendance_action" model="ir.actions.act_window">
+        <field name="name">Attendance Devices</field>
+        <field name="res_model">hr.device.attendance</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id"></field> 
+        <field name="help" type="html">
+
+            <p class="o_view_nocontent_smiling_face">
+                No data yet!
+            </p>
+        </field>
+    </record>
+
+      
+     
+
+    <menuitem id="menu_hr_device_attendance" name="Attendance Devices" parent="menu_hr_user_attendance_my_attendances" sequence="8"  action="hr_device_attendance_attendance_action"/>
+
+  </data>
+</odoo>

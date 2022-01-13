@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_overtime_req" model="ir.sequence">
+            <field name="name">Overtime Sequencer</field>
+            <field name="code">hr.overtime.request</field>
+            <field name="prefix">OVT-</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+            <field name="padding">5</field>
+        </record>
+    </data>
+    <data>
+        
+        <record id="hr_overtime_request_search_view" model="ir.ui.view">
+        <field name="name">hr_overtime_request_view_filter</field>
+        <field name="model">hr.overtime.request</field>
+        <field name="arch" type="xml">
+            <search string="Hr Overtime Search">
+                <field name="employee_id"/>
+                <field name="employee_number"/>
+                <filter string="My Attendances" name="myattendances" domain="[('employee_id.user_id.id', '=', uid)]" />
+                <separator/>
+                <filter string="Date_from" name="date_from_filter" date="date_from" default_period="last_month"/>
+                <filter string="No Date to" name="nocheckout" domain="[('date_to', '=', False)]" />
+                <group expand="0" string="Group By">
+                    <filter string="Employee" name="employee" context="{'group_by': 'employee_id'}"/>
+                    <filter string="Work Location" name="work_location" context="{'group_by': 'workf_location_id'}"/>
+                    <filter string="Date From" name="groupby_name" context="{'group_by': 'date_from'}"/>
+                    <filter string="Date To" name="groupby_check_out" context="{'group_by': 'date_to'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="hr_overtime_request_view_pivot" model="ir.ui.view">
+        <field name="name">hr.overtime.request.pivot</field>
+        <field name="model">hr.overtime.request</field>
+        <field name="arch" type="xml">
+            <pivot string="Overtime" sample="1">
+                <field name="employee_id" type="row"/>
+                <field name="date_from" type="col"/>
+                <field name="overtime_hours" type="measure" widget="float_time"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="hr_overtime_request_view_graph" model="ir.ui.view">
+        <field name="name">hr.overtime.request</field>
+        <field name="model">hr.overtime.request</field>
+        <field name="arch" type="xml">
+            <graph string="Overtime" sample="1">
+                <field name="employee_id"/>
+                <field name="date_from"/>
+                <field name="overtime_hours" type="measure"/>
+            </graph>
+        </field>
+    </record>
+        
+        
+        <!-- Views -->
+        <!-- Form View -->
+        <record id="hr_overtime_form_view" model="ir.ui.view">
+            <field name="name">hr_overtime_request</field>
+            <field name="model">hr.overtime.request</field>
+            <field name="arch" type="xml">
+                <form string="Overtime Request">
+                    <header>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,to_approve,approved,refused,paid,close"/>
+                        
+                        <button name="action_submit" string="Submit"
+                                type="object" class="btn-primary"
+                                attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                                              
+                        <button name="action_approve" string="Approve" type="object"
+                                class="btn-primary"
+                                attrs="{'invisible': [('state', '!=', 'to_approve')]}"
+                                groups="hr_holidays.group_hr_holidays_user"/>
+                        <button name="action_refuse" string="Refuse" type="object"
+                                class="btn-primary" 
+                                attrs="{'invisible': [('state', '!=', 'to_approve')]}" />
+                         <button name="action_cancel" string="Cancel"
+                                type="object" 
+                                attrs="{'invisible': [('state', '!=', 'to_approve')]}"/>
+                    </header>
+                    <sheet>
+                         <div class="oe_title">
+                            <h1>
+                                <field name="employee_id" placeholder="Employee..."  attrs="{'readonly':[('state','!=', 'draft')]}"/>
+                            </h1>
+                        </div>   
+                        <group>
+                            <group>
+                                <field name="date" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                                <field name="date_from" required="1"
+                                       class="oe_inline"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="date_to" required="1"
+                                       class="oe_inline"
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                              
+                                <field name="hours" readonly="1" widget='float_time'/>
+                                <field name="actual_ovt_hours"  readonly="1" widget='float_time'/>
+
+                            </group>
+                            <group>
+                                <div>
+                                    <separator string="Overtime Type" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="overtime_type_id"
+                                           force_save="1"  attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                </div>
+                                    <field name="overtime_hours" attrs="{'readonly': [('state', '!=', 'draft')]}"  />
+                                    <field name="company_id"   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            </group>
+
+                        </group>
+
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"
+                               widget="mail_followers"
+                               groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="hr_overtime_tree_view" model="ir.ui.view">
+            <field name="name">Overtime</field>
+            <field name="model">hr.overtime.request</field>
+            <field name="arch" type="xml">
+                <tree string="Overtime Request"  create="1" edit="false" decoration-danger="overtime_hours > 4">
+                      <field name="employee_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                      <field name="employee_number" readonly="1"/> 
+                      <field name="work_location_id" invisible="1"/>
+                      <field name="workf_location_id" readonly="1"/>
+                      <field name="date" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                      <field name="date_from" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                      <field name="date_to" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                      <field name="overtime_hours" attrs="{'readonly': [('state', '!=', 'draft')]}" widget="float_time"/>
+                      <field name="actual_ovt_hours" attrs="{'readonly': [('state', '!=', 'draft')]}" widget="float_time" />
+                      <field name="company_id" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                      <field name="overtime_type_id" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+                   
+                    <field name="remarks" optional="hide" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="hours"  widget="float_time" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                     <field name="state" readonly="1"/>
+                   
+                </tree>
+            </field>
+        </record>
+        <record id="view_hr_overtime_attendance_tree_inherit" model="ir.ui.view">
+        <field name="name">hr.overtime.request.tree.inherit</field>
+        <field name="model">hr.overtime.request</field>
+        <field name="inherit_id" ref="de_employee_overtime.hr_overtime_tree_view"/>
+        <field name="groups_id" eval="[(4, ref('hr_attendance.group_hr_attendance_user'))]"/>
+        <field name="arch" type="xml">
+            <tree position="attributes">
+                <attribute name="edit">1</attribute>
+                <attribute name="editable">bottom</attribute>
+            </tree>
+        </field>
+    </record>    
+      
+
+        <!-- Actions -->
+        <!-- overtime -->
+        <record id="hr_overtime_action" model="ir.actions.act_window">
+            <field name="name">Overtime Request</field>
+            <field name="res_model">hr.overtime.request</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create new Pre Approval Overtime Request.
+                </p>
+            </field>
+        </record>
+
+
+        <!-- MenuItems -->
+        
+        
+        <menuitem id="overtime" name="Overtime Request"
+                  parent="attendance_overtime_main_menu"
+                  action="hr_overtime_action"
+                  groups="base.group_user"  sequence="2"/>
+        
+        
+        <menuitem id="parent_menu_employee_overtime" name="Employees" parent="overtime_submenu" sequence="1"/>
+        
+          
+         <menuitem
+                id="menu_hr_employee_overtime"
+                name="Employees"
+                action="hr.open_view_employee_list_my"
+                parent="parent_menu_employee_overtime"
+                sequence="1"/>
+        
+         <menuitem
+            id="hr_menu_contract_overtime"
+            name="Contracts"
+            action="hr_contract.action_hr_contract"
+            parent="parent_menu_employee_overtime"
+            sequence="4"
+            groups="hr_contract.group_hr_contract_manager"/>
+
+
+
+    </data>
+</odoo>

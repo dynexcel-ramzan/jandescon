@@ -1,0 +1,599 @@
+<!--  <?xml version="1.0" encoding="utf-8"?>
+ -->
+
+
+<odoo>  
+      
+    
+    <template id="portal_layout" name="Portal layout: timesheet menu entry" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'hrtimesheet' or hrtimesheet" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not hrtimesheet else ''}">
+                <a t-if="hrtimesheet" t-attf-href="/hr/timesheets?{{ keep_query() }}">Timesheets</a>
+                <t t-else="">Timesheets</t>
+            </li>
+            
+        </xpath>
+    </template>
+
+    
+    <template id="portal_my_home" name="Show hrtimesheet / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry"  groups="de_portal_hr_timesheet.group_hr_timesheet">
+                <t t-set="title">Timesheets</t>
+                <t t-set="url" t-value="'/hr/timesheets'"/>
+                <t t-set="placeholder_count" t-value="'hrtimesheet_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+       
+    
+    <template id="portal_my_hrtimesheets" name="My hrtimesheet">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Timesheets</t>
+            </t>
+            <t t-if="not grouped_hrtimesheets">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no Timesheet.
+                </div>
+            </t>
+            
+            <t t-if="grouped_hrtimesheets">
+                <t t-call="portal.portal_table">
+                    <t t-foreach="grouped_hrtimesheets" t-as="all_hrtimesheets">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left">Employee</th>
+                                 <th class="text-left">Employee No</th>
+                                <th class="text-left">Check In</th>
+                                <th class="text-left">Check Out</th>                               
+                                <th class="text-left">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="all_hrtimesheets" t-as="hrtimesheet">
+                             
+                               <t t-if="hrtimesheet.employee_id.user_id.id == uid">  
+                                <tr>
+
+                                   
+                                     <td>
+                                        <a t-attf-href="/hr/timesheet/#{hrtimesheet.id}?{{ keep_query() }}"><span t-field="hrtimesheet.employee_id.name"/></a>
+                                    </td>
+                                    <td class="text-left">
+                                         <span t-esc="hrtimesheet.employee_id.emp_number" />
+                                        
+                                    </td>
+                                     <td class="text-left">
+                                        <span t-esc="hrtimesheet.check_in" t-options='{"widget": "datetime"}'/>
+                                    </td>
+                                     <td class="text-left">
+                                        <span t-esc="hrtimesheet.check_out" t-options='{"widget": "datetime"}'/>
+                                    </td>
+                                   
+                                    
+                                    <td class="text-left">
+                                        <span t-esc="hrtimesheet.total_duration"/>
+                                    </td> 
+                                    <td class="text-left">                                       
+                                        <t t-if="hrtimesheet.state == 'draft'">
+                                            <i class="badge badge-pill badge-info" >Draft</i>
+                                        </t>
+                                      
+                                        <t t-if="hrtimesheet.state == 'submitted'">
+                                            <i class="badge badge-pill badge-warning" >To Approve</i>
+                                        </t>
+                                        <t t-if="hrtimesheet.state == 'refused'">
+                                            <i class="badge badge-pill badge-danger" >Refused</i>
+                                        </t>
+                                        <t t-if="hrtimesheet.state == 'approved'">
+                                            <i class="badge badge-pill badge-success" >Approved</i>
+                                        </t>                                                                               
+                                    </td> 
+                                    
+                                </tr>
+                               </t>     
+                            </t>
+                            <tr>
+                                <div>
+                                    <t class="col-lg-7 col-md-8" >
+                                        <a href="/timesheet/create/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
+                                    </t>
+                                </div>
+                            </tr>   
+                        </tbody>
+                    </t>
+                </t>
+            </t>   
+            
+        </t>
+    </template>
+
+    <template id="portal_my_hrtimesheet" name="My hrtimesheet">
+        <t t-call="portal.portal_layout">
+            
+            <div id="optional_placeholder"></div>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                  <div id="optional_placeholder"></div>
+                    <div class="container">
+                      <div class="card">
+                        <div class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-12">
+                            <h5 class="d-flex mb-1 mb-md-0 row">
+                                <small class="text-muted d-none d-md-inline"> (#<span t-field="hrtimesheet.id"/>)</small>
+                                <div class="col-md-3  text-right">
+                                    <small class="text-right">Stage:</small>
+                                    <span t-field="hrtimesheet.state" class=" badge badge-pill badge-info" title="Current stage of this hrtimesheet"/>
+                                </div>
+                                
+                                 <div class="col-md-1  text-right">
+                                        <t t-if="pre_id">
+                                            <a role="button"  t-attf-href="/hrtimesheet/pre/#{hrtimesheet.id}?" ><i style="margin-right:10px; align:right" class="fa fa-chevron-left" role="img" aria-label="Previous" title="Previous"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="margin-right:10px; align:right; color:#B8B7B0" class="fa fa-chevron-left" aria-label="Previous" title="Previous"></i></a>
+
+                                        </t>
+                                        <t t-if="next_id">
+                                            <a role="button" t-attf-href="/hrtimesheet/next/#{hrtimesheet.id}?" ><i class="fa fa-chevron-right" role="img" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="color:#B8B7B0" class="fa fa-chevron-right" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                </div>
+                                    </h5>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </t>
+               <t t-set="card_body">          
+                  
+                     
+                        <div class="row">
+                                <div class="col-md-6"> <strong>Employee : </strong>
+                                    <t t-if="hrtimesheet.employee_id">
+                                        <span t-esc="hrtimesheet.employee_id.name"/>
+                                    </t>
+                                </div>
+                            
+                                 <div class="col-md-6"> 
+                                    <strong>Employee Code: </strong>
+                                    <t t-if="hrtimesheet.id">
+                                        <span t-esc="hrtimesheet.employee_id.emp_number"/>
+                                    </t>
+                                </div>  
+                        </div>       
+                    
+                        <br/>
+
+                      
+                      <div class="row">
+                                <div class="col-md-6"> <strong>Grade : </strong>
+                                    <t t-if="hrtimesheet.employee_id">
+                                        <span t-esc="hrtimesheet.employee_id.grade_type.name"/>
+                                    </t>
+                                </div>
+                            
+                                 <div class="col-md-6"> 
+                                    <strong>Department: </strong>
+                                    <t t-if="hrtimesheet.department_id">
+                                        <span t-esc="hrtimesheet.employee_id.department_id.name"/>
+                                    </t>
+                                </div>  
+                        </div>       
+                        <br/>
+                        <div class="row">
+                                <div class="col-md-6"> <strong>Check In : </strong>
+                                    <t t-if="hrtimesheet.check_in">
+                                        <span t-esc="hrtimesheet.check_in"/>
+                                    </t>
+                                </div>
+                            
+                                 <div class="col-md-6"> 
+                                    <strong>Check Out: </strong>
+                                    <t t-if="hrtimesheet.check_out">
+                                        <span t-esc="hrtimesheet.check_out"/>
+                                    </t>
+                                </div>  
+                        </div>       
+                       
+                    
+                        <br/>
+                          <div class="row">
+                              <table class="table table-sm table-striped table-bordered" >
+                                  <thead>
+                                      <th>Project</th>
+                                      <th>Task</th>
+                                      <th>Description</th>
+                                      <th>Duration(Hours)</th>
+                                  </thead>
+                                  <tbody>
+                                        <t t-foreach="hrtimesheet.timesheet_attendance_ids" t-as="sheetline">
+                                            <tr>
+                                                <td><span t-esc="sheetline.project_id.name"/></td>
+                                                <td><span t-esc="sheetline.task_id.name"/></td>
+                                                <td><span t-esc="sheetline.description"/></td>
+                                                <td><span t-esc="sheetline.duration"/></td>
+                                            </tr>
+                                            
+                                        </t>   
+                                     
+                                  </tbody>
+                              </table>
+                        </div>       
+                       
+                   
+                    
+                   
+                 
+                </t> 
+            </t>
+
+           
+        </t>
+    </template>
+    
+
+    
+    
+     <template id="hrtimesheet_template" name="hrtimesheet Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+                                         
+                        <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Timesheet</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <form id="saleForm"  action="/hr/timesheet/save"  method="post"  enctype="multipart/form-data">
+                                  <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='timehseetsubmit' type="submit" class="btn btn-primary pull-left">Submit</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                <br/>
+                            <div class="container mt-4 mb-5">
+                                <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                    </div>  
+                                     </div>  
+                                 </div>  
+                                        
+                    <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        </section>
+                                
+                        <div class="container">
+                        </div>    
+                            
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_timesheet">
+                                                <span class="s_website_form_label_content">Employee</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <t t-esc="employee_name.name"    />
+                                               <input type="hidden" class="form-control s_website_form_input" name="employee_id"   t-att-value='employee_name.id' />   
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                                <span class="s_website_form_label_content">Manager</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <t t-esc="managers"    />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_timesheet">
+                                                <span class="s_website_form_label_content">Employee Code</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <t t-esc="employee_name.emp_number"    />
+                                               <input type="hidden" class="form-control s_website_form_input" name="employee_id"   t-att-value='employee_name.id' />   
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                                <span class="s_website_form_label_content">Grade</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <t t-esc="employee_name.grade_type.name"    />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Time In</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                  <input type="datetime-local" class="form-control s_website_form_input" name="check_in"  t-options='{"widget": "date"}' required='1'/>
+                                                
+                                            </div>
+                                        </div>
+                                    </div> 
+                                    <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Department</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                  <t t-esc="employee_name.department_id.name"    />
+                                                
+                                            </div>
+                                        </div>
+                                    </div> 
+                                      
+                                </div>
+                                    <br/>
+                                                               
+                                    
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+                                    
+                                   
+                                  
+                                 <input type="hidden" id="timehseet_vals" class="form-control s_website_form_input" name="timehseet_vals"  multiple="true" />
+                        
+                                  
+                                </form> 
+                                   
+                                    <table id='timesheetrecord' class="table table-sm table-striped table-bordered">
+                                        <thead>
+                                        <tr >
+                                            <th>Project</th>
+                                            <th>Task</th>
+                                            <th>Description</th>
+                                            <th>Duration</th>
+                                        </tr>
+                                       </thead>
+                                        <tbody>
+                                        <form onsubmit="event.preventDefault();onFormSubmit();">
+                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+                                <script type="text/javascript" src="/de_portal_hr_timesheet/static/src/js/min.js"/>
+            
+                                <script type="text/javascript">
+                                    var timehseet_data_vals = []
+                                    function onFormSubmit(){
+                                       var formData = readFormData();
+                                       insertFormRecord(formData);
+                                       onFormLineData(formData);
+                                       
+                                    }
+                                    function readFormData(){
+                                      var formData = {};
+                                      formData['project'] = document.getElementById('projectline').value;
+                                      formData['task'] = document.getElementById('taskline').value;
+                                      formData['description'] = document.getElementById('descriptionline').value;
+                                      formData['duration'] = document.getElementById('durationline').value;
+                                      return formData;
+                                    }
+                                    function insertFormRecord(data){
+                                       var tabletimesheet = document.getElementById('timesheetrecord');
+                                       var newRow = tabletimesheet.insertRow(tabletimesheet.length)
+                                       cell1 = newRow.insertCell(0);
+                                       cell1.innerHTML= data.project
+                                       cell1.classList.add("projectline");
+                                       cell2 = newRow.insertCell(1);
+                                       cell2.innerHTML= data.task
+                                       cell2.classList.add("taskline");
+                                       cell3 = newRow.insertCell(2);
+                                       cell3.innerHTML= data.description
+                                       cell3.classList.add("descriptionline");
+                                       cell4 = newRow.insertCell(3);
+                                       cell4.innerHTML= data.duration
+                                       cell4.classList.add("durationline");
+                                       cell5 = newRow.insertCell(4);
+                                       cell5.innerHTML= '<a onClick="onDelete(this)"><i class="fa fa-trash"></i></a>';
+                                     
+                                    }
+                                    function resetForm(){
+                                      document.getElementById('projectline').value="";
+                                      document.getElementById('taskline').value="";
+                                      document.getElementById('descriptionline').value="";
+                                      document.getElementById('durationline').value="";   
+                                    }
+                                    
+                                    function onDelete(td){
+                                          row = td.parentElement.parentElement;
+                                          document.getElementById("timesheetrecord").deleteRow(row.rowIndex);
+                                          resetForm();
+                                    }
+                                    
+                                    function onFormLineData(data){
+                                       var timehseetdata=[];
+                                       var obj={};
+                                       obj.col1=data.project;
+                                       obj.col2=data.task;
+                                       obj.col3=data.description;
+                                       obj.col4=data.duration;
+                                       timehseetdata.push(obj);
+                                       timehseetdictionary = JSON.stringify(timehseetdata); 
+                                       var lista = document.getElementById("timehseet_vals")
+                                       lista.append(timehseetdata)
+                                    }
+                                    
+                                    
+                                   
+                                     $(document).ready(function(){
+
+                                        $("#timehseetsubmit").on('click',function(){
+
+                                           var timehseetdata=[];
+                                           // loop over each table row (tr)
+                                           $("#timesheetrecord tbody tr").each(function(){
+                                                var currentRow=$(this);
+
+                                                var col1_value=currentRow.find("td:eq(0)").text();
+                                                var col2_value=currentRow.find("td:eq(1)").text();
+                                                var col3_value=currentRow.find("td:eq(2)").text();
+                                                var col4_value=currentRow.find("td:eq(3)").text();
+
+                                                var obj={};
+                                                obj.col1=col1_value;
+                                                obj.col2=col2_value;
+                                                obj.col3=col3_value;
+                                                obj.col4=col4_value;
+
+                                                timehseetdata.push(obj);
+
+                                           });
+                                         timehseetdictionary = JSON.stringify(timehseetdata); 
+                                         var lista = document.getElementById("timehseet_vals")
+                                         lista.value = timehseetdictionary 
+                                         console.log(timehseetdata);   
+                                         });
+
+                                       });
+                                    
+                                    
+                                    
+                           
+                                </script> 
+                                            
+                                            
+                                            <tr>
+                                                <td class='projectline'>
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                
+                                            <div class="col-sm">
+                                                 <select  id="projectline" class="form-control  s_website_form_input" name="project_id" >
+                                                    <t t-foreach="projects" t-as="project">
+
+                                                            <option t-att-value="project.name">
+                                                                    <t t-esc="project.name"/>
+                                                            </option>
+                                                    </t>
+                                                </select>
+                                                  
+
+
+                                                
+                                            </div>
+                                        </div>
+                                            </div>
+                                                </td>
+                                                <td class='taskline'>
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            
+                                            <div class="col-sm">
+                                                 <select  id="taskline" class="form-control  s_website_form_input" name="task_id" >
+                                                        <t t-foreach="tasks" t-as="task">
+
+                                                                        <option t-att-value="task.name">
+                                                                            <t t-esc="task.name"/>
+                                                                        </option>
+                                                                     </t>
+                                                                </select>      
+
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                                </td>
+                                                <td class='descriptionline'>
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            
+                                            <div class="col-sm">
+                                                  <input id='descriptionline' type="text" class="form-control s_website_form_input" name="description"  />
+
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                                </td>
+                                    <td class='durationline'>
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                           
+                                            <div class="col-sm">
+                                                  <input id='durationline' type="float" class="form-control s_website_form_input" name="duration"   required='1'/>
+
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                                </td>
+                                                <td>
+                                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                                <div style="width: 200px;" class="s_website_form_label"></div>
+                                                <button type="submit" class="btn btn-link">Add</button>
+                                                <span id="s_website_form_result"></span>
+                                                </div>
+                                                </td>
+                                                
+                                            </tr>
+                                           
+                                             
+                                           
+                                            
+                                        </form>
+                               
+                                    
+                                     </tbody>
+                                    </table>
+                              
+
+                                    </div>
+         
+        </t>
+    </template>
+    
+    
+
+
+
+    
+      <template id="de_portal_hr_timesheet.timesheet_submited" name="timesheet Received">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container">
+                    <div class="row">
+                        <t t-if="request.session.get('form_builder_model_model', '') == 'account.analytic.line'">
+                            <t t-set="timesheet" t-value="request.portal._website_form_last_record().sudo()"/>
+                        </t>
+                        <h1 class="text-center"><i class="fa fa-check-circle fa-2x text-success" role="img" aria-label="Success" title="Success"/></h1>
+                        <t t-if="timesheet">
+                            <h1 class="text-center">Your Leave Request Number is <a t-if="request.session.uid" t-attf-href="/my/timesheet/page/#{timesheet.id}">#<span t-field="timesheet.id"/></a><t t-if="not request.session.get('uid')">#<span t-field="leave.id"/></t>.</h1>
+                        </t>
+                        <h1 class="text-center">Thank you for submitting your Timesheet request!</h1>
+                    </div>
+                </div>
+            </div>
+         </t>
+    </template>
+    
+        
+
+</odoo>
+
+

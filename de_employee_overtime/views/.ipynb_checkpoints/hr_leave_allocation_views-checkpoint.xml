@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <data>
+       <record id="hr_leave_allocation_form_view_ovt" model="ir.ui.view">
+			<field name="name">hr.leave.allocation.form.view</field>
+			<field name="model">hr.leave.allocation</field>
+			<field name="inherit_id" ref="hr_holidays.hr_leave_allocation_view_form_manager"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='number_of_hours_display']" position="after">
+					<field name="number_of_hours_calc" invisible="1"/>
+					<field name="approval_request_id" invisible="1"/>
+                    <field name="overtime_id" invisible="1"/>
+                    <field name="request_date" invisible="1"/>
+                    <field name="category_id" invisible="1"/>
+				</xpath>
+                <xpath expr="//div[@name='button_box']" position="inside">
+					  <button name="%(action_approval_request_view_leave_allcation)d" type="action" class="oe_stat_button" icon="fa-check-square-o" string="Approvals" context="{'allocation_id':id,'category_id':category_id}" attrs="{'invisible': [('approval_request_id', '=', False)]}">
+                        </button> 
+				</xpath>
+                <xpath expr="//field[@name='number_of_hours_display']" position="attributes">
+                    <attribute name="invisible" >1</attribute>
+				</xpath>
+                <xpath expr="//button[@name='action_approve']" position="replace">
+                    <button string="Approve" name="action_approve" states="confirm" type="object" class="oe_highlight" attrs="{'invisible': ['|','|', ('category_id', '!=', False),('can_approve', '=', False), ('state', '!=', 'confirm')]}"/>
+
+
+                </xpath>
+                <xpath expr="//button[@name='action_refuse']" position="replace">
+                    <button string="Refuse" name="action_refuse" type="object" attrs="{'invisible': ['|', '|', ('category_id', '!=', False),('can_approve', '=', False), ('state', 'not in', ('confirm','validate1','validate'))]}"/>
+
+
+                </xpath>
+				
+			</field>
+		</record>
+        
+       
+
+
+
+    </data>
+</odoo>

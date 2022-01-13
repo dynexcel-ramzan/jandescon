@@ -1,0 +1,129 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        <record id="view_timesheet_attendance_report_form" model="ir.ui.view">
+            <field name="name">timesheet.attendance.form</field>
+            <field name="model">timesheet.attendance.report</field> 
+            <field name="arch" type="xml">
+                <form string="Timesheet Attendance">
+                    <header>
+                        <button name='action_submit' string="Submit" type="object" states='draft'
+                                class='oe_highlight'/>
+                        <button name='action_approved' string="Approve" type="object" 
+                                class='oe_highlight'  attrs = "{'invisible': ['|',('category_id', '!=', False),('state', '!=', 'submitted')]}" />
+                        <button name='action_refuse' string="Refuse" type="object"
+                                class='oe_highlight' attrs = "{'invisible': ['|',('category_id', '!=', False),('state', '!=', 'submitted')]}"/>
+                       
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,submitted,approved,refused"/>
+                    </header>
+                    <sheet>
+                          <div class="oe_button_box" name="button_box">
+                             <button name="%(action_approval_request_view_timesheet_attendance)d" type="action" class="oe_stat_button" icon="fa-check-square-o" string="Approvals" context="{'timesheet_rep_id':id,'category_id':category_id}" attrs="{'invisible': [('approval_request_id', '=', False)]}">
+                            </button>
+                         </div>
+                            <group>
+                                 <group>
+                                      <field name="partner_id"    attrs="{'readonly': [('state','!=','draft')]}"
+/>
+                                      <field name="date_from"
+                                          attrs="{'readonly': [('state','!=','draft')]}" />
+                                 </group>
+                                <group>
+                                    <field name="project_id"   attrs="{'readonly': [('state','!=','draft')]}"/>
+                                    <field name="date_to"
+                                        attrs="{'readonly': [('state','!=','draft')]}"/>
+                                    <field name="category_id" invisible='1' />  
+                                    <field name="approval_request_id"
+                                        invisible="1" />    
+                              </group>
+                            </group>
+                        <notebook>
+                            <page string="Timesheet Lines">
+                                <field  name="timesheet_attendance_ids" attrs="{'readonly': [('state','!=','draft')]}">
+                                  <tree editable="bottom">
+                                    <field name="timesheet_repo_id" invisible="1" />
+                                    <field name="employee_id" />  
+                                    <field name="project_id" />
+                                    <field name="date_from"  />
+                                    <field name="date_to" />  
+                                    <field name="total_days" />
+                                  </tree> 
+                                </field>
+                                <group name="note_group" col="6">
+                                <group colspan="4">
+                                </group>
+                                <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                        <label for="total_duration"/>
+                                    </div>
+                                    <field name="total_duration" nolabel="1" class="oe_subtotal_footer_separator" />
+                                </group>
+                                <div class="oe_clear"/>
+                            </group>
+                            </page>
+                        </notebook>
+                       
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_timesheet_attendance_reprot_tree">
+            <field name="name">timesheet.attendance.report.tree</field>
+            <field name="model">timesheet.attendance.report</field>
+            <field name="arch" type="xml">
+                <tree string="Timesheet Attendance Report">
+                    <field name="partner_id"/>
+                    <field name="project_id"/>
+                    <field name="date_from"  />
+                    <field name="date_to"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_timesheet_attendance_report" model="ir.actions.act_window">
+            <field name="name">Project Timesheet</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">timesheet.attendance.report</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="view_id" ref="view_timesheet_attendance_reprot_tree"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create Records Here.......
+                </p>
+            </field>
+        </record>
+        
+        
+        <record id="timesheet_attendance_report_search_view" model="ir.ui.view">
+        <field name="name">timesheet_attendance_report_view_filter</field>
+        <field name="model">timesheet.attendance.report</field>
+        <field name="arch" type="xml">
+            <search string="Hr Tiemsheet Attendance Search">
+                <field name="employee_id"/>
+                <filter string="My Timesheets" name="mytimesheets" domain="[('partner_id.user_id.id', '=', uid)]" />
+                <separator/>
+               
+                <group expand="0" string="Group By">
+                    <filter string="Employee" name="employee" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Date From" name="date_from" context="{'group_by': 'date_from'}"/>
+                    <filter string="Date To" name="date_to" context="{'group_by': 'date_to'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+        
+        <menuitem id="timesheet_attendance_reports_menuitem"
+                  name="Project Timesheet"
+                  parent="hr_timesheet.menu_hr_time_tracking"
+                  action="action_timesheet_attendance_report"
+                  sequence="1"/>
+        
+     
+        
+    </data>
+</odoo>

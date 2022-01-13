@@ -1,0 +1,194 @@
+<odoo>
+    <data>
+        <record id="hr_recruitment_request_form" model="ir.ui.view">
+            <field name="name">hr.recruitment.request.form</field>
+            <field name="model">hr.recruitment.request</field>
+            <field name="arch" type="xml">
+
+                <form string="Hr Recruitment Request" create="false">
+                    <header>
+                        <button name="action_submitted" string="Submit" type="object" states='draft'
+                                class='oe_highlight'/>
+                        <button name='%(de_budget_approvals.action_recruitment_wizard_new)d' string="Approve"
+                                type="action"
+                                class='oe_highlight'
+                                attrs="{'invisible': ['|',('state','!=','submitted'), ('is_check','=',True)]}"/>
+                        <button name='action_approve' string="Approve" type="object"
+                                class='oe_highlight'
+                                attrs="{'invisible': ['|',('state','!=','submitted'), ('is_check','=',False)]}"/>
+
+                        <button name="action_refused" string="Refuse" type="object" states='submitted'
+                                class='oe_highlight' groups='de_budget_approvals.group_refuse_access'/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="request_for" widget='radio' options="{'horizontal': true}"/>
+                        </group>
+                        <group string="Position Info">
+                            <group>
+                                <field name="is_check" invisible="1"/>
+                                <field name="job_position"
+                                       attrs="{'invisible': [('request_for','!=','increase in head count')],'required': [('request_for','=','increase in head count')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="head_count_non_budgeted"
+                                       readonly="1"/>
+                                <field name="head_count_budgeted"
+                                       attrs="{'invisible': [('request_for','!=','increase in head count')]}"
+                                       readonly="1"/>
+                                <field name="head_count_un_budgeted"
+                                       attrs="{'invisible': [('request_for','!=','increase in head count')]}"
+                                       readonly="1"/>
+<!--                                 <field name="head_count_un_budgeted"
+                                       attrs="{'invisible': [('request_for','!=','new job position')]}"
+                                       readonly="1"/> -->
+                                <field name="company"
+                                       attrs="{'invisible': [('request_for','!=','increase in head count')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="company"
+                                       attrs="{'invisible': [('request_for','!=','new job position')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+
+                            </group>
+                        </group>
+                        <group string="Other Info">
+                            <group>
+                                <field name="job_title"
+                                       attrs="{'invisible': [('request_for','!=','new job position')],'required': [('request_for','=','new job position')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <br></br>
+                                <field name="short_code_new"
+                                       attrs="{'invisible': [('request_for','!=','new job position')],'required': [('request_for','=','new job position')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <br></br>
+                                <field name="people_recruit"
+                                       attrs="{'invisible': [('request_for','!=','increase in head count')],'required': [('request_for','=','increase in head count')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="people_recruit"
+                                       attrs="{'invisible': [('request_for','!=','new job position')],'required': [('request_for','=','new job position')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="reason"
+                                       attrs="{'invisible': [('request_for','!=','increase in head count')],'required': [('request_for','=','increase in head count')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="reason"
+                                       attrs="{'invisible': [('request_for','!=','new job position')],'required': [('request_for','=','new job position')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="exp_compen"
+                                       attrs="{'invisible': [('request_for','!=','increase in head count')],'required': [('request_for','=','increase in head count')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="exp_compen"
+                                       attrs="{'invisible': [('request_for','!=','new job position')],'required': [('request_for','=','new job position')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <br></br>
+                                <field name="start_date"
+                                       attrs="{'invisible': [('request_for','!=','increase in head count')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="start_date"
+                                       attrs="{'invisible': [('request_for','!=','new job position')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="qualification_req"
+                                       attrs="{'invisible': [('request_for','!=','increase in head count')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="qualification_req"
+                                       attrs="{'invisible': [('request_for','!=','new job position')],'required': [('request_for','=','new job position')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="appr_num_new_recruit"
+                                       attrs="{'invisible': [('request_for','!=','increase in head count')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"
+                                       invisible="1"/>
+                                <field name="appr_num_new_recruit"
+                                       attrs="{'invisible': [('request_for','!=','new job position')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"
+                                       invisible="1"/>
+                            </group>
+                        </group>
+                        
+                        <group string="Grade and Allowances">
+                            <group>
+                                <field name="grade_type" attrs="{'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <br></br>
+                                <field name="car_allowance" widget="radio" options="{'horizontal': true}" attrs="{'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="car_amount" attrs="{'invisible': [('car_allowance','!=','yes')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <br></br>
+                                <field name="mobile_allowance" widget="radio" options="{'horizontal': true}" attrs="{'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="mobile_amount" attrs="{'invisible': [('mobile_allowance','!=','yes')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <br></br>
+                                <field name="medical_allowance" widget="radio" options="{'horizontal': true}" attrs="{'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="medical_amount" attrs="{'invisible': [('medical_allowance','!=','yes')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <br></br>
+                                <field name="other_allowance" widget="radio" options="{'horizontal': true}" attrs="{'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="other_amount" attrs="{'invisible': [('other_allowance','!=','yes')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                                <field name="other_description" attrs="{'invisible': [('other_allowance','!=','yes')],'readonly': ['|',('state','=','approved'),('state','=','refused')]}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_recruitment_request_view_tree" model="ir.ui.view">
+            <field name="name">hr.recruitment.request.tree</field>
+            <field name="model">hr.recruitment.request</field>
+            <field name="arch" type="xml">
+                <tree create="false">
+                    <field name="name"/>
+                    <field name="job_position"/>
+                    <field name="job_title"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_hr_recruitment_request_view" model="ir.actions.act_window">
+            <field name="name">Hr Recruitment Request</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.recruitment.request</field>
+            <field name="view_mode">tree,form,search</field>
+            <field name="view_id" ref="hr_recruitment_request_view_tree"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your Record here!
+                </p>
+            </field>
+        </record>
+
+        <record id="hr_recruitment_request_view_tree" model="ir.ui.view">
+            <field name="name">hr.recruitment.request.tree</field>
+            <field name="model">hr.recruitment.request</field>
+            <field name="arch" type="xml">
+                <tree create="false">
+                    <field name="name"/>
+                    <field name="job_position"/>
+                    <field name="job_title"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record id="views_recruitment_search" model="ir.ui.view">
+            <field name="name">hr.recruitment.request.search</field>
+            <field name="model">hr.recruitment.request</field>
+            <field name="arch" type="xml">
+                <search string="hr recruitment search">
+                    <field name="name"/>
+                    <field name="job_position"/>
+                    <field name="job_title"/>
+                    <field name="state"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="hr_recruitment_request_view_tree_create" model="ir.ui.view">
+            <field name="name">hr.recruitment.request.tree</field>
+            <field name="model">hr.recruitment.request</field>
+            <field name="inherit_id" ref="de_budget_approvals.hr_recruitment_request_view_tree"/>
+            <field name="groups_id" eval="[(4,ref('de_budget_approvals.group_create_access'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="create">true</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="hr_recruitment_request_view_form_create" model="ir.ui.view">
+            <field name="name">hr.recruitment.request.form</field>
+            <field name="model">hr.recruitment.request</field>
+            <field name="inherit_id" ref="de_budget_approvals.hr_recruitment_request_form"/>
+            <field name="groups_id" eval="[(4,ref('de_budget_approvals.group_create_access'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="attributes">
+                    <attribute name="edit">true</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="hr_recruitment_request_manpower_request"
+                  name="Manpower Request"
+                  action="de_budget_approvals.action_hr_recruitment_request_view"
+                  parent="hr_recruitment.menu_hr_recruitment_root"
+                  sequence="6"/>
+
+    </data>
+</odoo>

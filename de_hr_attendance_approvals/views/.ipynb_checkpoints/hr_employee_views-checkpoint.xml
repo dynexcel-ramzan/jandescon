@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+      <record id="hr_employee_form_view" model="ir.ui.view">
+			<field name="name">hr.employee.form.view.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr.view_employee_form"/>
+			<field name="arch" type="xml">
+                <xpath expr="//group[@name='managers']" position="before">	
+                    <group name="rectification"   string="Attendance Rectification">
+                      <field name="category_id" readonly="0"/>
+                    </group>    
+				</xpath>      
+            </field>
+		</record>
+      
+      
+      
+      
+  
+
+    </data>
+</odoo>

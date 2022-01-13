@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_de_holiday_oracle_connector_de_holiday_oracle_connector,de_holiday_oracle_connector.de_holiday_oracle_connector,model_de_holiday_oracle_connector_de_holiday_oracle_connector,base.group_user,1,1,1,1
+access_ir_config_parameter,access.ir.config_parameter,model_ir_config_parameter,,1,1,1,1

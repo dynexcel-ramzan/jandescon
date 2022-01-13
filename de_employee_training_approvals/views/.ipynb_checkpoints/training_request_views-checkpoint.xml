@@ -1,0 +1,26 @@
+<odoo>
+   <data>
+   		<record id="training_request_form_view_in" model="ir.ui.view">
+			<field name="name">employee.request.form.view.inherit1</field>
+			<field name="model">employee.request</field>
+			<field name="inherit_id" ref="de_employee_training.view_test_training_form" />
+			<field name="arch" type="xml">
+                
+				<xpath expr="//sheet/div" position="before">
+					<div class="oe_button_box" name="button_box">
+                        <button name="%(action_approval_request_training_view)d" type="action" class="oe_stat_button" icon="fa-check-square-o" string="Approvals" context="{'training_request_id':id,'category_id':category_id}" attrs="{'invisible': [('approval_request_id', '=', False)]}">
+                        </button>      
+                    </div> 
+				</xpath>
+
+                
+                <xpath expr="//field[@name='reason']" position="after">
+					<field name="category_id" />
+                    <field name="approval_request_id" />
+				</xpath>
+			</field>
+		</record>
+   
+
+    </data>
+</odoo>

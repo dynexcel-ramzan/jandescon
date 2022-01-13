@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_employee_training,access.employee.training,model_employee_training,base.group_user,1,1,1,1
+access_employee_request,access.employee.request,model_employee_request,base.group_user,1,1,1,1
+access_employee_request_line,access.employee.request.line,model_employee_request_line,base.group_user,1,1,1,1
+access_employee_session,access.employee.session,model_employee_session,base.group_user,1,1,1,1
+access_employee_session_line,access.employee.session.line,model_employee_session_line,base.group_user,1,1,1,1

@@ -1,0 +1,26 @@
+<odoo>
+  <data>
+      
+      <record id="product_product_form_view_ora_category" model="ir.ui.view">
+        <field name="name">product.product.form.view.ora.category</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="hr_expense.product_product_expense_form_view"/>
+        <field name="arch" type="xml">
+             <xpath expr="//field[@name='taxes_id']" position="after">
+                  <field name="ora_category_id" />
+                  <field name="sub_category_id" />
+                  <field name="controlled_id" />
+                  <field name="meter_reading"/>
+                  <field name="ora_unit"/>
+             </xpath>
+             <xpath expr="//field[@name='company_id']" position="after">
+               <group>  
+               </group>    
+             </xpath>
+        </field>
+    </record>
+      
+     
+   
+  </data>
+</odoo>

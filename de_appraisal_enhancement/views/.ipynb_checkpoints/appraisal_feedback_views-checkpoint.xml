@@ -1,0 +1,354 @@
+<odoo>
+    
+    <record id="view_hr_appraisal_feedback_form" model="ir.ui.view">
+		<field name="name">hr.appraisal.feedback.form</field>
+		<field name="model">hr.appraisal.feedback</field>
+		<field name="arch" type="xml">
+			<form> 
+                <header>
+                    <button name='action_confirm' string="Confirmed" type="object" states='draft'
+						class='oe_highlight'/>
+
+                    <button name='action_Sent_for_Employee_Review'
+                            string="Sent for Employee Review"
+                            type="object"
+                            states='expired,confirm'
+                            class='oe_highlight'/>
+                    <button name='employee_done'
+                            string="Done"
+                            type="object"
+                            states='confirm'
+                            class='oe_highlight'/>
+                    <button name='action_endorsed_employee' string="Endorsed by Employee" type="object" states='sent'
+						class='oe_highlight'/>
+                    <button name='action_endorsed_hod' string="Endorsed by HOD" type="object" states='endorsed_employee'
+						class='oe_highlight'/>
+                     <button name='action_refuse'
+                            string="Refuse"
+                            type="object" states='endorsed_employee'
+                            class='oe_highlight'/>
+                    <button name='action_done' string="Done" type="object" states='endorsed_hod'
+						class='oe_highlight'/>
+<!--                     States After Done -->
+                    <button name='action_end_year_appraisee_review'
+                            string="Appraisee Review"
+                            type="object" states='done'
+                            class='oe_highlight'/>
+                    
+                    <button name='action_end_year_appraiser_review'
+                            string="Appraiser Review"
+                            type="object" states='end_year_appraisee_review'
+                            class='oe_highlight'/>
+                    
+                    <button name='action_end_year_sent_emp_view'
+                            string="Sent for Emp Review"
+                            type="object" states='end_year_appraiser_review'
+                            class='oe_highlight'/>
+                    
+                    <button name='action_end_year_endorsed_emp'
+                            string="Endorsed by Emp"
+                            type="object" states='end_year_sent_emp_view'
+                            class='oe_highlight'/>
+                    
+                    <button name='action_end_year_endorse_hod'
+                            string="Endorsed by HOD"
+                            type="object" states='end_year_endorsed_emp'
+                            class='oe_highlight'/>
+                    
+                    <button name='action_closed'
+                            string="Closed"
+                            type="object" states='end_year_endorse_hod'
+                            class='oe_highlight'/>
+                    <button name='action_refuse'
+                            string="Refuse"
+                            type="object" states='end_year_endorse_hod'
+                            class='oe_highlight'/>
+                    
+                    <field name="state" widget="statusbar" clickable="1" readonly="0"/>
+                </header>
+				<sheet>
+                    <group string="Employee Information">
+                        <group>
+                            <field name="name" readonly="1" required="True"/>
+                            <field name="job_title" readonly="1"/>
+                            <field name="date_joining" readonly="1"/>
+                            <field name="performance_period" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="manager" readonly="1"/>
+                            <field name="department" readonly="1"/>
+                            <field name="grade" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="mid_year_date" readonly="1"/>
+                            <field name="date_mid_deadline" readonly="1"/>
+                            
+                            
+                        </group>
+                        <group>
+                            <field name="end_year_date" readonly="1"/>
+                            <field name="date_end_deadline" readonly="1"/>
+                            
+                        </group>
+					</group>
+                    <group>
+                        <group>
+                            <field name="concerned_person" widget="radio" readonly="1" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="rating_score_calc"  invisible='1'/>
+                            <field name="appraisal_period" widget="radio" readonly="1" invisible="1"/>
+                        </group>
+                    </group>          
+                
+                    <group>
+                        
+                        <group string="Employee Overall Score"
+                               attrs="{'invisible': [('state','in',('draft','confirm','expired','sent',
+                                                    'endorsed_employee','endorsed_hod','done',
+                                                    'end_year_appraisee_review'))]}">
+                            <field name="rating_level" />
+                            <field name="rating_score" />
+                            <field name="objective_score" readonly = "1" invisible="1"/>
+                            <field name="objective_rating" readonly = "1"  invisible="1"/>
+                            <field name="behavioral_score" readonly = "1"  invisible="1"/>
+                            <field name="behavioral_rating" readonly = "1" invisible="1"/>
+                        </group>
+                        
+					</group>
+                    <notebook>
+                        
+                        <page string="Half Year Review">
+                            <h2><b>Business Objectives</b></h2>
+                            <field name='feedback_objective_appraisee_lines'>
+                                <tree create="false" delete="false" editable="false">
+                                    <field name='objective' readonly="1"/>
+                                    <field name='obj_description' readonly="1"/>
+                                    <field name='weightage' readonly="1"/>
+                                    <field name='priority' readonly="1"/>
+                                    <field name="employee_rating_score" invisible='1'/>
+                                    <field name="employee_rating_level" />
+                                    <field name="remarks" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name='percentage_score' attrs="{'readonly':[('state','!=','draft')]}" invisible="1"/>
+                                    <field name="remarks_mngr" attrs="{'readonly':[('state','!=','confirm')]}"/>
+                                    <field name='percentage_score_mngr' attrs="{'readonly':[('state','!=','confirm')]}" invisible='1'/>
+                                    <field name="manager_rating_score" invisible='1'/>
+                                    <field name="manager_rating_level" />
+                                    <field name="concerned_person" invisible='1'/>
+                                    <field name="appraisal_period" invisible='1'/>
+                                    <field name="state" invisible='1'/>
+                                </tree>
+                            </field>
+                            <group>
+                                <group>
+                                    <field name='objective_comment' placeholder = "Emp Half Year Comments..." attrs="{'readonly':[('state','!=','draft')]}"/>
+                                </group>
+                                <group>
+                                    <field name='full_year_objective_comment' placeholder = "Manager Half Year Comments..." attrs="{'readonly':[('state','!=','confirm')]}"/>
+                                </group>
+                            </group>
+                            <h2><b>Core Values</b></h2>
+                            <field name='feedback_values_appraisee_lines'>
+                                <tree create="false" delete="false" editable="false">
+                                    <field name='core_values' readonly="1"/>
+                                    <field name='core_description' readonly="1"/>
+                                    <field name='weightage' readonly="1"/>
+                                    <field name='priority' readonly = "1"/>
+                                    <field name="remarks" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                    <field name="employee_rating_score" invisible='1'/>
+                                    <field name="employee_rating_level" />
+                                    <field name='conformance_level' attrs="{'readonly':[('state','!=','draft')]}" invisible='1'/>
+                                    <field name="remarks_mngr" attrs="{'readonly':[('state','!=','confirm')]}"/>
+                                    <field name='conformance_level_mngr' attrs="{'readonly':[('state','!=','confirm')]}" invisible='1'/>
+                                    <field name="manager_rating_score" invisible='1'/>
+                                    <field name="manager_rating_level" />
+                                    <field name="concerned_person" invisible='1'/>
+                                    <field name="appraisal_period" invisible='1'/>
+                                    <field name="state" invisible='1'/>
+                                </tree>
+                             </field>
+                            <group>
+                                <group>
+                                    <field name='value_comment' placeholder = "Emp Half Year Comments..." attrs="{'readonly':[('state','!=','draft')]}"/>
+                                </group>
+                                <group>
+                                    <field name='full_year_value_comment' placeholder = "Manager Half Year Comments..." attrs="{'readonly':[('state','!=','confirm')]}"/>
+
+                                </group>
+                        </group>
+                         </page>
+                         <page string="Full Year Review" attrs="{'invisible':[('state','not in',('end_year_appraisee_review','end_year_appraiser_review','end_year_sent_emp_view','end_year_endorsed_emp','end_year_endorse_hod','closed'))]}">
+                            <h2><b>Business Objectives</b></h2>
+                            <field name='feedback_objective_lines'>
+                                <tree create="false" delete="false" editable="false">
+                                    <field name='objective' readonly="1"/>
+                                    <field name='obj_description' readonly="1"/>
+                                    <field name='weightage' readonly="1"/>
+                                    <field name='priority' readonly="1"/>
+                                    <field name="employee_rating_score"  invisible='1'/>
+                                    <field name="employee_rating_level"  />
+                                    <field name='rating' attrs="{'readonly':[('state','!=','end_year_appraisee_review')]}" invisible='1'/>
+                                    <field name="full_remarks" attrs="{'readonly':[('state','!=','end_year_appraisee_review')]}"/>
+                                    <field name='rating_mngr' attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"  invisible='1'/>
+                                    <field name="full_remarks_mngr" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                    <field name='weightage_score_mngr' readonly="1" invisible='1'/>
+                                     <field name="manager_rating_score" invisible='1' />
+                                    <field name="manager_rating_level" />
+                                    <field name="concerned_person" />
+                                    <field name="appraisal_period" invisible='1'/>
+                                    <field name="state" invisible='1'/>
+                                </tree>
+                            </field>
+                            <group>
+                                <group>
+                                    <field name='half_year_appraiser_objective_comment' placeholder = "Emp Full Year Comments..." attrs="{'readonly':[('state','!=','end_year_appraisee_review')]}"/>
+                                </group>
+                                <group>
+                                     <field name='full_year_appraiser_objective_comment' placeholder = "Manager Full Year Comments..." attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+
+                                </group>
+                            </group>
+                            <h2><b>Core Values</b></h2>
+                            <field name='feedback_values_lines'>
+                                <tree create="false" delete="false" editable="false">
+                                    <field name='core_values' readonly="1"/>
+                                    <field name='core_description' readonly="1"/>
+                                    <field name='weightage' readonly="1"/>
+                                    <field name='priority' readonly = "1"/>
+                                    <field name='rating' attrs="{'readonly':[('state','!=','end_year_appraisee_review')]}" invisible='1'/>
+                                    <field name="employee_rating_score" invisible='1'/>
+                                    <field name="employee_rating_level" />
+                                    <field name="full_remarks" attrs="{'readonly':[('state','!=','end_year_appraisee_review')]}"/>
+                                    <field name='rating_mngr' attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}" invisible='1'/>
+                                    <field name="full_remarks_mngr" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                    <field name='weightage_score_mngr' readonly="1" invisible='1'/>
+                                     <field name="manager_rating_score" invisible='1'/>
+                                    <field name="manager_rating_level" />
+                                    <field name="concerned_person" invisible='1'/>
+                                    <field name="appraisal_period" invisible='1'/>
+                                    <field name="state" invisible='1'/>
+                                </tree>
+                             </field>
+                             <group>
+                                 <group>
+                                    <field name='half_year_appraiser_value_comment' placeholder = "Emp Full Year Comments..." attrs="{'readonly':[('state','!=','end_year_appraisee_review')]}"/>
+                                 </group>
+                                 <group>
+                                     <field name='full_year_appraiser_value_comment' placeholder = "Manager Full Year Comments..." attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+
+                                 </group>
+                            </group>
+                         </page>
+                        <page string="Strengths/Weaknesses and Training" attrs="{'invisible':[('state','not in',('end_year_appraiser_review','end_year_endorsed_emp','end_year_endorse_hod','closed'))]}">
+                            <group>  
+                                <group string="Strengths/Achievements"> 
+                                    <div class="o_address_format">
+                                        <field name="strength_1" placeholder="Line 1..." class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="strength_2" placeholder="Line 2..." class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>     
+                                        <field name="strength_3" placeholder="Line 3" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="strength_4" placeholder="Line 4" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="strength_5" placeholder="Line 5" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                    </div> 
+                                </group>
+                                <group string="Weaknesses/Areas for Improvement">
+                                    <div class="o_address_format">
+                                        <field name="improvements_1" placeholder="Line 1..." class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="improvements_2" placeholder="Line 2..." class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="improvements_3" placeholder="Line 3" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="improvements_4" placeholder="Line 4" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="improvements_5" placeholder="Line 5" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                    </div>  
+                                </group>
+                                <group string="Training">
+                                    <div class="o_address_format">
+                                        <field name="training_1" placeholder="Line 1..." class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="training_2" placeholder="Line 2..." class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>     
+                                        <field name="training_3" placeholder="Line 3" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="training_4" placeholder="Line 4" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="training_5" placeholder="Line 5" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                    </div>
+                                </group>
+                                <group string = 'Reason'>
+                                    <div class="o_address_format">
+                                        <field name="reason_1" placeholder="Line 1..." class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="reason_2" placeholder="Line 2..." class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>     
+                                        <field name="reason_3" placeholder="Line 3" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="reason_4" placeholder="Line 4" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                        <field name="reason_5" placeholder="Line 5" class="o_address_street" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                    </div>
+                                </group>
+                             </group>
+                        </page>
+                        <page string="Promotion" attrs="{'invisible':[('state','not in',('end_year_appraiser_review','end_year_endorsed_emp','end_year_endorse_hod','closed'))]}">
+                            <group>
+                                <group>
+                                    <field name="recommend_promotion" attrs="{'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                    <field name='promotion_position' attrs="{'invisible': [('recommend_promotion', '=', 'no')], 'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                </group>
+                                <group>
+                                    <field name='promotion_grade' attrs="{'invisible': [('recommend_promotion', '=', 'no')], 'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                    <field name='date_effective' attrs="{'invisible': [('recommend_promotion', '=', 'no')], 'readonly':[('state','!=','end_year_appraiser_review')]}"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Note">
+                            <group>
+                                <field name="training_need" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="future_aspiration" attrs="{'readonly':[('state','!=','draft')]}"/>
+                                <field name="feedback_to_manager" attrs="{'readonly':[('state','not in',['draft','end_year_appraisee_review'])]}"/>
+                            </group>
+                            <group>
+                                <field name="note" readonly = "1"/>
+                            </group>
+                        </page>
+                    </notebook>
+				</sheet>
+                
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                
+			</form>
+		</field>
+	</record>
+
+    <record id="view_hr_appraisal_feedback_tree" model="ir.ui.view">
+        <field name="name">hr.appraisal.feedback.tree</field>
+		<field name="model">hr.appraisal.feedback</field>
+		<field name="arch" type="xml">
+			<tree>
+                <field name="name" />
+                <field name="job_title" />
+                <field name="date_joining"/>
+                <field name="department" />
+                <field name="grade" />
+                <field name="performance_period"/>
+                <field name="mid_year_date" />
+                <field name="end_year_date" />
+			</tree>
+		</field>
+	</record>
+    
+
+    <record id="action_hr_appraisal_feedback_tree" model="ir.actions.act_window">
+            <field name="name">Appraisal Feedback</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.appraisal.feedback</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="de_appraisal_enhancement.view_hr_appraisal_feedback_tree"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Not Found. Let's Create One!
+              </p>
+            </field>
+    </record>
+
+    <menuitem name="Appraisal Feedback"
+        id="menu_hr_appraisal_feedback_root"
+        parent="hr_appraisal.menu_hr_appraisal_root"
+        action="action_hr_appraisal_feedback_tree"
+        sequence="4"/>
+
+</odoo>

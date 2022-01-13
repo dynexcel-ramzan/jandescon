@@ -1,0 +1,12 @@
+<odoo>
+  <data>
+       <report id="hr_payslip_reconcile_report"
+            model="hr.payslip"
+            string="Slip Report"
+            report_type="qweb-pdf"
+            name="de_payroll_reports.slip_reconcile_report"
+            file="de_payroll_reports.slip_reconcile_report"
+       />
+      
+  </data>
+</odoo>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo> 
+        <!--Display form view of wizard-->    
+        <record id="view_reconciliation_wizard_form" model="ir.ui.view">
+            <field name="name">reconciliation.wizard.form</field>
+            <field name="model">reconciliation.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Reconciliation Wizard">
+                    <group>
+                      <group>
+                          
+                          <field name="company_id"  options="{'no_create': True, 'no_create_edit':True}" />
+                          <field name="company_number" /> 
+                      </group>
+                      <group>
+                        <field name="date_to" />  
+                        <field name="date_from" /> 
+                        
+                      </group>
+                        
+                    </group>
+                    <footer>
+                        <button string='Print' name="check_report" type="object" default_focus="1" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!--Open the wizard on click of menu-->
+        <record id="open_reconciliation_wizard_action" model="ir.actions.act_window">
+            <field name="name">Reconciliation Report</field>
+            <field name="res_model">reconciliation.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_reconciliation_wizard_form"/>
+        </record> 
+    
+    
+       <menuitem
+        id="reconciliation_wizard_menuitem"
+        name="Reconciliation Report"
+        parent="hr_payroll.menu_hr_payroll_report"
+        sequence="10"
+        action="de_payroll_reconcilation_report.open_reconciliation_wizard_action"
+    />
+
+</odoo>

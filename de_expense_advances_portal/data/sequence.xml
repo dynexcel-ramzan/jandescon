@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+		
+		<record id="seq_adv_against_exp" model="ir.sequence">
+            <field name="name">Advance Against Expense Sequence</field>
+            <field name="code">advance.against.expense.sequence</field>
+            <field name="prefix">AAE</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

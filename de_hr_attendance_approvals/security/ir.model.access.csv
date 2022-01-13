@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_attendance_rectification_manager,hr.attendance.rectification,model_hr_attendance_rectification,de_hr_attendance_approvals.group_hr_rectification_manager,1,1,1,1
+access_hr_overtime_type_user,hr.attendance.rectification,model_hr_attendance_rectification,de_hr_attendance_approvals.group_hr_rectification_user,1,0,0,0
+access_hr_overtime_type_portal,hr.attendance.rectification,model_hr_attendance_rectification,base.group_portal,1,1,1,1
+

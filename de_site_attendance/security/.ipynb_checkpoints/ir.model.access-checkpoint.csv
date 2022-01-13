@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_attendance_site,hr.attendance.site,model_hr_attendance_site,,1,1,1,1
+access_site_incharge_wizard,site.incharge.wizard,model_site_incharge_wizard,,1,1,1,1
+access_hr_attendance_site_line,hr.attendance.site.line,model_hr_attendance_site_line,,1,1,1,1
+access_hr_employee_public,hr.employee.public,model_hr_employee_public,,1,1,1,1
+access_hr_employee,hr.employee,model_hr_employee,,1,1,1,1
+
+
+

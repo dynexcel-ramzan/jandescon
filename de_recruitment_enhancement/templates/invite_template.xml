@@ -1,0 +1,31 @@
+<odoo>
+    <data>
+        <record id="mail_template_user_input_invite_survey" model="mail.template">
+            <field name="name">Test: Invite</field>
+            <field name="model_id" ref="model_hr_recruitment_assessment"/>
+            <field name="subject">Participate to ${object.survey_id.title} Test</field>
+            <field name="email_to">${(object.applicant_id.email_formatted or object.applicant_id.email_from) |safe}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px; font-size: 13px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear ${object.applicant_id.partner_name or 'participant'}<br/><br/>
+
+                            We are conducting a Test and your response would be appreciated.
+                        <div style="margin: 16px 0px 16px 0px;">
+                            <a href="${(object.action_start_survey()) | safe}"
+                                style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
+                                Start Test
+                            </a>
+                        </div>
+<!--                        % if object.deadline:-->
+<!--                            Please answer the survey for ${format_date(object.deadline)}.<br/><br/>-->
+<!--                        % endif-->
+<!--                        Thank you for your participation.-->
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.applicant_id.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>

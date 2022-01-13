@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		
+		<record id="account_analytic_account_apprver_view" model="ir.ui.view">
+			<field name="name">account.analytic.account.form.view.approver</field>
+			<field name="model">account.analytic.account</field>
+			<field name="inherit_id" ref="analytic.view_account_analytic_account_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='code']" position="after">
+						<field name="approver_ids"  widget='many2many_tags' />
+				</xpath>
+			</field>
+		</record>
+
+
+	</data>
+</odoo>

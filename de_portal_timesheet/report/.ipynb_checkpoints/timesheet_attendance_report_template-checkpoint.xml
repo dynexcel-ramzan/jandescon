@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="timesheet_report">
+        <t t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <div class="page">
+                    <div  style="position: relative; max-width: 400px;">
+                           <table>
+                            <tr >
+                                <th style="border:1px solid black; background-color:LightGreen; width:25px; height: 20px;"  align="center"></th>
+                                <td   align="center">Rest Day</td>
+                            </tr>
+                            <tr style="height: 20px;">
+                                <th style="border:1px solid black; background-color:#C4A484;  width:25px; height: 20px;" align="center"></th>
+                                <td  align="center">Gazetted Day</td>
+                            </tr>
+                         </table>
+                      </div>
+                        <div class="text-center">
+                          <h2>
+                            Attendance Sheet
+                          </h2>
+                        </div>
+                        <table class="table" style="table-layout: fixed">
+                            <tr>
+                                <th>Client</th>
+                                <td><span t-esc="partner" /></td>
+                                <th>Project</th>
+                                <td><span t-esc="project.name" /></td>
+                            </tr>
+                            <tr>
+                                <th>Date From</th>
+                                <td><span t-esc="date_from" t-options='{"widget": "date"}' /></td>
+                                <th>Date To</th>
+                                <td><span t-esc="date_to" t-options='{"widget": "date"}' /></td>
+                            </tr>
+                        </table>
+
+                        <div class="row justify-content-end">
+                            <div class="col-12">
+                                <table class="table table-sm"  style='font-size:13px;'>
+                                    <thead>
+                                        <tr>
+                                            <th style="border: 1px solid black;">Employee</th>
+                                            <th style="border: 1px solid black;">Remarks</th>
+                                            <t t-set="todays" t-value="0"/>
+                                            <t t-set="todays" t-value="(date_to - date_from).days+1"/>
+                                             <t t-set="datelabel" t-value="[]"/>
+                                                <t t-foreach="todays" t-as="t">
+                                                    <t t-set="datelabel" t-value="datelabel+[t]"/>
+                                             </t>
+                                            <t t-foreach="set(datelabel)" t-as="ta">
+                                                <t t-if="datelabel">
+                                                  <th style="border: 1px solid black;">
+                                                      <span t-esc="(date_from + datetime.timedelta(ta)).strftime('%b')"/>
+                                                      <span t-esc="(date_from + datetime.timedelta(ta)).strftime('%d')"/>
+                                                  </th>
+                                                </t>
+                                            </t>
+                                            <th style="border: 1px solid black;">Working Days</th>
+                                            <th style="border: 1px solid black;">Extra Days</th>
+                                            <th style="border: 1px solid black;">OT Hours</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                      <t t-set="tot_line_total" t-value="0"/>  
+                                      <t t-set="tot_extra_days_total" t-value="0"/>  
+                                      <t t-set="tot_ot_total" t-value="0"/>  
+                                      <t t-set="total_extra_day_ot" t-value="0"/>   
+                                      <t t-set="total_normal_day_ot" t-value="0"/>    
+                                      <t t-foreach="uniq_employee_list" t-as="emp">
+                                          <t t-set="line_total" t-value="0"/>  
+                                          <t t-set="extra_days_total" t-value="0"/>  
+                                          <t t-set="ot_total" t-value="0"/>  
+                                        <tr>
+                                            <td style="border: 1px solid black;">
+                                                <span t-field="request.env['hr.employee'].search([('id','=',emp)]).name" /><br/>
+                                                <span t-field="request.env['hr.employee'].search([('id','=',emp)]).emp_number" />
+                                            </td>
+                                            <td style="border: 1px solid black;">
+                                                Attendance
+                                                <hr/>
+                                                Overtime
+                                            </td> 
+                                            <t t-foreach="timesheet_list" t-as="timelist">
+                                               <t t-if="timelist['id']==emp">
+                                                <t t-if="timelist['rest_day']=='1'">
+                                                 <t t-if="timelist['gazetted_day']=='0'">   
+                                                  <td style="border: 1px solid black;background-color:LightGreen;" >
+                                                     <span t-esc="timelist['timesheet']" />
+                                                     <t t-if="timelist['timesheet']=='P'">  
+                                                      <t t-set="extra_days_total" t-value="extra_days_total + 1"/>  
+                                                     </t>
+                                                     <hr/>
+                                                     <t t-if="timelist['overtime']>0">
+                                                        <span t-esc="timelist['overtime']" />
+                                                        <t t-set="ot_total" t-value="ot_total + timelist['overtime']"/> 
+                                                        <t t-set="total_extra_day_ot" t-value="total_extra_day_ot + timelist['overtime']"/>   
+ 
+                                                     </t>    
+                                                  </td>
+                                                </t> 
+                                                 </t>     
+                                                <t t-if="timelist['gazetted_day']=='1'">
+                                                  <td style='border: 1px solid black;background-color:#C4A484;'>
+                                                     <span t-esc="timelist['timesheet']" />
+                                                     <t t-if="timelist['timesheet']=='P'">  
+                                                       <t t-set="extra_days_total" t-value="extra_days_total + 1"/> 
+                                                     </t>    
+                                                     <hr/>
+                                                     <t t-if="timelist['overtime']>0">
+                                                        <span t-esc="timelist['overtime']" />
+                                                        <t t-set="ot_total" t-value="ot_total + timelist['overtime']"/>
+                                                        <t t-set="total_extra_day_ot" t-value="total_extra_day_ot + timelist['overtime']"/>   
+ 
+                                                     </t>     
+                                                  </td>
+                                                </t>  
+                                                <t t-if="timelist['rest_day']=='0'">
+                                                 <t t-if="timelist['gazetted_day']=='0'">  
+                                                  <td style="border: 1px solid black;">
+                                                     <span t-esc="timelist['timesheet']" />
+                                                     <t t-if="timelist['timesheet']=='P'"> 
+                                                       <t t-set="line_total" t-value="line_total + 1"/>  
+                                                     </t>
+                                                     <hr/>
+                                                     <t t-if="timelist['overtime']">
+                                                        <span t-esc="timelist['overtime']" />
+                                                        <t t-set="ot_total" t-value="ot_total + timelist['overtime']"/> 
+                                                        <t t-set="total_normal_day_ot" t-value="total_normal_day_ot + timelist['overtime']"/>    
+                                                     </t>    
+                                                  </td>
+                                                </t> 
+                                                 </t>    
+                                             </t>   
+                                            </t>    
+
+                                            
+                                             <td style="border: 1px solid black;">  
+                                                  <span t-esc="round(line_total,2)"/>
+                                                  <hr/>
+                                                  <span t-esc="round(total_normal_day_ot,2)"/>
+                                                  <t t-set="tot_line_total" t-value="tot_line_total + line_total"/>      
+                                              </td>
+                                             <td style="border: 1px solid black;">  
+                                                  <span t-esc="round(extra_days_total,2)"/>
+                                                   <hr/>
+                                                   <span t-esc="round(total_extra_day_ot,2)"/>
+                                                  <t t-set="tot_extra_days_total" t-value="tot_extra_days_total + extra_days_total"/>   
+                                             </td>
+                                             <td style="border: 1px solid black;">
+                                                  <hr/>
+                                                  <span t-esc="round(ot_total,2)"/>
+                                                  <t t-set="tot_ot_total" t-value="tot_ot_total + ot_total"/>       
+                                              </td>
+                                        </tr>
+                                      </t>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <t t-foreach="set(datelabel)" t-as="tot">  
+                                              <td></td>
+                                            </t>
+                                            
+                                            <td ><span t-esc="round(tot_line_total,2)"/> Days</td> 
+                                            <td ><span t-esc="round(tot_extra_days_total,2)"/> Days</td> 
+                                            <td ><span t-esc="round(tot_ot_total,2)"/> Hours</td> 
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                                <br/>
+                               <table class="table" style="table-layout: fixed">
+                                        <tr>
+                                            <th colspan="4"> <span t-esc="project.company_id.name"/></th>
+                                            <th >Approved By</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Name</th>
+                                            <td><u><span t-esc="incharge.name"/></u></td>
+                                            <th>Signature</th>
+                                            <td>------------</td>
+                                            <th>Name</th>
+                                            <td><u>
+                                                <span t-esc="incharge.parent_id.name"/>
+                                                </u></td>
+
+                                            <th>Signature</th>
+                                            <td>------------</td>
+
+                                        </tr>
+                                        <tr>
+
+                                            <th>Position</th>
+                                            <td><u>
+                                                
+                                                  <span t-esc="incharge.job_id.name"/>
+                                                   
+                                                </u>
+                                            
+                                            </td>
+                                            <th>Date</th>
+                                            <td>-----------</td>
+                                            <th>Position</th>
+                                            <td><u>
+                                                <span t-esc="incharge.parent_id.job_id.name"/>
+                                                </u></td>
+                                            <th>Date</th>
+                                            <td>-----------</td>
+                                        </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+        </t>
+    </template>
+
+</odoo>

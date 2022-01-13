@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+        
+    <data noupdate="0">
+       <record id="site_attendance_incharge_server_action" model="ir.actions.server">
+                  <field name="name">Site Attendance Incharge</field>
+                  <field name="model_id" ref="de_site_attendance.model_hr_employee"/>
+                  <field name="binding_model_id" ref="de_site_attendance.model_hr_employee"/>            
+                  <field name="binding_view_types">list</field>
+                  <field name="state">code</field>
+                  <field name="code">action = records.action_assign_incharge() </field>
+    </record>
+    <record id="hr_manager_server_action" model="ir.actions.server">
+                  <field name="name">Assign Manager</field>
+                  <field name="model_id" ref="de_site_attendance.model_hr_employee"/>
+                  <field name="binding_model_id" ref="de_site_attendance.model_hr_employee"/>            
+                  <field name="binding_view_types">list</field>
+                  <field name="state">code</field>
+                  <field name="code">action = records.action_assign_manager() </field>
+    </record>
+            
+  </data>
+        
+        
+        
+         <record id="hr_employee_form_view" model="ir.ui.view">
+			<field name="name">hr.employee.form.view.inherit</field>
+			<field name="model">hr.employee</field>
+			<field name="inherit_id" ref="hr.view_employee_form"/>
+			<field name="arch" type="xml">
+                <xpath expr="//group[@name='managers']" position="before">
+                     <group name="site_attendance_managers" string="Site Attendance" class="hide-group-if-empty">
+                         <field name="site_incharge_id" />
+                         <field name="site_user_id" />
+                      </group>
+				</xpath>      
+            </field>
+		</record>
+        
+    </data>
+</odoo>

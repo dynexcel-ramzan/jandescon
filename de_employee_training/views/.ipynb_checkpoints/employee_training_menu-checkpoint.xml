@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem name="Employee Training" id="de_employee_training_menu_root"
+              groups="de_employee_training.group_hr_training_manager"
+              web_icon="de_employee_training,static/description/icon.jpg"
+              />
+
+    <menuitem id="training_employee" name="Training" parent="de_employee_training_menu_root"
+              action="de_employee_training.action_employee_training_view"
+              sequence="1"/>
+
+    <menuitem id="employee_request" name="Requests" parent="de_employee_training_menu_root"
+              action="de_employee_training.action_employee_request_view"
+              sequence="1"/>
+
+    <menuitem id="employee_sessions" name="Sessions" parent="de_employee_training_menu_root"
+              action="de_employee_training.action_employee_sessions_view"
+              sequence="1"/>
+
+
+</odoo>

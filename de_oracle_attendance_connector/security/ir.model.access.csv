@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_user_attendance,hr.user.attendance,model_hr_user_attendance,,1,1,1,1
+access_oracle_setting_connector,oracle.setting.connector,model_oracle_setting_connector,,1,1,1,1
+access_hr_attendance_wizard,hr.attendance.wizard,model_hr_attendance_wizard,,1,1,1,1
+access_hr_device_attendance,hr.device.attendance,model_hr_device_attendance,,1,1,1,1
+access_attendance_process_wizard,access.attendance.process.wizard,model_attendance_process_wizard,,1,1,1,1
+access_oracle_device_line,access.oracle.device.line,model_oracle_device_line,,1,1,1,1
+access_oracle_attendance_count,access.oracle.attendance.count,model_oracle_attendance_count,,1,1,1,1

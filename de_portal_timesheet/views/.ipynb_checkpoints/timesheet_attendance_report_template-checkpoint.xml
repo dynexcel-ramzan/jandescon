@@ -1,0 +1,1095 @@
+<!--  <?xml version="1.0" encoding="utf-8"?>
+ -->
+
+
+<odoo>
+    <template id="portal_layout" name="Portal layout: timesheet menu entry" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'ptimesheet' or ptimesheet" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not timesheet else ''}">
+                <a t-if="ptimesheet" t-attf-href="/project/timesheets?{{ keep_query() }}">Timesheet</a>
+                <t t-else="">Timesheet</t>
+            </li>
+
+        </xpath>
+    </template>
+
+    <template id="portal_my_home" name="Show Timesheet / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry"  groups='de_portal_timesheet.group_portal_timesheet'>
+                <t t-set="title">Timesheet</t>
+                <t t-set="url" t-value="'/project/timesheets'"/>
+                <t t-set="placeholder_count" t-value="'ptimesheet_count'"/>
+            </t>
+        </xpath>
+    </template>
+    
+    
+    
+  <template id="portal_project_timesheets" name="Timesheet Management">
+  <t t-call="website.layout">
+    <div id="wrap">
+      <div class="container" id="portal_my_timesheet">
+          <form class="mt8 float-right" role="search" t-attf-action="/project/timesheets" method="get">
+              <t t-call="website.website_search_box"/>
+          </form>
+          <div t-if="searchbar_sortings" class="dropdown float-right mt8 mr8">
+              <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                  <span class="fa fa-sort fa-lg" role="img" aria-label="Sort" title="Sort"/>
+                  <span class="d-none d-xl-inline" t-esc="searchbar_sortings[sortby].get('label', 'Newest')"/>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="portal_searchbar_sortby" role="menu">
+                  <t t-foreach="searchbar_sortings" t-as="option">
+                      <a role="menuitem"
+                         t-att-href="request.httprequest.path + '?' + keep_query('*', sortby=option)"
+                         t-attf-class="dropdown-item#{sortby == option and ' active' or ''}">
+                          <span t-esc="searchbar_sortings[option].get('label')"/>
+                      </a>
+                  </t>
+              </div>
+          </div>
+          <h3 class="mt16">Manage Timesheet</h3>
+          <div>
+                <t class="col-lg-7 col-md-8" >
+                    <a href="/timesheet/create/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a>
+                </t>
+           </div>
+               <div class='pull-right'>
+                <t class="col-lg-7 col-md-8" style='margin:5px;'>
+                     <a t-attf-href="/timesheet/report/" >
+                      <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Print</div> 
+                    </a>     
+                </t>
+          </div>
+          <t t-if="not grouped_ptimesheets">
+              <div t-if="search" class="alert alert-warning mt8" role="alert">
+                  Your search '<t t-esc="search" />' did not match any timesheet.
+              </div>
+              <div t-else="" class="alert alert-warning mt8" role="alert">
+                  There are currently no timesheet request.
+              </div>
+          </t>
+          <div t-if="grouped_ptimesheets" class="table-responsive">
+              <t t-foreach="grouped_ptimesheets" t-as="all_ptimesheets">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr style='background-color:#875A7B; color:white;'>
+                                <th class="text-left">Incharge</th>
+                                <th class="text-left">Client</th>
+                                <th class="text-left">Project</th>
+                                <th class="text-left">Date From</th>
+                                <th class="text-left">Date To</th>
+                               <th class="text-left">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="all_ptimesheets" t-as="ptimesheet">
+                               <t t-if="ptimesheet.incharge_id.user_id.id == uid">
+                                <tr>
+                                     <td>
+                                        <a t-attf-href="/project/timesheet/#{ptimesheet.id}?{{ keep_query() }}"><span t-field="ptimesheet.incharge_id.name"/></a>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="ptimesheet.partner_id.name" />
+                                    </td>
+
+                                    <td class="text-left">
+                                        <span t-esc="ptimesheet.project_id.name" />
+                                    </td>
+                                    <td class="text-left">
+                                        <t t-if="ptimesheet.date_from">
+                                         <span t-esc="ptimesheet.date_from" t-options='{"widget": "date"}'/>
+                                       </t>
+
+                                    </td>
+                                    <td class="text-left">
+                                        <t t-if="ptimesheet.date_to">
+                                         <span t-esc="ptimesheet.date_to" t-options='{"widget": "date"}'/>
+                                       </t>
+
+                                    </td>
+                                    <td class="text-left">
+                                        <t t-if="ptimesheet.state == 'draft'">
+                                            <i class="badge badge-pill badge-info" >Draft</i>
+                                        </t>
+
+                                        <t t-if="ptimesheet.state == 'submitted'">
+                                            <i class="badge badge-pill badge-warning" >To Approve</i>
+                                        </t>
+                                        <t t-if="ptimesheet.state == 'refused'">
+                                            <i class="badge badge-pill badge-danger" >Refused</i>
+                                        </t>
+                                        <t t-if="ptimesheet.state == 'approved'">
+                                            <i class="badge badge-pill badge-info" > Approved</i>
+                                        </t>
+                                    </td>
+                                    
+                                </tr>
+                               </t>
+                            </t>
+                           
+                        </tbody>
+                    </table>  
+                    </t>
+          </div>
+                  
+      </div>
+    </div>
+  </t>
+</template>
+    
+
+   
+
+    <template id="portal_project_timesheet" name="Project Timesheet Form">
+        <t t-call="portal.portal_layout">
+
+                 
+         <div class="s_card card bg-white w-100" data-snippet="s_card" data-name="Card">
+    
+         <h4 class="card-header" >
+         <font style="color: rgb(61, 66, 70);">
+         <div class="o_form_statusbar">
+            <div class="o_statusbar_buttons">
+                <t class="col-lg-7 col-md-8" >
+                 <t t-if='edit_timesheet==1'>
+                    <t t-if='ptimesheet.state=="draft"'>  
+                     <a t-attf-href="/project/timesheet/submit/#{ptimesheet.id}?"><div class="btn btn-primary" style="height:30px; line-height:100%; ">Submit</div></a>
+        
+                    </t>  
+                 </t>      
+                </t>
+                <t class="col-lg-7 col-md-8" >
+                 <t t-if='edit_timesheet==0'>
+                    <t t-if='ptimesheet.state=="draft"'>  
+                      <a t-attf-href="/project/timesheet/edit/#{ptimesheet.id}?"><div class="btn btn-primary" style="height:30px; line-height:100%; ">Edit</div></a>
+                    </t>    
+                 </t>    
+                </t>
+                <t class="col-lg-7 col-md-8" >
+                 <t t-if='edit_timesheet==0'>
+                    <t t-if='ptimesheet.state not in ("draft","approved")'>  
+                      <a t-attf-href="/project/timesheet/reset/#{ptimesheet.id}?"><div class="btn btn-primary" style="height:30px; line-height:100%; ">Reset To Draft</div></a>
+                    </t>    
+                 </t>    
+                </t>
+                   
+                <span class='pull-right'>status: <i class="badge badge-pill badge-info" ><span t-esc='ptimesheet.state'/></i></span>
+           </div>
+         </div>  
+        </font>    
+        </h4>
+        
+       <div class="card-body container border rounded shadow" style='box-shadow:3px;'>
+        <p class="card-text">
+            
+            <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="project">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Project</span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="ptimesheet.project_id.name"    />
+                            </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_employee">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);' >Client</span>
+                        </label>
+                        <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="ptimesheet.project_id.ora_client_id.name"    />
+                        </div>
+                  </div>
+                </div>
+               </div> 
+            <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="project">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Date From</span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="ptimesheet.date_from"    t-options='{"widget": "date"}' />
+                            </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_employee">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);' >Date To</span>
+                        </label>
+                        <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="ptimesheet.date_to"    t-options='{"widget": "date"}' />
+                        </div>
+                  </div>
+                </div>
+               </div>
+              <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="project">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Project Status</span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="ptimesheet.project_id.ora_status"    />
+                            </div>
+                            </div>
+                        </div>
+               </div>
+             <br/>
+                       
+                 <div class="o_notebook" data-name="_default_">
+                          <div class="o_notebook_headers">
+                              <ul class="nav nav-tabs">
+                                  <li class="nav-item">
+                                    <a data-toggle="tab" disable_anchor="true" href="#notebook_page_3338" class="nav-link active" role="tab">Timesheet Lines</a>
+                                  </li>
+                                  <!--<li class="nav-item">
+                                      <a data-toggle="tab" disable_anchor="true" href="#notebook_page_3340" class="nav-link" role="tab">Other Info</a>
+                                  </li> -->
+                              </ul>
+                          </div>   
+                  </div>
+                <input id='datefromb' type="hidden" name="date_froma" t-att-value="ptimesheet.date_from"/>
+                <input id='datetob' type="hidden" name="date_toa" t-att-value="ptimesheet.date_to"/>
+
+                <t t-if='edit_timesheet==1'>
+                  <form id="timesheeteditForm"  action="/project/timesheet/edit/save"  method="post"  enctype="multipart/form-data">
+                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+                     <script src="/de_portal_timesheet/static/src/js/jquery_min.js"></script>   
+                         <script type="text/javascript">
+                                    
+                              function validatedateFormEdit(event) {
+                                  const selected_date=event.target.value;
+                                  let datefroma = document.getElementById("datefromb").value;
+                                  let datetoa = document.getElementById("datetob").value;
+                                  let line_dateto = document.getElementById("date_to").value;  
+                                  if (new Date(datefroma) > new Date(selected_date)) {
+                                    alert("Not Allow to Enter date less than Project Date From. "+datefroma);
+                                    event.target.value= datefroma;
+                                  }
+                                  if (new Date(selected_date) > new Date(line_dateto)) {
+                                    alert("Not Allow to Enter date greater than Date To. "+line_dateto);
+                                    event.target.value= datefroma;
+                                  }
+                                  if (new Date(selected_date) > new Date(datetoa)) {
+                                     alert("Not Allow to Enter date Greater than Project Date To. "+datetoa);
+                                     event.target.value= datefroma;
+                                  }
+                            }
+                           function validatedateToEdit(event) {
+                              const selected_date=event.target.value;
+                              let datetob = document.getElementById("datetob").value;
+                              let datefromb = document.getElementById("datefromb").value;
+                              let line_datefrom = document.getElementById("date_from").value;
+                              if ( new Date(datefromb) > new Date(selected_date)) {
+                                alert("Not Allow to Enter date less than Project Date From. "+datefromb);
+                                event.target.value= datetob;
+                              }
+                              if ( new Date(line_datefrom) > new Date(selected_date)) {
+                                alert("Not Allow to Enter date less than Date From. "+line_datefrom);
+                                event.target.value= datetob;
+                              }
+                              if (new Date(selected_date) > new Date(datetob)) {
+                                alert("Not Allow to Enter date Greater than Project Date to. "+datetob);
+                                event.target.value= datetob;
+                              }
+                            }
+                    window.addEventListener('DOMContentLoaded', (event) => {
+                        [...document.getElementsByClassName("date_from_edit")].map(el=>{el.addEventListener("change",validatedateFormEdit)}); 
+                        [...document.getElementsByClassName("date_to_edit")].map(el=>{el.addEventListener("change",validatedateToEdit)});
+                    });
+                </script>
+                    <input id='timesheet_id' type="hidden" name="timesheet_id" t-att-value="ptimesheet.id"/>
+                    <input id='project_id' type="hidden" name="project_id" t-att-value="ptimesheet.project_id.id"/>
+                      
+                   &#160;&#160;&#160;&#160;&#160; 
+                   <div class="s_website_form_rows row s_col_no_bgcolor">
+                         <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="timesheet_employee">
+                                    <span style='color:#495057;'>Employee</span>
+                                </label>
+                               <div class="col-sm" id='data_list'>
+                                       <select id="timesheet_employee" class="form-control  o_website_form_input" name="employee_id" readonly="1" required="1">                  
+                                                <option value="blank">
+                                                </option>
+                                            <t t-foreach="emps" t-as="emp">
+                                                <option t-att-value="emp.id">
+                                                    <t t-esc="emp.name"  />(<t t-esc="emp.emp_number"  />)
+                                                </option>
+                                            </t>
+                                       </select>            
+                                </div>
+                            </div>
+                          </div>
+                          
+                        </div> 
+                    
+                      <div class="s_website_form_rows row s_col_no_bgcolor">
+                      <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date_from">
+                                             <span class="s_website_form_label_content" style='color:#495057;'>Date From</span>
+                                </label>
+                                    <div class="col-sm">           
+                                        <input id='date_from' type="date" class="form-control s_website_form_input date_from_edit" name="date_from" required="True"  t-options='{"widget": "date"}'  t-att-value="ptimesheet.date_from" />
+                                    </div>
+                                </div>
+                            </div>  
+                          <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date_to">
+                                             <span class="s_website_form_label_content" style='color:#495057;'>Date To</span>
+                                </label>
+                                    <div class="col-sm">           
+                                        <input id='date_to' type="date" class="form-control s_website_form_input date_to_edit" name="date_to" required="True" t-options='{"widget": "date"}' t-att-value="ptimesheet.date_to" />
+                                    </div>
+                                </div>
+                            </div>  
+                     </div>
+                    
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button type="submit" class="btn btn-primary pull-left">Add Line</button>
+                                        <span id="s_website_form_result"></span>
+                                </div>
+                        </div>    
+                </form> 
+            </t>
+                <table id="timesheetformTable" class='table tabel-responsive'>
+                    <thead> 
+                    <tr style='background-color:#875A7B; color:white;'>
+                      <th>Employee</th>    
+                      <th>Date From</th>  
+                      <th>Date To</th>
+                      <th></th> 
+                    </tr>
+                    </thead>    
+                      <tbody> 
+                         <t t-foreach="ptimesheet.timesheet_attendance_ids" t-as="line">
+                             <tr>
+                                     <td class="employee">
+                                        <span t-esc="line.employee_id.name" />
+                                    </td>
+                                    <td class="date_from">
+                                      <span t-esc="line.date_from"    t-options='{"widget": "date"}'/>
+                                    </td>
+                                    <td class="date_to">
+                                      <span t-esc="line.date_to"    t-options='{"widget": "date"}'/>
+                                    </td>
+                                   <t t-if='edit_timesheet==1'>
+                                     <td class="action_delete">
+                                       <a t-attf-href="/timesheet/line/delete/#{line.id}?"><i class="fa fa-trash"></i></a>
+                                     </td>
+                                   </t>    
+                                    
+                                </tr>
+                         </t>    
+                        
+                      </tbody>
+                </table>
+            </p>
+            </div>
+           <div class="card-footer">
+            <i class="fa fa-1x fa-clock-o mr8"/>
+            <small class="o_default_snippet_text">
+            <div class="mt32">
+              
+            </div>
+            </small>
+           </div>
+                </div>
+              
+
+        </t>
+    </template>
+
+
+     <template id="project_timesheet_template" name="Project Timesheet Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+                            <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/portal.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Timesheet</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="container mt-4 mb-5">
+                                <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                        <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[2]/div[1]/div[1]/div[1]">
+                                            <section class="s_text_block" data-snippet="s_text_block">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <p>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                        <span class="hidden" data-for="contactus_form" data-oe-id="2822" data-oe-xpath="/data/xpath/span" data-oe-model="ir.ui.view" data-oe-field="arch" data-values="{'leave_type_id': '', 'employee_id': '', 'date_start': '', 'date_end': '', 'description': ''}"></span>
+            <div id="timesheet_section" data-oe-id="3374" data-oe-xpath="/data/xpath[2]/div" data-oe-model="ir.ui.view" data-oe-field="arch">
+                    <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        <div class="container">
+                            <form id="timesheetForm"  action="/project/timesheet/next"  method="post"  enctype="multipart/form-data">
+                                
+
+
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                    <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity1">
+                                                <span class="s_website_form_label_content">Project</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <select  id="project" class="form-control  s_website_form_input" name="project_id"  required="1">
+                                                                    <t t-foreach="projects" t-as="pro">
+                                                                        <option t-att-value="pro.id">
+                                                                            <t t-esc="pro.name"/>
+                                                                        </option>
+                                                                     </t>
+                                                                </select>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                   
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                    <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button type="submit" class="btn btn-primary pull-left">Next</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+			</div>
+                                    <div class="col-lg-4 mt-4 mt-lg-0">
+                                   <div class='section-custom col-md-12'>
+                                                   <a class="mb-5" id="submit-timesheet" t-attf-href="/project/timesheets">
+                                                        <button t-attf-class="btn btn-primary #{'col-md-10' if multi_type else 'col-md-12'} mb-2">View Project Timesheet</button>
+                                                    </a>
+                                                </div>
+
+
+
+    <address itemscope="itemscope" itemtype="http://schema.org/Organization">
+        <div data-oe-model="res.company" data-oe-id="1" data-oe-field="partner_id" data-oe-type="contact" data-oe-expression="res_company.partner_id" data-oe-many2one-id="1" data-oe-many2one-model="res.partner" data-oe-contact-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;name&quot;, &quot;address&quot;, &quot;phone&quot;, &quot;mobile&quot;, &quot;email&quot;], &quot;tagName&quot;: &quot;div&quot;, &quot;expression&quot;: &quot;res_company.partner_id&quot;, &quot;type&quot;: &quot;contact&quot;, &quot;inherit_branding&quot;: true, &quot;translate&quot;: false}" data-oe-field-xpath="/t[1]/address[1]/div[1]">
+    <address class="mb-0" itemscope="itemscope" itemtype="http://schema.org/Organization">
+
+
+
+    <div>
+
+
+    </div>
+
+
+        <div itemprop="address" itemscope="itemscope" itemtype="http://schema.org/PostalAddress">
+
+
+
+
+        </div>
+
+
+
+    </address>
+</div>
+
+
+    </address>
+
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="oe_structure mt-2" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[3]"></div>
+                        </div>
+
+        </t>
+    </template>
+    
+    
+    <template id="portal_create_timesheet_report_lines" name="Timesheet Request">
+<t t-name="website.timesheet-timesheet">
+<t t-call="website.layout">
+<div id="wrap" class="oe_structure oe_empty">
+<section class="s_quotes_carousel_wrapper o_colored_level" data-vxml="001" data-vcss="001" data-snippet="s_quotes_carousel" data-name="Quotes" style="">
+<div class="s_card card bg-white w-100" data-snippet="s_card" data-name="Card">
+    
+        <h4 class="card-header" >
+        <font style="color: rgb(61, 66, 70);">
+        <div class="o_form_statusbar">
+            <div class="o_statusbar_buttons">
+              <form  id="portal_timesheeet_form" data-toggle="validator" action="/project/timesheet/line/save" method="post"  enctype="multipart/form-data">
+              <input type="hidden" id="timesheet_attendance_vals" class="form-control s_website_form_input" name="timesheet_attendance_vals"  multiple="true" />
+                       <input id='datefromb' type="hidden"  class="form-control s_website_form_input" name="docsdate_from" t-att-value="project.ora_mobilization_date"  multiple="true" />
+                        <input type="hidden" id="project_id" class="form-control s_website_form_input" name="project_id" t-att-value="project.id"  multiple="true" />
+                        <input type="hidden" id="partner_id" class="form-control s_website_form_input" name="partner_id" t-att-value="partner.id"  multiple="true" />
+                        <input id='datetob' type="hidden"  class="form-control s_website_form_input" name="docsdate_to" t-att-value="project.ora_close_date"  multiple="true" /> 
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                  
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+          <script src="/de_portal_timesheet/static/src/js/jquery_min.js"></script> 
+          <script type="text/javascript">
+              
+                        $(document).ready(function(){
+                        $("#timesheetsubmit").on('click',function(){
+                        var timesheetsubmitdata=[];
+                        // loop over each table row (tr)
+                        $("#timesheetTable tr").each(function(){
+                            var currentRow=$(this);
+                            var col1_value=currentRow.find("td:eq(0)").text();
+                            var col2_value=currentRow.find("td:eq(1)").text();
+                            var col3_value=currentRow.find("td:eq(2)").text();
+                            var obj={};
+                            obj.employee=col1_value;
+                            obj.date_from=col2_value;
+                            obj.date_to=col3_value;
+                            timesheetsubmitdata.push(obj);
+                        });
+                        timesheetdictionary = JSON.stringify(timesheetsubmitdata); 
+                        var lista = document.getElementById("timesheet_attendance_vals")
+                        lista.value = timesheetdictionary 
+                        });
+                        });
+                        
+                        
+                  </script> 
+
+                
+                   <button id='timesheetsubmit' type="submit" class="btn btn-primary pull-left">Submit</button>
+
+               </form>      
+                <span class='pull-right'>status: <i class="badge badge-pill badge-info" >Draft</i></span>
+           </div>
+         </div>  
+        </font>    
+        </h4>
+        
+       <div class="card-body container border rounded shadow" style='box-shadow:3px;'>
+        <p class="card-text">
+            
+            <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="project">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Project</span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="project.name"    />
+                            </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_employee">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);' >Client</span>
+                        </label>
+                        <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="project.ora_client_id.name"    />
+                        </div>
+                  </div>
+                </div>
+               </div> 
+            <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="project">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Date From</span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="project.ora_mobilization_date"    t-options='{"widget": "date"}' />
+                            </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_employee">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);' >Date To</span>
+                        </label>
+                        <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="project.ora_close_date"    t-options='{"widget": "date"}' />
+                        </div>
+                  </div>
+                </div>
+               </div>
+              <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="project">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Project Status</span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="project.ora_status"    />
+                            </div>
+                            </div>
+                        </div>
+               </div>
+             <br/>
+                       
+                 <div class="o_notebook" data-name="_default_">
+                          <div class="o_notebook_headers">
+                              <ul class="nav nav-tabs">
+                                  <li class="nav-item">
+                                    <a data-toggle="tab" disable_anchor="true" href="#notebook_page_3338" class="nav-link active" role="tab">Timesheet Lines</a>
+                                  </li>
+                                  <!--<li class="nav-item">
+                                      <a data-toggle="tab" disable_anchor="true" href="#notebook_page_3340" class="nav-link" role="tab">Other Info</a>
+                                  </li> -->
+                              </ul>
+                          </div>   
+                  </div>
+                  <form onsubmit="event.preventDefault();onTimesheetFormSubmit();">
+                     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+                     <script src="/de_portal_timesheet/static/src/js/jquery_min.js"></script>   
+                         <script type="text/javascript">
+                                    var timesheet_data_vals = []
+                                    function onTimesheetFormSubmit(){
+                                          var formData = readTimesheetFormData();
+                                          insertTimesheetFormRecord(formData);
+                                          resetTimesheetForm();
+                                    }
+                                    function readTimesheetFormData(){
+                                      var formData = {};
+                                      formData['timesheet_employee'] = document.getElementById('timesheet_employee').value;
+                                      formData['date_from'] = document.getElementById('date_from').value;
+                                      formData['date_to'] = document.getElementById('date_to').value;
+                                      return formData;
+                                    }
+                                    function insertTimesheetFormRecord(data){
+                                       var tableproduct = document.getElementById('timesheetTable');
+                                       var duplicate_record = 0
+                                       var newRow = tableproduct.insertRow(tableproduct.length)
+                                       if (data.timesheet_employee=='blank'){
+                                            alert('Please Select Employee!')
+                                       }
+                                       $("#timesheetTable tr").each(function(){
+                                         var currentRow=$(this);
+                                         var col1_value=currentRow.find("td:eq(0)").text();
+                                         var col2_value=currentRow.find("td:eq(1)").text();
+                                         var col3_value=currentRow.find("td:eq(2)").text();
+                                         if (new Date(data.date_to) >= new Date(col2_value) &amp;&amp; new Date(col3_value) >= new Date(data.date_to) &amp;&amp; col1_value==data.timesheet_employee)
+                                         {
+                                           duplicate_record = 1 
+                                           alert('Same Date Entry Already Exist For This Employee ')
+                                         }
+                                         else if (new Date(data.date_from) >= new Date(col2_value) &amp;&amp; new Date(col3_value) >= new Date(data.date_from) &amp;&amp; col1_value==data.timesheet_employee)
+                                         {
+                                           duplicate_record = 1 
+                                           alert('Same Date Entry Already Exist For This Employee ')
+                                         }     
+                                    });
+                                    if (duplicate_record == 0){
+                                       cell1 = newRow.insertCell(0);
+                                       cell1.innerHTML= data.timesheet_employee
+                                       cell1.classList.add("timesheet_employee");
+                                       cell2 = newRow.insertCell(1);
+                                       cell2.innerHTML= data.date_from
+                                       cell2.classList.add("date_from");
+                                       cell3 = newRow.insertCell(2);
+                                       cell3.innerHTML= data.date_to
+                                       cell3.classList.add("date_to");
+                                       cell4 = newRow.insertCell(3);                                   
+                                       cell4.innerHTML= '<a onClick="onDelete(this)"><i class="fa fa-trash"></i></a>'; 
+                                       }
+                                    }
+                             
+                                    function resetTimesheetForm(){
+                                      document.getElementById('timesheet_employee').value="";
+                                      document.getElementById('date_from').value=document.getElementById("datefromb").value;
+                                      document.getElementById('date_to').value=document.getElementById("datetob").value;
+                                    }
+                                    function onDelete(td){
+                                          row = td.parentElement.parentElement;
+                                          document.getElementById("timesheetTable").deleteRow(row.rowIndex);
+                                    }
+                              function validatedateForm(event) {
+                                  const selected_date=event.target.value;
+                                  let datefroma = document.getElementById("datefromb").value;
+                                  let datetoa = document.getElementById("datetob").value;
+                                  let line_dateto = document.getElementById("date_to").value;  
+                                  if (new Date(datefroma) > new Date(selected_date)) {
+                                    alert("Not Allow to Enter date less than Project Date From. "+datefroma);
+                                    event.target.value= datefroma;
+                                  }
+                                  if (new Date(selected_date) > new Date(line_dateto)) {
+                                    alert("Not Allow to Enter date greater than Date To. "+line_dateto);
+                                    event.target.value= datefroma;
+                                  }
+                                  if (new Date(selected_date) > new Date(datetoa)) {
+                                     alert("Not Allow to Enter date Greater than Project Date To. "+datetoa);
+                                     event.target.value= datefroma;
+                                  }
+                            }
+                           function validatedateTo(event) {
+                              const selected_date=event.target.value;
+                              let datetob = document.getElementById("datetob").value;
+                              let datefromb = document.getElementById("datefromb").value;
+                              let line_datefrom = document.getElementById("date_from").value;
+                              if ( new Date(datefromb) > new Date(selected_date)) {
+                                alert("Not Allow to Enter date less than Project Date From. "+datefromb);
+                                event.target.value= datetob;
+                              }
+                              if ( new Date(line_datefrom) > new Date(selected_date)) {
+                                alert("Not Allow to Enter date less than Date From. "+line_datefrom);
+                                event.target.value= datetob;
+                              }
+                              if (new Date(selected_date) > new Date(datetob)) {
+                                alert("Not Allow to Enter date Greater than Project Date to. "+datetob);
+                                event.target.value= datetob;
+                              }
+                            }
+                    window.addEventListener('DOMContentLoaded', (event) => {
+                        [...document.getElementsByClassName("date_from")].map(el=>{el.addEventListener("change",validatedateForm)}); 
+                        [...document.getElementsByClassName("date_to")].map(el=>{el.addEventListener("change",validatedateTo)});
+                    });
+                </script>
+                      
+                   &#160;&#160;&#160;&#160;&#160; 
+                   <div class="s_website_form_rows row s_col_no_bgcolor">
+                         <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="timesheet_employee">
+                                    <span style='color:#495057;'>Employee</span>
+                                </label>
+                               <div class="col-sm" id='data_list'>
+                                       <select id="timesheet_employee" class="form-control  o_website_form_input" name="employee_id" readonly="1" required="1">                  
+                                                <option value="blank">
+                                                </option>
+                                            <t t-foreach="emps" t-as="emp">
+                                                <option t-att-value="emp.name">
+                                                    <t t-esc="emp.name"  />(<t t-esc="emp.emp_number"  />)
+                                                </option>
+                                            </t>
+                                       </select>            
+                                </div>
+                            </div>
+                          </div>
+                          
+                        </div> 
+                    
+                      <div class="s_website_form_rows row s_col_no_bgcolor">
+                      <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date_from">
+                                             <span class="s_website_form_label_content" style='color:#495057;'>Date From</span>
+                                </label>
+                                    <div class="col-sm">           
+                                        <input id='date_from' type="date" class="form-control s_website_form_input date_from" name="date_from" required="True"  t-options='{"widget": "date"}'  t-att-value="project.ora_mobilization_date" />
+                                    </div>
+                                </div>
+                            </div>  
+                          <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date_to">
+                                             <span class="s_website_form_label_content" style='color:#495057;'>Date To</span>
+                                </label>
+                                    <div class="col-sm">           
+                                        <input id='date_to' type="date" class="form-control s_website_form_input date_to" name="date_to" required="True" t-options='{"widget": "date"}' t-att-value="project.ora_close_date" />
+                                    </div>
+                                </div>
+                            </div>  
+                     </div>
+                    
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button type="submit" class="btn btn-primary pull-left">Add Line</button>
+                                        <span id="s_website_form_result"></span>
+                                </div>
+                        </div>    
+                </form> 
+                
+                <table id="timesheetTable" class='table tabel-responsive'>
+                    <thead> 
+                    <tr style='background-color:#875A7B; color:white;'>
+                      <th>Employee</th>    
+                      <th>Date From</th>  
+                      <th>Date To</th>
+                      <th></th> 
+                    </tr>
+                    </thead>    
+                      <tbody> 
+                        
+                      </tbody>
+                </table>
+            </p>
+            </div>
+           <div class="card-footer">
+            <i class="fa fa-1x fa-clock-o mr8"/>
+            <small class="o_default_snippet_text">
+            <div class="mt32">
+              
+            </div>
+            </small>
+           </div>
+        </div>
+        </section>
+        </div>
+        </t>
+        </t>
+    </template>
+    
+    
+    <template id="print_timesheet_report" name="print timesheet report">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+                            <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Timesheet Report</h1>
+                                    </div>
+                                </section>
+                            </div>
+                                            
+                            <div class="container mt-4 mb-5">
+                                <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                        <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[2]/div[1]/div[1]/div[1]">
+                                            <section class="s_text_block" data-snippet="s_text_block">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <p>
+                                                               
+                                                            </p>
+                                                                   
+                                                            
+                                                          
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                        <span class="hidden" data-for="contactus_form" data-oe-id="2822" data-oe-xpath="/data/xpath/span" data-oe-model="ir.ui.view" data-oe-field="arch" data-values="{'employee_id': '', 'manager': '', 'date_end': '', 'description': ''}"></span>
+            <div id="report_section" data-oe-id="3374" data-oe-xpath="/data/xpath[2]/div" data-oe-model="ir.ui.view" data-oe-field="arch">
+                    <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        <div class="container">
+                            <form id="portal_timesheet_form" data-toggle="validator" action="/project/timesheet/print">
+
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                   
+                                    <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="project">
+                                                <span class="s_website_form_label_content">Project</span>
+                                                <span class="s_website_form_mark"> *</span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                             <select id="timesheet_employee" class="form-control  o_website_form_input" name="project_id" readonly="1" required="1">                  
+                                                <option value="blank">
+                                                </option>
+                                            <t t-foreach="projects" t-as="project">
+                                                <option t-att-value="project.id">
+                                                    <t t-esc="project.name"  />
+                                                </option>
+                                            </t>
+                                       </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                     
+                                    
+                                   
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date_from">
+                                                <span class="s_website_form_label_content">Date From</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+
+                                                
+                                              <input type="date" class="form-control s_website_form_input" name="date_from"   required="1"/>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                   
+                                    
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date_to">
+                                                <span class="s_website_form_label_content">Date To</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+
+                                                
+                                              <input type="date" class="form-control s_website_form_input" name="date_to"  required="1"  />
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                         
+                                   
+                                   
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button type="submit" class="btn btn-primary pull-left">Print</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+			</div>
+                                    <div class="col-lg-4 mt-4 mt-lg-0">
+                                   <div class='section-custom col-md-12'>
+                                                   <a class="mb-5" id="submit-leave" t-attf-href="/project/timesheets">
+                                                        <button t-attf-class="btn btn-primary #{'col-md-10' if multi_type else 'col-md-12'} mb-2">View  Timesheet</button>
+                                                    </a>
+                                                </div>      
+                                        
+                                        
+                                        
+    <address itemscope="itemscope" itemtype="http://schema.org/Organization">
+        <div data-oe-model="res.company" data-oe-id="1" data-oe-field="partner_id" data-oe-type="contact" data-oe-expression="res_company.partner_id" data-oe-many2one-id="1" data-oe-many2one-model="res.partner" data-oe-contact-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;name&quot;, &quot;address&quot;, &quot;phone&quot;, &quot;mobile&quot;, &quot;email&quot;], &quot;tagName&quot;: &quot;div&quot;, &quot;expression&quot;: &quot;res_company.partner_id&quot;, &quot;type&quot;: &quot;contact&quot;, &quot;inherit_branding&quot;: true, &quot;translate&quot;: false}" data-oe-field-xpath="/t[1]/address[1]/div[1]">
+    <address class="mb-0" itemscope="itemscope" itemtype="http://schema.org/Organization">
+        
+        
+            
+    <div>
+        
+        
+        
+        
+    </div>
+
+        
+        <div itemprop="address" itemscope="itemscope" itemtype="http://schema.org/PostalAddress">
+           
+            
+          
+            
+           
+        </div>
+        <div>
+             
+            
+
+        </div>
+    
+        
+        
+    </address>
+</div>
+        
+          
+    </address>
+        
+            
+        
+    
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="oe_structure mt-2" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[3]"></div>
+                        </div>
+                            
+                            
+                            
+            
+            
+         
+        </t>
+    </template>
+    
+    
+    <template id="de_portal_timesheet.submited_validation" name="Document Validation">
+        <t t-call="portal.portal_layout">
+            
+                  <div id="wrap">
+                    <div class="oe_structure" id="oe_structure_website_form_contact_us_thanks_1"/>
+                    <div class="container mt-4">
+                        <div class="row">
+                            <div class="col-lg-7 col-xl-6 mr-lg-auto oe_structure">
+                                <section class="pt40 s_text_block pb40 o_colored_level o_cc o_cc1" data-snippet="s_text_block" data-name="Text">
+                                    <div class="container">
+                                        <span class="d-block fa fa-4x fa-thumbs-down mx-auto rounded-circle bg-primary"/><br/>
+                                        <h1 class="text-center;"><p style='color:red;margin-left:200px'>Warning!</p></h1>
+                                        <div class="pb16 pt16 s_hr" data-snippet="s_hr" data-name="Separator">
+                                            <hr class="mx-auto border-top w-50 border-dark text-center"/>
+                                        </div>
+                                        <h5 class="text-center">
+                                            <span class="fa fa-check-circle"/>
+                                            <span t-esc='warning_message'></span>
+                                        </h5>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="col-lg-4">
+                                <t t-call="website.company_description"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="oe_structure" id="oe_structure_website_form_contact_us_thanks_2"/>
+                  </div>
+           
+         </t>
+    </template>
+    
+    
+     
+      <template id="de_portal_timesheet.ptimesheet_submited" name="timesheet Received">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container">
+                    <div class="row">
+                        <t t-if="request.session.get('form_builder_model_model', '') == 'hr.timesheet.reprot'">
+                            <t t-set="leave" t-value="request.portal._website_form_last_record().sudo()"/>
+                        </t>
+                        <h1 class="text-center"><i class="fa fa-check-circle fa-2x text-success" role="img" aria-label="Success" title="Success"/></h1>
+                        <t t-if="ptimesheet">
+                            <h1 class="text-center">Your Project Timesheet Request Number is <a t-if="request.session.uid" t-attf-href="/project/timesheet/page/">#<span t-field="ptimesheet.id"/></a><t t-if="not request.session.get('uid')">#<span t-field="ptimesheet.id"/></t>.</h1>
+                        </t>
+                        <h1 class="text-center">Thank you for submitting your project timesheet request!</h1>
+                    </div>
+                </div>
+            </div>
+         </t>
+    </template>
+
+
+</odoo>
+
+

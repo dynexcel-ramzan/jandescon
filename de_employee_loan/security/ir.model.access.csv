@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_loan_user,hr.loan.group_user,model_hr_loan,hr.group_hr_user,1,1,1,0
+access_hr_jobuser,hr.job.group_user,hr.model_hr_job,,1,1,1,0
+access_hr_loan_line_user,hr.loan.line.group_user,model_hr_loan_line,,1,1,0,0
+access_hr_loan_officer,hr.loan.group_hr_user,model_hr_loan,,1,1,1,1
+access_hr_loan_line_officer,hr.loan.line.group_hr_user,model_hr_loan_line,,1,1,1,1
+access_hr_loan_manager,hr.loan,model_hr_loan,,1,1,1,1
+access_hr_loan_line_manager,hr.loan.line,model_hr_loan_line,,1,1,1,1
+access_hr_loan_policy,access.hr.loan.policy,model_hr_loan_policy,,1,1,1,1
+access_hr_loan_proof,hr.loan.proof,model_hr_loan_proof,,1,1,1,1
+access_hr_loan_type,hr.loan.type,model_hr_loan_type,,1,1,1,1
+access_hr_loan_type_proof,hr.loan.type.proof,model_hr_loan_type_proof,,1,1,1,1
+access_hr_employee_loan_proof,hr.employee.loan.proof,model_hr_employee_loan_proof,,1,1,1,1
+access_hr_employee_loan_policy_line,hr.employee.loan.policy.line,model_hr_employee_loan_policy_line,,1,1,1,1

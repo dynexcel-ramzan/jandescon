@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="appraisal_improvements_tree" model="ir.ui.view">
+        <field name="name">hr.appraisal.improvements.tree</field>
+        <field name="model">hr.appraisal.improvements</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="employee_id"/>
+                <field name="grade"/>
+                <field name="position"/>
+                <field name="department_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="appraisal_improvements_form" model="ir.ui.view">
+        <field name="name">hr.appraisal.improvements.form</field>
+        <field name="model">hr.appraisal.improvements</field>
+        <field name="arch" type="xml">
+            <form string="Appraisal Improvements">
+                <header>
+                    <button name='action_confirmed' string="Confirm" type="object" class='oe_highlight' 
+                            states='draft'/>                    
+                    <button name='action_waiting' string="Sent For Employees Review" 
+                            type="object" class='oe_highlight' states='confirmed'/>
+                    
+                    <button name='action_review' string="Reviewed By Employee" type="object" class='oe_highlight' 
+                            states='employee_waiting'/>
+                    
+                    <button name='action_follow_up' string="Awaiting Follow Up"
+                            type="object" class='oe_highlight' 
+                            states='employee_review'/>
+                    
+                    <button name='action_done' string="Done"
+                            type="object" class='oe_highlight' 
+                            states='follow_up'/>
+                    
+                    <field name="state" widget="statusbar" clickable="True"/>
+                </header>
+                
+                <sheet>
+                    <h2>
+                    <field name="name"/>
+                    </h2>
+                    <group>
+                        <group string="Employee Info" name="Employee Info">
+                            <field name="employee_id" required = "1"
+                                   attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="grade" readonly="1"/>
+                            <field name="position" readonly="1"/>
+                            <field name="department_id" readonly="1"/>
+                            <field name="date_of_joining" readonly="1"/>
+                        </group>
+                        <group string =" Manager Info" name="Manger Info">
+                            <field name = "manager_name" readonly="1"/>
+                            <field name ="designation" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group string ="PIP Info" name="PIP Info">
+                        <field name = "rating_scale" readonly="1"/>
+                        <field name="follow_up_period"
+                               attrs="{'readonly': [('state','!=','draft')]}"/>
+                        <field name="follow_up_date" readonly="1"/>
+                    </group>
+<!--                      attrs="{'no_create': [('state','!=','draft')]}"-->
+                    <notebook>
+                        <page string = "Performane Improvement Plan" name="Performane Improvement Plan">
+                            <field name="appraisal_improve_line"
+                                   attrs="{'readonly': [('state', '!=', 'draft'),('state', '!=', 'confirmed'),('state', '!=', 'follow_up')]}">
+                                <tree editable="bottom">
+                                    <field name='performance_improvement_area' required="True"
+                                          attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                                    <field name="action_plan"
+                                          attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                                    <field name="rating"
+                                           attrs="{'invisible': [('state','!=','follow_up'),('state','!=','done')],
+                                                  'readonly': [('state','=','done')]}"/>
+                                    <field name="state" invisible="1"
+                                           attrs="{'readonly': [('state','!=','draft'),('state','!=','confirmed')]}"/>
+                                </tree>
+                            </field>
+                        </page>
+                       <page string = "PIP Follow UP" name="PIP Follow UP"
+                             attrs="{'invisible': [('state','!=','draft'),
+                                    ('state','!=','follow_up'),('state','!=','done')],
+                                   'readonly': ['|',('state','=','employee_waiting')
+                                             ,('state','=','done')]}">
+                           <group>
+                               <field name="employee_undertake_action"
+                                      attrs="{'readonly': ['|',('state','=','employee_waiting')
+                                             ,('state','=','done')]}"/>
+                               <br/>
+                               <field name="ratings" attrs="{'invisible': [
+                                                            ('employee_undertake_action','!=','yes')]}"/>
+                               <field name="comments"
+                                      attrs="{'readonly': ['|',('state','=','employee_waiting')
+                                             ,('state','=','done')]}"/>
+                           </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_appraisal_improvements_action" model="ir.actions.act_window">
+        <field name="name">Appraisall Improvements</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hr.appraisal.improvements</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create Records Here.......
+            </p>
+        </field>
+    </record>
+    
+    <menuitem id="improvements_appraisal"
+          name="Improvement"
+          parent="hr_appraisal.menu_hr_appraisal_root"
+          action="de_appraisal_probation_improvement.action_appraisal_improvements_action"
+          sequence="6"/>
+
+</odoo>

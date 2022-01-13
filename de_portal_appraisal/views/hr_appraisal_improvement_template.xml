@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    
+    <template id="portal_appraisal_imrovements" name="improvements">
+         <t t-set="foo" t-value="2 + 1"/>
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Improvements</t>
+            </t>
+            <t t-if="not grouped_improvements">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no Improvements.
+                </div>
+            </t>
+            <t t-if="grouped_improvements">
+                <t t-call="portal.portal_table">
+                    <t t-foreach="grouped_improvements" t-as="improvements">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left">No#</th>
+                                 <th class="text-left">Employee</th>
+                                <th class="text-left">Grade</th>
+                                <th class="text-left">Position</th>
+                                <th class="text-left">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="improvements" t-as="improvement">   
+                            <t t-if="improvement.employee_id.parent_id.user_id.id == uid">   
+                                
+                                <tr>
+                                      <td class="text-left">
+                                        #<span t-esc="improvement.id" />
+                                    </td>
+                                     <td>
+                                        <a t-attf-href="/appraisal/improvement/#{improvement.id}?{{ keep_query() }}"><span t-field="improvement.employee_id.name"/></a>
+                                    </td>
+                                    
+                                     
+                                    <td class="text-left">
+                                        <span t-esc="improvement.grade.name" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="improvement.position"  />
+                                    </td>
+                                   
+                                    <td class="text-left">
+                                        <t t-if="improvement.state == 'draft'">
+                                            <i class="badge badge-pill badge-info" >Draft</i>
+                                        </t>
+                                        <t t-if="improvement.state == 'employee_waiting'">
+                                            <i class="badge badge-pill badge-info" >Sent For Employees Review</i>
+                                        </t>
+                                        <t t-if="improvement.state == 'confirmed'">
+                                            <i class="badge badge-pill badge-info" >Approved</i>
+                                        </t>
+                                        <t t-if="improvement.state == 'employee_review'">
+                                            <i class="badge badge-pill badge-info" >Reviewed By Employee</i>
+                                        </t>
+                                        <t t-if="improvement.state == 'follow_up'">
+                                            <i class="badge badge-pill badge-info" >Follow Up</i>
+                                        </t>
+                                         <t t-if="improvement.state == 'done'">
+                                            <i class="badge badge-pill badge-info" >Done</i>
+                                        </t>
+                                       
+                                    </td>                                   
+                            
+                                </tr>
+                            </t>
+                                <t t-if="improvement.employee_id.user_id.id == uid">   
+                                
+                                <tr>
+                                      <td class="text-left">
+                                        #<span t-esc="improvement.id" />
+                                    </td>
+                                     <td>
+                                        <a t-attf-href="/appraisal/improvement/#{improvement.id}?{{ keep_query() }}"><span t-field="improvement.employee_id.name"/></a>
+                                    </td>
+                                    
+                                     
+                                    <td class="text-left">
+                                        <span t-esc="improvement.grade.name" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="improvement.position"  />
+                                    </td>
+                                   
+                                    <td class="text-left">
+                                        <t t-if="improvement.state == 'draft'">
+                                            <i class="badge badge-pill badge-info" >Draft</i>
+                                        </t>
+                                        <t t-if="improvement.state == 'employee_waiting'">
+                                            <i class="badge badge-pill badge-info" >Sent For Employees Review</i>
+                                        </t>
+                                        <t t-if="improvement.state == 'confirmed'">
+                                            <i class="badge badge-pill badge-info" >Confirmed</i>
+                                        </t>
+                                        <t t-if="improvement.state == 'employee_review'">
+                                            <i class="badge badge-pill badge-info" >Reviewed By Employee</i>
+                                        </t>
+                                        <t t-if="improvement.state == 'follow_up'">
+                                            <i class="badge badge-pill badge-info" >Follow Up</i>
+                                        </t>
+                                         <t t-if="improvement.state == 'done'">
+                                            <i class="badge badge-pill badge-info" >Done</i>
+                                        </t>
+                                       
+                                    </td>                                   
+                            
+                                </tr>
+                            </t>
+                              
+                            </t>    
+
+                            <tr>
+                               <div>
+                                <t class="col-lg-7 col-md-8" >
+                                    <a href="/appraisal/improvement/create/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
+                                    </t>
+                                </div>  
+                            </tr> 
+                        </tbody>
+                    </t>
+                </t>
+            </t>   
+        </t>
+    </template>
+     
+        <template id="portal_appraisal_improvement" name="Improvement">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                    <div class="row no-gutters">
+                        <div class="col-12">
+                            <h5 class="d-flex mb-1 mb-md-0 row">
+                                <span t-field="improvement.id" class="col-9 text-truncate"/>
+                                <small class="text-muted d-none d-md-inline"> (#<span t-field="improvement.id"/>)</small>
+                                <div class="col-3 col-md-2 text-right">
+                                    <small class="text-right">Status:</small>
+                                    <span t-field="improvement.state" class=" badge badge-pill badge-info" title="Current stage of this improvement"/>
+                                </div>
+                            </h5>
+                        </div>
+                    </div>
+                </t>
+                <t t-set="card_body">
+                 <t t-if='improvement.state=="draft"'> 
+                   <div>
+                        <a class="mb-5" id="submit-object" t-attf-href="/new/improvement/line/save/#{improvement.id}?">
+                            <button class="btn btn-primary pull-right">Add Improvement</button>
+                        </a>                        
+                    </div> 
+                </t>
+                     <div  class='pull-left'>
+                        <t t-if="improvement.state == 'draft'">
+                                <t t-if="improvement.employee_id.parent_id.user_id.id == uid">
+                                        <a t-attf-href="/action/confirm/improvement/#{improvement.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%; ">Confirm</div> </a>
+                                      </t>
+                                    </t>
+                                <t t-if="improvement.state == 'confirmed'">
+                                   
+                                      <t t-if="improvement.employee_id.parent_id.user_id.id == uid">
+                                        <a t-attf-href="/action/send/improvement/#{improvement.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%; ">Send for Employee Review</div> </a>
+                                      </t>
+                                </t> 
+                                <t t-if="improvement.state == 'follow_up'">
+                                   
+                                      <t t-if="improvement.employee_id.parent_id.user_id.id == uid">
+                                        <a t-attf-href="/action/done/#{improvement.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%; ">Done</div> </a>
+                                      </t>
+                                </t>
+                               <t t-if="improvement.state=='employee_waiting'">                                   
+                                      <t t-if="improvement.employee_id.user_id.id == uid">
+                                        <a t-attf-href="/action/confirm/employee/#{improvement.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%; ">Confirm</div> </a>
+                                      </t>
+                                </t>      
+                     </div>
+                    <br/>
+                    <br/>
+                    <br/>
+                 <form id="improveForm"  action="/test"  method="post"  enctype="multipart/form-data">
+                    
+                     
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Employee</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.name"    />
+                                <input type="hidden" class="form-control s_website_form_input" name="employee_id"   t-att-value='employee_name.id' />   
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content">Manager</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="managers"    />
+                        </div>
+                  </div>
+                </div>
+               </div>
+                
+                <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Employee Code</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.emp_number"    />
+                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content">Department</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="employee_name.department_id.name"    />
+                        </div>
+                  </div>
+                </div>
+               </div>  
+                
+                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Grade</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.grade_designation.name"/>
+                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                            <span class="s_website_form_label_content">Job Position</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="employee_name.job_id.name"    />
+                        </div>
+                  </div>
+                </div>
+               </div>  
+               <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Employee Type</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.emp_type"/>
+                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content">Date Of Joining</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="employee_name.date"    t-options='{"widget": "date"}'/>
+                        </div>
+                  </div>
+                </div>
+               </div>  
+                
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+
+                <input id='recordid' type="hidden" class="form-control s_website_form_input" name="record_id"   t-att-value="improvement.id"/>
+                
+                </form> 
+                 <div >
+                 
+                  <t t-set='sr_count' t-value='0'/>   
+                  <t t-foreach="improvement.appraisal_improve_line" t-as="line"> 
+                    <t t-set='sr_count' t-value='sr_count + 1'/>     
+                    <section class="s_text_image pt32 pb32 o_colored_level"  style='box-shadow:3px;' data-snippet="s_image_text" data-name="Image - Text">
+                     
+                    <div class="container" style='box-shadow:3px;'>                      
+                      <div class="row align-items-center">
+                        <div class="col-lg-12 pt16 pb16 o_colored_level col-lg-12 border rounded shadow">
+                            <div data-snippet="s_share"  data-name="Share">
+                                <i class="pull-left">Improvement# <t t-esc='sr_count'/> </i>
+                                <t t-if='line.rating'>
+                                  <i class="badge badge-pill badge-info pull-right" ><t t-esc='line.rating'/></i> 
+                                </t>    
+                            </div>  
+                            <br/>
+                             <h2><t t-esc='line.performance_improvement_area'/></h2>
+                              <p class="o_default_snippet_text"><t t-esc='line.action_plan'/></p>                  
+                            
+                              <div>                                  
+                                 <div data-snippet="s_share"  data-name="Share">                                     
+                                   <t t-if='improvement.state=="draft"'>
+                                       <a t-attf-href="/delete/improvement/line/save/#{line.id}?" class="fa fa-trash pull-right" style="font-size:20px;color:red"></a>                    
+                                       <a t-attf-href="/edit/improvement/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                   </t>    
+                                   <t t-if='improvement.state=="follow_up"'>
+                                       <a t-attf-href="/edit/improvement/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                   </t>       
+                                </div>
+                                </div>      
+                        </div>
+                      </div>
+                    </div>
+                  </section> 
+                 </t>     
+                </div>                  
+                </t>
+            </t>       
+        </t>
+    </template> 
+    
+    
+        <!--  Edit Objective Line  -->   
+    
+        <template id="edit_appraisal_improvement" name="edit improvement line Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">                                         
+                    <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Improvement</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <form id="saleForm"  action="/edit/improvement/line/save"  method="post"  enctype="multipart/form-data">                            
+                                <div class="container mt-4 mb-5">
+                                 <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                    </div>  
+                                    </div>  
+                                 </div>  
+                                        
+                               <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="performance_improvement_area">
+                                               <span class="s_website_form_label_content">Performance Improvement Area</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                              <t t-if='improvement.state!="follow_up"' >
+                                                <input id='performance_improvement_area' type="text" class="form-control s_website_form_input" name="performance_improvement_area"  required='1' t-att-value="improvement.performance_improvement_area"/>
+                                              </t>    
+                                                <t t-esc='improvement.action_plan'/>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="action_plan">
+                                               <span class="s_website_form_label_content">Action Plan and Timeline</span>
+                                            </label>
+                                            <div class="col-sm">
+                                              <t t-if='improvement.state!="follow_up"' >
+                                                <input id='action_plan' type="text" class="form-control s_website_form_input" name="action_plan"  required='1' t-att-value="improvement.action_plan"/>
+                                              </t>  
+                                              <t t-esc='improvement.action_plan'/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+                                <t t-if='improvement.state=="follow_up"' >
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                  <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="action_plan">
+                                               <span class="s_website_form_label_content">Rating *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                
+                                            <select  id="managerratinglevelline" class="form-control  s_website_form_input" name="rating"  required='1'>
+                                                <option value="blank"> </option>
+                                                <option value="Outstanding Performance">Outstanding Performance</option>
+                                                <option value="Excellent Performance">Excellent Performance</option>
+                                                <option value="Strong Performance">Strong Performance</option>
+                                                <option value="Needs Improvement">Needs Improvement</option>
+                                                <option value="Unsatisfactory">Unsatisfactory</option>
+                                            </select> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                               </t>     
+                                
+                                <input id='id' type="hidden" class="form-control s_website_form_input" name="line_id"  t-att-value="improvement.id"/>                               
+                                                                                                  
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+                                    
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='objectivesubmit' type="submit" class="btn btn-primary pull-left">Update</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                <br/>                                                          
+                                </form>                                                                                             
+                            </div>         
+                       </t>
+              </template>
+    
+    
+        <!--  Add New Objective Below-->
+    
+        <template id="add_appraisal_improvement" name="improvements line Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+                                         
+                        <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Improvement</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <form id="addForm"  action="/add/improvement/line/save"  method="post"  enctype="multipart/form-data">
+                                  
+                            <div class="container mt-4 mb-5">
+                                <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                    </div>  
+                                     </div>  
+                                 </div>     
+                             
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="performance_improvement_area">
+                                               <span class="s_website_form_label_content">Performance Improvement Area</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <textarea  class="form-control s_website_form_input" name="performance_improvement_area"  required='1' ></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="action_plan">
+                                               <span class="s_website_form_label_content">Action Plan and Timeline	</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <textarea  class="form-control s_website_form_input" name="action_plan"   ></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+                                
+                               
+                                <input id='id' type="hidden" class="form-control s_website_form_input" name="rec_id"  t-att-value="improvement.id"/>                                                                                                
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+                                    
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='objectivesubmit' type="submit" class="btn btn-primary pull-left">Add</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                <br/>                                                            
+                                </form>                                                            
+                            </div>
+         
+        </t>
+    </template>
+    
+    
+    
+    
+    <template id="create_appraisal_improvement" name="improvement Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+                                         
+                        <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Improvement</h1>
+                                    </div>
+                                </section>
+                            </div>
+                             <div>
+
+                     </div> 
+                             
+                            <form id="improvementForm"  action="/new/improvement/save"  method="post"  enctype="multipart/form-data">
+                                 
+                                <br/>
+                            <div class="container mt-4 mb-5">
+                                <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                    </div>  
+                                     </div>  
+                                 </div>  
+                                        
+                    <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        </section>
+                                
+                        <div class="container">
+                        </div>    
+                            
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                                <span class="s_website_form_label_content">Employee *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                               <select class="form-control  o_website_form_input" name="employee_id" readonly="1" required="1">
+                                                <t t-foreach="employees" t-as="emp">
+                                                    <option t-att-value="emp.id">
+                                                            <t t-esc="emp.name"    />
+                                                     </option>
+                                                </t>
+                                            </select>  
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                            </label>
+                                            <div class="col-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_code">
+                                                <span class="s_website_form_label_content">Follow Up Period</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                  <select  id="follow_up_period" class="form-control  s_website_form_input" name="follow_up_period" >
+                                                <option value="blank"></option>      
+                                                <option value="1">1 Month</option>
+                                                <option value="2">2 Month</option>
+                                                <option value="3">3 Month</option>
+                                         </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_grade">
+                                            </label>
+                                            <div class="col-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_code">
+                                                <span class="s_website_form_label_content">Comments</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                  <textarea id="comments" class="form-control s_website_form_input" name="comments" ></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+                                    
+                                  <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='objectivesubmit' type="submit" class="btn btn-primary pull-left">Add Improvement</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>  
+                                
+                                </form>                                                                                             
+                              </div>         
+                            </t>
+                   </template>
+       
+
+</odoo>
+
+

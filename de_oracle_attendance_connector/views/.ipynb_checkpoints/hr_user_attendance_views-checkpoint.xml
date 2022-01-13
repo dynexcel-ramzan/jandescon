@@ -1,0 +1,91 @@
+<odoo>
+  <data noupdate="1">
+   <record id="user_attendance_calculation_server_action" model="ir.actions.server">
+                  <field name="name">Compute Attendance</field>
+                  <field name="model_id" ref="de_oracle_attendance_connector.model_hr_user_attendance"/>
+                  <field name="binding_model_id" ref="de_oracle_attendance_connector.model_hr_user_attendance"/>            
+                  <field name="binding_view_types">list</field>
+                  <field name="state">code</field>
+                  <field name="code">action = records.action_attendace_validated() </field>
+    </record>
+  </data>
+  <data>    
+     <record id="hr_user_attendance_view_filter" model="ir.ui.view">
+        <field name="name">hr_user_attendance_view_filter</field>
+        <field name="model">hr.user.attendance</field>
+        <field name="arch" type="xml">
+            <search string="Hr User Attendance Search">
+                <field name="device_id"/>
+                <field name="card_no" />
+                <field name="employee_id"  />
+                <separator/>
+                
+                <filter string="Date" name="timestamp_filter" date="timestamp" default_period="last_month"/>
+                <filter string="Card NO" name="card_no" domain="[('card_no', '=', False)]" />
+                <group expand="0" string="Group By">
+                    <filter string="Employee" name="employee_id" context="{'group_by': 'employee_id'}"/>
+                    <filter string="Card NO" name="card_no" context="{'group_by': 'card_no'}"/>
+                    <filter string="Device" name="groupby_device_id" context="{'group_by': 'device_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+      
+    
+      
+    <record id="view_hr_user_attendance_tree" model="ir.ui.view">
+        <field name="name">hr.user.attendance.tree</field>
+        <field name="model">hr.user.attendance</field>
+        <field name="arch" type="xml">
+            <tree string="Employee attendances"  create="true"  edit="true">
+                <field name="timestamp"/>
+                <field name="employee_id"/>
+                <field name="is_mapped" invisible="1" />
+                <field name="device_id"/>
+                <field name="card_no"/>
+                <field name="attendance_date" invisible="0"/>
+                <field name="creation_date" invisible="1"/> 
+                <field name="company_id" optional="hide"/>             
+                <field name="remarks"/>
+                <field name="time" invisible="1" />
+                <field name="updation_date" invisible="1"/>
+                <field name="is_attedance_created" invisible="1"/>
+            </tree>
+        </field>
+    </record> 
+      
+     <record id="view_hr_userattendance_tree_inherit" model="ir.ui.view">
+        <field name="name">hr.user.attendance.tree.inherit</field>
+        <field name="model">hr.user.attendance</field>
+        <field name="inherit_id" ref="de_oracle_attendance_connector.view_hr_user_attendance_tree"/>
+        <field name="groups_id" eval="[(4, ref('hr_attendance.group_hr_attendance_user'))]"/>
+        <field name="arch" type="xml">
+            <tree position="attributes">
+                <attribute name="edit">1</attribute>
+                <attribute name="editable">bottom</attribute>
+            </tree>
+        </field>
+    </record>    
+      
+      
+      
+    <record id="hr_user_attendance_action" model="ir.actions.act_window">
+        <field name="name">Oracle Attendance</field>
+        <field name="res_model">hr.user.attendance</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id"></field> 
+<!--         <field name="context">{'search_default_employee_id':1, 'group_by':[]} </field> -->
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No data yet!
+            </p>
+        </field>
+    </record>
+
+      
+     <menuitem id="menu_hr_user_attendance_my_attendances" name="Oracle Attendance" parent="hr_attendance.menu_hr_attendance_root" sequence="3" groups="hr_attendance.group_hr_attendance" />
+
+    <menuitem id="menu_hr_user_attendance" name="Attendance" parent="menu_hr_user_attendance_my_attendances" sequence="10"  action="hr_user_attendance_action"/>
+
+  </data>
+</odoo>

@@ -1,0 +1,24 @@
+<odoo>
+  <data>
+    <record id="edit_holiday_status_form_inherit" model="ir.ui.view">
+		<field name="name">edit.holiday.status.form.inherit</field>
+		<field name="model">hr.leave.type</field>
+		<field name="inherit_id" ref="hr_holidays.edit_holiday_status_form" />
+		<field name="arch" type="xml">
+            <xpath expr="//field[@name='leave_validation_type']" position="after">
+                <field name="category_id" attrs="{'invisible': [('leave_validation_type', '!=', 'approvals')],'required':[('leave_validation_type','=','approvals')]}"/>
+            </xpath>
+            <xpath expr="//field[@name='validity_stop']" position="after">
+                <group string="Attachments">
+                  <field name="attachment"  />
+                  <field name="attachment_validity" attrs="{'invisible': [('attachment', '!=', True)],'required':[('attachment', '=', True)]}" />
+                </group>
+                <group string="CEO Approvals">
+                  <field name="is_ceo_approval"  />
+                  
+                </group>
+            </xpath>
+       </field>
+    </record>
+  </data>
+</odoo>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+         
+
+        <record id="view_account_move_form_inherit" model="ir.ui.view">
+        <field name="name">account.move.form.inherit</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+               <button name="action_posted_on_oracle" string="Post to Oracle" class="oe_highlight" type="object" states="posted"/> 
+            </xpath>
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="is_posted" />
+            </xpath>
+        </field>
+    </record>
+        
+  
+ </data>
+</odoo>

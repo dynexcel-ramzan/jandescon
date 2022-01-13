@@ -1,0 +1,24 @@
+<odoo>
+    <record id="auto_employee_appraisal_record_action" model="ir.actions.server">
+            <field name="name">Auto Employee Appraisals</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="de_auto_employee_appraisal.model_hr_appraisal_autoplan"/>
+            <field name="binding_model_id" ref="de_auto_employee_appraisal.model_hr_appraisal_autoplan"/>
+            <field name="code">records.auto_appraisal_action()</field>
+    </record>
+    
+    
+    <record id="auto_employee_appraisal_record_cron" model="ir.cron">
+            <field name="name">Auto Employee Appraisals Cron</field>
+            <field name="model_id" ref="de_auto_employee_appraisal.model_hr_appraisal_autoplan"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">model.auto_appraisal_action()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+	        <field name="active" eval="True"/>
+	    </record>
+    
+</odoo>

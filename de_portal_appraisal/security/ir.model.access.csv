@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_appraisal_feedback_portal,access.hr.appraisal.feedback,model_hr_appraisal_feedback,base.group_portal,1,1,1,1
+access_res_company_portal,access.res.company,model_res_company,base.group_portal,1,1,1,1
+access_hr_department_portal,access.hr.department,model_hr_department,base.group_portal,1,1,1,1
+access_hr_appraisal_objective_portal,access.hr.appraisal.objective,model_hr_appraisal_objective,base.group_portal,1,1,1,1
+access_hr_appraisal_objective_line_portal,access.hr.appraisal.objective.line,model_hr_appraisal_objective_line,base.group_portal,1,1,1,1
+
+access_grade_type_portal,access.grade.type,model_grade_type,base.group_portal,1,1,1,1
+access_hr_appraisal_probation_portal,access.hr.appraisal.probation,model_hr_appraisal_probation,base.group_portal,1,1,1,1
+access_hr_appraisal_feedback_values_appraisee_line_portal,access.hr.appraisal.feedback.values.appraisee.line,model_hr_appraisal_feedback_values_appraisee_line,base.group_portal,1,1,1,1
+access_hr_appraisal_feedback_objective_appraisee_line_portal,access.hr.appraisal.feedback.objective.appraisee.line,model_hr_appraisal_feedback_objective_appraisee_line,base.group_portal,1,1,1,1
+access_hr_appraisal_feedback_objective_line_portal,access.hr.appraisal.feedback.objective.line,model_hr_appraisal_feedback_objective_line,base.group_portal,1,1,1,1
+access_hr_appraisal_feedback_values_line_portal,access.hr.appraisal.feedback.values.line,model_hr_appraisal_feedback_values_line,base.group_portal,1,1,1,1
+acces_hr_employee_portal,access.hr.employee,model_hr_employee,base.group_portal,1,0,0,0
+access_hr_ppraisal_improvements_portal,access.hr.appraisal.improvements,model_hr_appraisal_improvements,,1,1,1,1
+access_hr_ppraisal_improvements_line_portal,access.hr.appraisal.improvements.line,model_hr_appraisal_improvements_line,,1,1,1,1

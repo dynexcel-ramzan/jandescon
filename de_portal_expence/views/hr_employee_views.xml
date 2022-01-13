@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+<odoo>   
+    
+     <record id="hr_employee_form_view_vehicle_meter" model="ir.ui.view">
+        <field name="name">hr.employee.form.view.vehicle</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='managers']" position="after">
+                <group string='Expense'>
+                   <field name="expense_incharge_id" />    
+                </group> 
+                <group string='Vehicle'>
+                   <field name="vehicle_id" />    
+                </group>    
+            </xpath> 
+            <xpath expr="//notebook//page[@name='public']" position="after">
+               <page string='Vehicle Meter'> 
+                    <field name='vehicle_meter_line_ids' >
+                        <tree editable='bottom'>
+                            <field name='sub_category_id' />
+                            <field name='limit_reading' />
+                            <field name='ora_unit' /> 
+                            <field name='opening_reading' string='Last Reading'/>
+                            <field name='employee_id' invisible='1'/>
+                        </tree>
+                    </field>
+               </page>  
+               <page string='Medical'> 
+                    <field name='medical_line_ids' >
+                        <tree editable='bottom'>
+                            <field name='sub_category_id' />
+                            <field name='limit' />
+                            <field name='ora_unit' /> 
+                            <field name='last_paid' string='Paid'/>
+                            <field name='employee_id' invisible='1'/>
+                        </tree>
+                    </field>
+               </page>   
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
+
+

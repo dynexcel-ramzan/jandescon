@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<template id="employee_promotion_template">
+		<t t-call="web.external_layout">
+		<t t-call="web.html_container">
+            
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Date: </th>
+                        <td t-foreach="docs" t-as="doc"><t t-esc="doc.date"/></td>
+                    </tr>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Previous Salary</th>
+                        <th>New Salary</th>
+                        <th>Previous Designation</th>
+                        <th>New Designation</th>
+                    </tr>   
+                </thead>
+                <tbody>
+                    <tr t-foreach="docs" t-as="doc">
+                        <td><t t-esc="doc.employee_id.name"/></td>
+                        <td><t t-esc="doc.previous_wage"/></td>
+                        <td><t t-esc="doc.new_wage"/></td>
+                        <td><t t-esc="doc.pre_job_id.name"/></td>
+                        <td><t t-esc="doc.new_job_id.name"/></td>
+                    </tr>
+                </tbody>
+                <tr>
+                    <th>Description: </th>
+                    <td t-foreach="docs" t-as="doc"><t t-esc="doc.description"/></td>
+                </tr>
+            </table>
+            
+		</t>
+		</t>
+	</template>
+</odoo>

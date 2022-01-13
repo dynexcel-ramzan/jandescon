@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_de_payslip_cost_center_de_payslip_cost_center,de_payslip_cost_center.de_payslip_cost_center,model_de_payslip_cost_center_de_payslip_cost_center,base.group_user,1,1,1,1

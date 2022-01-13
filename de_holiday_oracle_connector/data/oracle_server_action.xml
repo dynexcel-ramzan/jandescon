@@ -1,0 +1,44 @@
+<odoo>
+  <data>
+      
+       <record id="hr_leave_oracle_action" model="ir.actions.server">
+                  <field name="name">Post to Oracle</field>
+                  <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+                  <field name="binding_model_id" ref="hr_holidays.model_hr_leave"/>            
+                  <field name="binding_view_types">list</field>
+                  <field name="state">code</field>
+                  <field name="code">action = records.action_send_holiday_data() </field>
+                 </record>
+
+        <record id="hr_leave_oracle_action_re_post" model="ir.actions.server">
+                  <field name="name">Re-Post to Oracle</field>
+                  <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+                  <field name="binding_model_id" ref="hr_holidays.model_hr_leave"/>            
+                  <field name="binding_view_types">list</field>
+                  <field name="state">code</field>
+                  <field name="code">action = records.action_re_send_holiday_data() </field>
+                 </record>
+    
+        <record id="hr_leave_oracle_fetch_action" model="ir.actions.server">
+                  <field name="name">View Oracle Data</field>
+                  <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+                  <field name="binding_model_id" ref="hr_holidays.model_hr_leave"/>            
+                  <field name="binding_view_types">list</field>
+                  <field name="state">code</field>
+                  <field name="code">action = records.action_send_leave_data_fetch() </field>
+                 </record>
+         
+           <record id="ir_cron_scheduler_leave_post_to_oracle" model="ir.cron">
+			<field name="name">Post Leave To Oracle</field>
+			<field name="model_id" ref="model_hr_leave" />
+			<field name="user_id" ref="base.user_root" />
+			<field name="state">code</field>
+			<field name="interval_number">12</field>
+			<field name="interval_type">hours</field>
+			<field name="numbercall">-1</field>
+			<field eval="False" name="doall" />
+			<field name="code">model.action_send_holiday_data()</field>
+		</record>
+ 
+  </data> 
+</odoo>

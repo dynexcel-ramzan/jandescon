@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+<odoo>  
+      
+    
+    <template id="portal_account_statement_layout" name="Portal layout: Account menu entry" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'accountstatement' or accountstatement" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not accountstatement else ''}">
+                <a t-if="timeoff" t-attf-href="/my/account?{{ keep_query() }}">Accounting Statements</a>
+                <t t-else="">Accounting Statements</t>
+            </li>
+            <li t-if="timeoff" class="breadcrumb-item active text-truncate col-8 col-lg-10">
+                <t t-esc="timeoff.name"/>
+            </li>
+        </xpath>
+    </template>
+
+    
+    
+
+    
+    <template id="portal_account_statements" name="Show Account / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry"  groups ="de_portal_accounting.group_portal_accounting">
+                <t t-set="title">Accounting Statements</t>
+                <t t-set="url" t-value="'/account/statement'"/>
+                <t t-set="placeholder_count" t-value="'account_count'"/>
+            </t>
+        </xpath>
+    </template>
+    
+     <template id="journal_item_page_template" name="Journal Item Details">
+        <t t-call="portal.portal_layout">
+            <div class="oe_structure">
+                <div class="container">
+                    <br/>
+                    <center><h3>Journal Items</h3></center>
+                    <br/>
+                    <table class="table-striped table">
+                        <thead style="font-size:23px;">
+                            <tr>
+                                <h4>
+                                    <b>
+                                <th class="text-left">Date</th>
+                                <th class="text-left">Name</th>
+                                <th class="text-left">Document No</th>
+                                <th class="text-left">Debit</th>
+                                <th class="text-left">Credit</th>
+                                <th class="text-left">Balance</th>
+                                <th class="text-left">Cumulated Balance</th>
+                                    </b>
+                                </h4>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="journal_items" t-as="journal_item">
+
+                                
+                                <tr>
+                                    <td><span t-esc="journal_item.date"/></td>
+                                    <td><span t-esc="journal_item.name"/></td>
+                                    <td><span t-esc="journal_item.move_id.name"/></td>
+                                    <td><span t-esc="journal_item.debit"/></td>
+                                    <td><span t-esc="journal_item.credit"/></td>
+                                    <td><span t-esc="journal_item.balance"/></td>
+                                    <td><span t-esc="journal_item.cumulated_balance"/></td>
+                                </tr>
+
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+     <template id="portal_my_account_statement" name="Account Statements">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+                            <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-black-50 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/portal.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-black-50"></div>
+                                    <div class="container">
+                                        <h1>Account Statements</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="container mt-4 mb-5">
+                                <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                        <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[2]/div[1]/div[1]/div[1]">
+                                            <section class="s_text_block" data-snippet="s_text_block">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <p>
+                                                                Account Statements From Here.
+                                                            </p>
+                                                                   
+                                                            
+                                                       
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                        <span class="hidden" data-for="contactus_form" data-oe-id="2822" data-oe-xpath="/data/xpath/span" data-oe-model="ir.ui.view" data-oe-field="arch" data-values="{'leave_type_id': '', 'employee_id': '', 'date_start': '', 'date_end': '', 'description': ''}"></span>
+            <div id="leave_section" data-oe-id="3374" data-oe-xpath="/data/xpath[2]/div" data-oe-model="ir.ui.view" data-oe-field="arch">
+                    <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        <div class="container">
+                            <form id="account_statements" data-toggle="validator" action="/account/statement/views">
+
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                    <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity1">
+                                                <span class="s_website_form_label_content">Account</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+
+                                                <select  id="chartaccount" class="form-control  s_website_form_input" name="account_id" >
+                                                                    <t t-foreach="accounts" t-as="account">
+
+                                                                        <option t-att-value="account.id">
+                                                                            <t t-esc="account.publish_name"/>
+                                                                        </option>
+                                                                     </t>
+                                                                </select>                                                                    
+                                                
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                     <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity2">
+                                                <span class="s_website_form_label_content">Partner</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <select class="form-control  o_website_form_input" name="partner_id" readonly="1">
+                                                                    <t t-foreach="partners" t-as="partner">
+                                                                        <option t-att-value="partner.id">
+                                                                            <t t-esc="partner.name"    />
+                                                                        </option>
+                                                                    </t>
+                                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    
+                                       <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity3">
+                                                <span class="s_website_form_label_content">Date Start</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+
+                                                
+                                              <input type="date" class="form-control s_website_form_input" name="date_start" required="True"/>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity4">
+                                                <span class="s_website_form_label_content">Date End</span>
+                                            </label>
+                                            <div class="col-sm">
+                                              <input type="date" class="form-control s_website_form_input" name="date_end" required="True"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                   
+                                   
+                                    <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button type="submit" class="btn btn-primary pull-left">Submit</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+			</div>
+                                    <div class="col-lg-4 mt-4 mt-lg-0">
+                                    
+                                        
+                                        
+                                        
+    <address itemscope="itemscope" itemtype="http://schema.org/Organization">
+        <div data-oe-model="res.company" data-oe-id="1" data-oe-field="partner_id" data-oe-type="contact" data-oe-expression="res_company.partner_id" data-oe-many2one-id="1" data-oe-many2one-model="res.partner" data-oe-contact-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;name&quot;, &quot;address&quot;, &quot;phone&quot;, &quot;mobile&quot;, &quot;email&quot;], &quot;tagName&quot;: &quot;div&quot;, &quot;expression&quot;: &quot;res_company.partner_id&quot;, &quot;type&quot;: &quot;contact&quot;, &quot;inherit_branding&quot;: true, &quot;translate&quot;: false}" data-oe-field-xpath="/t[1]/address[1]/div[1]">
+    <address class="mb-0" itemscope="itemscope" itemtype="http://schema.org/Organization">
+        
+        
+            
+    <div>
+        
+            <span itemprop="name"><t t-esc="company_info.company_id.name"/></span>
+        
+        
+        
+    </div>
+
+        
+        <div itemprop="address" itemscope="itemscope" itemtype="http://schema.org/PostalAddress">
+            <div class="d-flex align-items-baseline">
+                <i class="fa fa-map-marker fa-fw" role="img" aria-label="Address" title="Address"></i>
+                <span class="w-100 o_force_ltr d-block" itemprop="streetAddress"><t t-esc="company_info.company_id.street"/> <t t-esc="company_info.company_id.street2"/><br/><t t-esc="company_info.company_id.city"/><br/><t t-esc="company_info.company_id.country_id.name"/></span>
+            </div>
+            
+            <div><i class="fa fa-phone fa-fw" role="img" aria-label="Phone" title="Phone"></i> <span class="o_force_ltr" itemprop="telephone"><t t-esc="company_info.company_id.phone"/> </span></div>
+            
+            
+            
+            <div><i class="fa fa-envelope fa-fw" role="img" aria-label="Email" title="Email"></i> <span itemprop="email"><t t-esc="company_info.company_id.email"/></span></div>
+        </div>
+        <div>
+             
+            
+
+        </div>
+    
+        
+        
+    </address>
+</div>
+        
+            <span class="fa fa-map-marker fa-fw mt16" role="img" aria-label="Address" title="Address" data-oe-model="ir.ui.view" data-oe-id="2175" data-oe-field="arch" data-oe-xpath="/t[1]/address[1]/t[1]/span[1]"></span> <a target="_BLANK" data-oe-model="ir.ui.view" data-oe-id="2175" data-oe-field="arch" data-oe-xpath="/t[1]/address[1]/t[1]/a[1]" href="https://maps.google.com/maps?q=250+Executive+Park+Blvd%2C+Suite+3400%2C+San+Francisco+94134%2C+United+States&amp;z=8"> Google Maps</a>
+        
+    </address>
+        
+            <div class="alert alert-warning" data-oe-model="ir.ui.view" data-oe-id="2176" data-oe-field="arch" data-oe-xpath="/data/xpath/t[2]/div[1]">
+                <i class="fa fa-plus-circle"></i>
+                The Google map option is enabled but <a href="/web#action=portal.action_website_configuration">not properly configured</a>.
+            </div>
+        
+    
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="oe_structure mt-2" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[3]"></div>
+                        </div>
+                            
+                            
+                            
+            
+            
+         
+        </t>
+    </template>
+    
+    
+    
+    
+    
+    
+
+
+
+    
+ 
+    
+    
+    
+    
+    
+    
+
+    
+
+</odoo>
+
+

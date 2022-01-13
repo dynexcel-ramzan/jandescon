@@ -1,0 +1,16 @@
+<odoo>
+  <data>
+      
+       <record id="account_account_views_controlled_account" model="ir.ui.view">
+			<field name="name">account.account.controlled.account</field>
+			<field name="model">account.account</field>
+			<field name="inherit_id" ref="account.view_account_form"/>
+			<field name="arch" type="xml">
+                <xpath expr="//field[@name='user_type_id']" position="after">
+                      <field name='controlled_id' />
+                      <field name='salary_rule_id'  widget='many2many_tags'/>
+				</xpath>
+            </field>
+		</record>
+  </data>
+</odoo>

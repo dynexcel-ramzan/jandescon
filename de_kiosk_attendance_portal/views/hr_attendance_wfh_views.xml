@@ -1,0 +1,139 @@
+<odoo>
+   <data>
+          
+       
+    <record id="view_hr_attendance_wfh_form" model="ir.ui.view">
+		<field name="name">hr.attendance.wfh.form</field>
+		<field name="model">hr.attendance.wfh</field>
+		<field name="arch" type="xml">
+
+			<form string="Attendance">
+				<header>
+                    <button name="action_submit"
+							type="object"
+							string="Submit"
+                            class='oe_highlight'
+							states = "draft" />
+                    
+                    <button name="action_approve"
+							type="object"
+							string="Approve"
+                            class='oe_highlight'
+							attrs = "{'invisible': ['|',('category_id', '!=', False),('state', '!=', 'submitted')]}"/>
+                    
+                    <button name="action_refuse"
+							type="object"
+							string="Refuse"
+                            class='oe_highlight'
+							attrs = "{'invisible': ['|',('category_id', '!=', False),('state', '!=', 'submitted')]}"/>
+                    
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,refused"/>
+                </header>
+
+				<sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_approval_request_view_wfh_attendance)d" type="action" class="oe_stat_button" icon="fa-check-square-o" string="Approvals" context="{'wfh_id':id,'category_id':category_id}" attrs="{'invisible': [('approval_request_id', '=', False)]}">
+                        </button>      
+                    </div> 
+					<h1><field name="employee_id" attrs="{'readonly': [('state','!=', 'draft')]}" force_save='1'/></h1>
+
+					<group>
+
+						<group>
+                            <field name="check_in"  attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                            <field name="check_out" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                            <field name="company_id" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+						</group>
+
+                        <group>
+                            <field name="date"  attrs="{'readonly': [('state','!=', 'draft')]}"/> 
+                            <field name="create_date" invisible='1'/> 
+							<field name="approval_request_id" invisible="1" />
+							<field name="category_id" invisible='1'/>
+							<field name="reason" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+						</group>
+
+					</group>
+                    
+                    
+
+				
+
+				</sheet>
+			</form>
+
+		</field>
+	</record>
+
+
+
+	<record id="view_hr_attendance_wfh_search" model="ir.ui.view">
+		<field name="name">hr.attendance.wfh.search</field>
+		<field name="model">hr.attendance.wfh</field>
+		<field name="arch" type="xml">
+
+			<search string="Attendance WFH">
+				<field name="employee_id"/>
+				<field name="department_id"/>
+                <field name="date"/>
+				<field name="check_in"/>
+				<field name="check_out"/>
+                
+                <field name="state"/>
+			</search>
+
+		</field>
+	</record>
+
+
+    
+    
+    
+
+    
+    
+    	<record id="hr_attendance_wfh_tree" model="ir.ui.view">
+		<field name="name">hr.attendance.wfh.tree</field>
+		<field name="model">hr.attendance.wfh</field>
+		<field name="arch" type="xml">
+
+			<tree string="Attendance WFH"  >
+				<field name="employee_id"/>
+                <field name="department_id"/>
+				<field name="check_in"/>
+				<field name="check_out"/>
+                <field name="date" optional='hide'/>
+                <field name="company_id" optional='hide'/>
+                <field name="state"/>
+			</tree>
+
+		    </field>
+	       </record>
+
+
+
+    <record id="action_wfh_attendance" model="ir.actions.act_window">
+		<field name="name">Work From Home</field>
+		<field name="res_model">hr.attendance.wfh</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[]</field>
+		<field name="context">{}</field>
+		<field name="help" type="html">
+
+			<p class="o_view_nocontent_smiling_face">
+				Add Attendance WFH .............
+			</p>
+
+		</field>
+	</record>
+       
+    <menuitem
+		  id="wfh_attendance_menu"
+		  name="Work From Home"
+		  parent="hr_attendance.menu_hr_attendance_manage_attendances"
+		  action="action_wfh_attendance"
+		  sequence="2"
+	/>   
+    </data>
+</odoo>

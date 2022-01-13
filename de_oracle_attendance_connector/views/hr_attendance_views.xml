@@ -1,0 +1,21 @@
+<odoo>
+    <data> 
+        <record id="hr_attendance_form_view_attendance" model="ir.ui.view">
+			<field name="name">hr.attendance.form.view</field>
+			<field name="model">hr.attendance</field>
+			<field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='check_in']" position="after">
+					<field name="att_date" invisible="1"/>
+					
+				</xpath>
+                                <xpath expr="//field[@name='employee_id']" position="after"> 
+					
+					<field name="oralce_employee_no" />
+                                        <field name="work_location_id"  optional='hide'/>
+				</xpath>
+                              
+			</field>
+		</record>
+  </data>
+</odoo>

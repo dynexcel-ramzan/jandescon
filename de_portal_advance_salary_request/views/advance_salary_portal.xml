@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<odoo>
+    <template id="portal_layout" name="Portal layout: salary menu entry" inherit_id="portal.portal_breadcrumbs" priority="40">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'salary' or salary" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not salary else ''}">
+                <a t-if="salary" t-attf-href="/my/salaries?{{ keep_query() }}">Advance Salary</a>
+                <t t-else="">Advance Salaries</t>
+            </li>
+            <li t-if="salary" class="breadcrumb-item active text-truncate col-8 col-lg-10">
+                <t t-esc="salary.name"/>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home" name="Show Advance Salary / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Advance Salary</t>
+                <t t-set="url" t-value="'/my/salaries'"/>
+                <t t-set="placeholder_count" t-value="'salary_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_salaries" name="My Advance Salary">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Advance Salary</t>
+            </t>
+            <t t-if="not grouped_salaries">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no Approvals.
+                </div>
+            </t>
+            
+            <t t-if="grouped_salaries">
+                <t t-call="portal.portal_table">
+                    <t t-foreach="grouped_salaries" t-as="salaries">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left">No#</th>
+                                <th class="text-left">Reference</th>
+                                <th class="text-left">Employee</th>
+                                <th class="text-left">Request Date</th>
+                                <th class="text-left">Department Manager</th>
+                                <th class="text-left">Request Ammount</th>
+                                <th class="text-center">Status</th>
+<!--                                 <th class="text-center">Action</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="salaries" t-as="salary">
+                             
+                                <tr>
+                                    <td>
+                                        <a t-attf-href="/my/salary/#{salary.id}?{{ keep_query() }}">#<span t-field="salary.id"/></a>
+                                    </td>
+                                     <td>
+                                        <a t-attf-href="/my/salary/#{salary.id}?{{ keep_query() }}"><span t-field="salary.name"/></a>
+                                    </td>
+                                    
+                                     <td class="text-left">
+                                        <span t-esc="salary.employee_id.name"/>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="salary.request_date" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="salary.manager_id.name" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="salary.amount" />
+                                    </td>
+                                
+<!--
+                                    <td class="text-left">
+                                        <span t-esc="salary.request_owner_id.name"/>
+                                    </td>
+                                    
+                                    <td class="text-left">
+                                        <span t-esc="salary.partner_id.name"/>
+                                    </td>
+-->
+                                    <td class="text-center">
+                                             <t t-if="salary.state == 'draft'">
+                                        <i class="badge badge-pill badge-info" >Draft</i>
+                                    </t>
+                                    <t t-if="salary.state == 'request'">
+                                        <i class="badge badge-pill badge-info" >Request</i>
+                                    </t>
+                                    <t t-if="salary.state == 'approval'">
+                                        <i class="badge badge-pill badge-info" >Approval</i>
+                                    </t>
+                                    <t t-if="salary.state == 'hrconfirm'">
+                                        <i class="badge badge-pill badge-info" >HR Confirm</i>
+                                    </t>
+                                    <t t-if="salary.state == 'paid'">
+                                        <i class="badge badge-pill badge-info" >Paid</i>
+                                    </t>
+                                    <t t-if="salary.state == 'close'">
+                                        <i class="badge badge-pill badge-info" >Close</i>
+                                    </t>
+<!--                                         <span class="badge badge-pill badge-info" title="Current stage of the Approval is " t-esc="salary.state" /> -->
+                                    </td>	 
+                               
+<!--                                    <td>   -->
+                                                                    
+                                    
+<!--                                        <t t-esc="uid">#</t> -->
+<!--                                  <t t-foreach="salary.approver_ids" t-as="lines">
+                                    
+                                    <t t-if="lines.user_id.id == uid">
+                                        <t t-if="salary.request_status != 'approved' ">
+                                             <t t-if="salary.request_status !=   'refused'">
+                                     <a t-attf-href="/approval/accept/#{salary.id}?" title="Approve"><div class="btn btn-primary"><i class="fa fa-check"></i></div></a>
+                                        <a t-attf-href="/approval/reject/#{salary.id}?" title="Refuse"><div class="btn btn-warning"><i class="fa fa-times"></i></div></a> 
+                                       </t></t>
+                                     </t>   
+                                </t> 
+                                       
+                                        -->
+                                       
+                                       
+<!--                                      <t t-if="salary.request_status != pending"> -->
+                                                              
+<!--                                        </t> -->
+<!--                                        </t> -->
+<!--                                     <t t-else="">
+                                            <t t-if="salary.request_status == approved">
+                                               <div class="btn btn-success"><i class="fa fa-thumbs-up"></i></div>
+                                           </t>
+                                           <t t-if="salary.request_status == refused">
+                                               <div class="btn btn-warning"><i class="fa fa-thumbs-down"></i></div>
+                                          </t>
+                                           <t t-else="">
+                                               <div class="btn"><i class="fa fa-stumbleupon"></i></div>
+                                          </t>
+                                    </t> -->
+<!--                                         <a t-attf-href="/my/approval_update/#{salary.id}?{{ keep_query() }}"><i class="fa fa-edit"></i></a> 
+                                        <a t-attf-href="/approval/delete/#{salary.id}?"   > <i class="fa fa-trash"></i></a> -->
+                                       
+<!--                                        onclick="setTimeout(location.reload.bind(location), 1)"  -->
+                                       
+<!--                                     </td> -->
+                                </tr>
+                            </t>
+                            <tr>
+                                <div>
+                                    <t class="col-lg-7 col-md-8" >
+                                        <a href="/advance_salary_page" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
+                                    </t>
+                                </div>
+                            </tr>   
+                        </tbody>
+                    </t>
+                </t>
+            </t>   
+            
+        </t>
+    </template>
+
+    <template id="portal_my_salary" name="My Time Off">
+        <t t-call="portal.portal_layout">
+             <t t-set="o_portal_fullwidth_alert" groups="de_leave_portal.group_time_off">
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#model=hr.leave&amp;id=%s&amp;view_type=form' % (salary.id)"/>
+                </t>
+            </t>
+                   
+            <div id="optional_placeholder"></div>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                  <div id="optional_placeholder"></div>
+                    <div class="container">
+                      <div class="card">
+                        <div class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-12">
+                            <h5 class="d-flex mb-1 mb-md-0 row">
+                                <span t-field="salary.name" class="col-7 text-truncate"/>
+                                <small class="text-muted d-none d-md-inline"> (#<span t-field="salary.id"/>)</small>
+                                <div class="col-md-3  text-right">
+                                    <small class="text-right">Stage:</small>
+                                    <span t-field="salary.state" class=" badge badge-pill badge-info" title="Current stage of this Salary"/>
+                                </div>
+                               
+                                 <div class="col-md-1  text-right">
+                                        <t t-if="pre_id">
+                                            <a role="button"  t-attf-href="/salary/pre/#{salary.id}?" ><i style="margin-right:10px; align:right" class="fa fa-chevron-left" role="img" aria-label="Previous" title="Previous"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="margin-right:10px; align:right; color:#B8B7B0" class="fa fa-chevron-left" aria-label="Previous" title="Previous"></i></a>
+
+                                        </t>
+                                        <t t-if="next_id">
+                                            <a role="button" t-attf-href="/salary/next/#{salary.id}?" ><i class="fa fa-chevron-right" role="img" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="color:#B8B7B0" class="fa fa-chevron-right" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                </div>
+                                    </h5>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </t>
+               <t t-set="card_body">          
+                  
+                        <div class="row">
+                                <div class="col-md-6"> <strong>Employee : </strong>
+                                    <t t-if="salary.employee_id">
+                                        <span t-esc="salary.employee_id.name"/>
+                                    </t>
+                                </div>
+                            
+                            <div class="col-md-6"> <strong>Request Manager : </strong>
+                                <t t-if="salary.manager_id">
+                                     <span t-esc="salary.manager_id.name"/>
+                                 </t>
+                             </div>
+                        </div>       
+                    
+                        <br/><br/>
+                               <div class="row"> 
+                                 <div class="col-md-6"> 
+                                    <strong>Amount : </strong>
+                                    <t t-if="salary.amount">
+                                        <span t-esc="salary.amount"/>
+                                    </t>
+                                </div> 
+                                <div class="col-md-6"> <strong>Confirm Manager : </strong>
+                                    <t t-if="salary.conf_manager_id">
+                                        <span t-esc="salary.conf_manager_id.name"/>
+                                    </t>
+                                </div>
+                            </div>
+            
+                            <div class="row"> 
+                                 <div class="col-md-6"> 
+                                    <strong>Request Date : </strong>
+                                    <t t-if="salary.request_date">
+                                        <span t-esc="salary.request_date"/>
+                                    </t>
+                                </div> 
+                                <div class="col-md-6"> 
+                                    <strong>Confirm Date : </strong>
+                                    <t t-if="salary.confirm_date">
+                                        <span t-esc="salary.confirm_date"/>
+                                    </t>
+                                </div>
+                            </div>
+                   
+                    <div class="row"> 
+                        <div t-attf-class="col-12 col-lg-12  mb-md-0 ">
+                            <hr class="mb-1"/>
+                            <div class="d-flex my-2">
+                                <strong>Reason</strong>
+                            </div>
+                            <t t-if="salary.note">                                        
+                                <div class="py-1 px-2 bg-100 small" t-field="salary.note"/>
+                            </t>
+                        </div> 
+                    </div>
+<!--                    <div class="row"> 
+                       <t t-if = "salary.state == 'confirm'">
+
+                        <div class="offset-md-10 col-md-1">
+                            <a t-attf-href="/salary/ccpt/#{salary.id}?"><i  class="btn btn-primary">Approve</i></a>
+                        </div>                  
+                        <div class="col-md-1">
+                            <a t-attf-href="/salary/rjct/#{salary.id}?"><i class="btn btn-warning">Refuse</i></a>                   
+                        </div>
+                            
+                         </t>
+                      
+                    </div> -->
+                </t> 
+            </t>
+
+            <div class="mt32">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="salary"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+            </div>
+        </t>
+    </template>
+    
+   
+
+
+</odoo>
+

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<data>
+		<record model="ir.ui.view" id="hr_overtime_wizards_view">
+			<field name="name">Overtime Wizards</field>
+			<field name="model">hr.overtime.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Synchronize Data">
+					<div>
+						This wizard will synchronize all  ovt data from all of your Attendaces
+						into Overtime Model.
+						<br />
+						
+					</div>
+					<group>
+						<group>
+							<field name="attendace_ids" widget="many2many_tags" options="{'no_create_edit': True}" />
+						</group>
+						
+					</group>
+					<footer>
+						<button name="cron_create_hr_overtime" type="object"
+							string="Create Overtime" class="oe_highlight" />
+					
+						<button special="cancel" string="Cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<act_window id="action_ovt_hr_attendance" name="Data"
+			res_model="hr.overtime.wizard" view_mode="form" target="new" />
+
+		<menuitem id="sync_overtime_attendance_menu" parent="hr_attendance.menu_hr_attendance_settings"
+			sequence="110" name=" Overtime" action="action_ovt_hr_attendance"   groups="de_employee_overtime.group_overtime_attendance"/>
+
+	</data>
+</odoo>

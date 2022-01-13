@@ -1,0 +1,25 @@
+<odoo>
+   <data>
+   		<record id="hr_resignation_form_view_inh" model="ir.ui.view">
+			<field name="name">hr.resignation.form.view.inherit</field>
+			<field name="model">hr.resignation</field>
+			<field name="inherit_id" ref="hr_resignation.employee_resignation_form" />
+			<field name="arch" type="xml">
+                
+				<xpath expr="//sheet/div" position="before">
+					<div class="oe_button_box" name="button_box">
+                        <button name="%(action_approval_request_view_resignation)d" type="action" class="oe_stat_button" icon="fa-check-square-o" string="Approvals" context="{'resignation_id':id,'category_id':category_id}" attrs="{'invisible': [('approval_request_id', '=', False)]}">
+                        </button>      
+                    </div> 
+				</xpath>
+                
+                <xpath expr="//field[@name='employee_id']" position="after">
+					<field name="category_id" />
+                    <field name="approval_request_id" />
+				</xpath>
+			</field>
+		</record>
+   
+
+    </data>
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <data>
+        <!-- Views -->
+        <!-- Form View -->
+        <record id="expense_sub_category_form_view" model="ir.ui.view">
+            <field name="name">expense.sub.category.form</field>
+            <field name="model">expense.sub.category</field>
+            <field name="arch" type="xml">
+                <form string="Expense Sub Cateogry">
+                  
+                    <sheet>
+                         <div class="oe_title">
+                            <h1>
+                                <field name="name" 
+                                       placeholder="Name ...."/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                   <field name="ora_unit" />
+                                   <field name="amount" />
+                                   <field name="meter_reading" />
+                            </group>
+                            <group>
+                                <field name="ora_category_id" />
+                                <field name="company_id" />
+                                <field name="is_petty_cash" />
+                            </group>
+                        </group> 
+                    </sheet>
+                  
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="expense_sub_category_tree_view" model="ir.ui.view">
+            <field name="name">expense.sub.category.tree</field>
+            <field name="model">expense.sub.category</field>
+            <field name="arch" type="xml">
+                <tree string="Expense Sub Category">
+                     <field name="name" />
+                     <field name="ora_unit" />
+                     <field name="amount" />
+                     <field name="company_id" />
+                </tree>
+            </field>
+        </record>
+        
+         <record id="expense_sub_category_action" model="ir.actions.act_window">
+            <field name="name">Expense Sub-Category</field>
+            <field name="res_model">expense.sub.category</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create new Expense Sub-Category.
+                </p>
+            </field>
+        </record>
+
+        <!-- MenuItems -->
+         
+        <menuitem id="expense_sub_category_menu" name="Expense Sub-Category"
+                  parent="hr_expense.menu_hr_expense_configuration"
+                  action="expense_sub_category_action"
+                  sequence="11"
+                  />
+        
+    </data>
+</odoo>

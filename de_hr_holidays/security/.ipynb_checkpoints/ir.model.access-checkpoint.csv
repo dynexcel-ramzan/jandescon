@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_gazetted_day_generate_user,hr.gazetted.day.generate,model_hr_gazetted_day_generate,de_employee_shift.group_hr_shift_user,1,0,0,0
+access_gazetted_day_generate_line_user,gazetted.day.generate.line,model_gazetted_day_generate_line,de_employee_shift.group_hr_shift_user,1,0,0,0
+access_hr_rest_day_config_user,hr.rest.day.config,model_hr_rest_day_config,de_employee_shift.group_hr_shift_user,1,0,0,0
+
+access_hr_gazetted_day_generate,hr.gazetted.day.generate,model_hr_gazetted_day_generate,de_employee_shift.group_hr_shift_manager,1,1,1,1
+access_gazetted_day_generate_line,gazetted.day.generate.line,model_gazetted_day_generate_line,de_employee_shift.group_hr_shift_manager,1,1,1,1
+access_hr_rest_day_config,hr.rest.day.config,model_hr_rest_day_config,de_employee_shift.group_hr_shift_manager,1,1,1,1

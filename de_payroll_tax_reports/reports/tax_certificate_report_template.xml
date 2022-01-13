@@ -1,0 +1,172 @@
+<odoo>
+  <data>
+  <template id="certificate_report">
+    <t t-call="web.html_container">
+    <t t-call="web.external_layout">
+        <div class="page" style="font-size:12px">
+            <div class="oe_structure"/>
+                <h5 style='text-align:center;'>Certificate Of Collection And Deduction Of Income Tax (Including Salary)</h5>
+                <h5 style='text-align:center;'>      (under rule 42) </h5>
+                <table class='table table-sm'>
+                    <tr>
+                        <td>Emp No</td>
+                        <td><span t-esc='docs.employee_id.emp_number'/></td>
+                        <td>Orignal/Duplicate</td>
+                        <td>Date of Issue </td>
+                        <td><span t-esc='issue_date.strftime("%d/%b/%y")'/></td>
+                        
+                    </tr>
+                 </table> 
+            <table  class='table table-sm'>
+              <tr>
+                  <td>
+                      <t t-set='taxable_amount'  t-value='0'/>
+                    <t t-foreach="certificate_list" t-as="certificate">
+                         <t t-set='taxable_amount'  t-value="taxable_amount + certificate['amount']"/>
+                    </t>    
+ 
+                  <p>Certificate that the sum of Rupees <u><t t-esc="'{0:,}'.format(int(round(taxable_amount)))"/> <span t-esc='docs.company_id.currency_id.amount_to_text(taxable_amount)'/></u><i style='font-size:11px'>(amount in words)</i></p>
+                  </td>    
+              </tr>
+              <tr>
+                  <td>
+                 <p>on account of Income tax has been deducted/collected from <u><span t-esc='docs.employee_id.name'/></u>______<u><span t-esc='docs.employee_id.job_id.name'/></u></p>
+                  </td>     
+              </tr>
+              <tr>
+                  <td> <p><u><span t-esc='docs.employee_id.address_home_id.street'/>
+                             <span t-esc='docs.employee_id.address_home_id.street2'/>
+                             <span t-esc='docs.employee_id.address_home_id.city'/>
+                             <span t-esc='docs.employee_id.address_home_id.state_id.name'/>
+                             <span t-esc='docs.employee_id.address_home_id.zip'/>
+                             <span t-esc='docs.employee_id.address_home_id.country_id.name'/> 
+                           </u></p></td>
+              </tr>
+                <tr>
+                    <td> <p style='font-size:12px'>In case of an individual, his/her name in full and in case of an association of persons/company, name and style of the association of persons/company </p></td>
+              </tr>
+                <tr>
+                  <td><p>having National Tax Number_______<u><span t-esc='docs.employee_id.ntn'/></u>_______<i style='font-size:12px'>(if any) and</i></p></td>
+              </tr>
+                <tr>
+                  <td><p>holder of CNIC No.        _______<u><span t-esc='docs.employee_id.cnic'/></u>_______<i style='font-size:12px'>in case of an individual)</i></p></td>
+              </tr>
+                <tr>
+                  <td>  
+                  <p>on or during the period <u><span t-esc='docs.date_from.strftime("%d-%b-%y")'/> </u>_____To <u><span t-esc='docs.date_to.strftime("%d-%b-%y")'/></u>___<i style='font-size:12px'>(Date of collected/deduction) </i></p>
+                  </td>    
+              </tr>
+                <tr>
+                  <td>  
+                  <p><span t-esc='docs.section'/> <u><span t-esc='docs.date_from.strftime("%d-%b-%y")'/> </u>_____To <u><span t-esc='docs.date_to.strftime("%d-%b-%y")'/></u><i style='font-size:12px'>(Period of collection/deduction)</i>
+                      </p>
+                  </td>    
+              </tr>
+                <tr>
+                  <td>
+                       
+                  <p>on the value/amount of Rupee ___________<u><t t-esc="'{0:,}'.format(int(round(gross_total)))"/></u>_______ <i style='font-size:12px'>(Gross amount on which Tax deducted/collected in fitures) </i></p>
+                  </td>    
+              </tr>
+                <tr>
+                  <td>  
+                  <p>This is to further certify that the tax collected/deducted has been deposited in the federal Government Account as per the 
+following details.</p>
+                  </td>    
+              </tr>
+             </table>    
+                    
+            
+            <table  class='table table-sm table-striped table-bordered'>
+                    <tr>
+                        <td >Date of deposit.</td>
+                        <td >SBP/NBP/Treasury</td>
+                        <td >Branch/City</td>
+                        <td >Amount</td>                        
+                    </tr>
+                    <t t-foreach="certificate_list" t-as="certificate">
+                         <tr>
+                             <td ><span t-esc="certificate['period']"/></td>
+                             <td ><span t-esc="certificate['bank']"/></td>
+                             <td ><span t-esc="certificate['branch']"/></td>
+                             <td ><span t-esc="'{0:,}'.format(int(round(certificate['amount'])))"/></td>
+                         </tr>
+                    </t>    
+                
+              </table>
+            <br/>
+            <br/>
+            <p>company / office etc. collecting/deducting the tax. </p>
+            <br/>
+            <table  class='table table-sm'>
+                <tr>
+                    <td>
+                       Name.
+                    </td> 
+                    <td>
+                        <u><span t-esc="docs.company_id.name"/></u>
+                    </td> 
+                    <td>
+                       Signature
+                    </td> 
+                    <td>
+                       __________________________
+                    </td> 
+                </tr>
+                <tr>
+                    <td>
+                       Address.
+                    </td> 
+                    <td>
+                      <u><span t-esc="docs.company_id.street"/>
+                       <span t-esc="docs.company_id.street2"/>
+                       <span t-esc="docs.company_id.city"/> 
+                       <span t-esc="docs.company_id.state_id.name"/>
+                       <span t-esc="docs.company_id.zip"/>
+                          <span t-esc="docs.company_id.country_id.name"/></u>  
+                    </td> 
+                    <td>
+                       Name
+                    </td> 
+                    <td>
+                        <u><span t-esc="user.name"/></u>
+                    </td> 
+                </tr>
+                <tr>
+                    <td>
+                       NTN (if any)
+                    </td> 
+                    <td>
+                        <u><span t-esc="docs.company_id.vat"/>  </u>
+                    </td> 
+                    <td>
+                       Designation
+                    </td> 
+                    <td>
+                       <u><span t-esc="request.env['hr.employee'].sudo().search([('user_id','=',user.id)]).job_id.name"/></u>  
+                    </td> 
+                </tr>
+                <tr>
+                    <td>
+                       Date.
+                    </td> 
+                    <td>
+                        <u><span t-esc="docs.date_of_issue.strftime('%d/%b/%y')"/></u>
+                    </td> 
+                    <td>
+                       Seal
+                    </td> 
+                    <td>
+                       __________________________
+                    </td> 
+                </tr>
+            </table>    
+              
+          </div>
+    </t>
+    </t>
+</template>
+    
+    
+  </data>
+</odoo>

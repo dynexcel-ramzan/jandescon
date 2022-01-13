@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_employee_form_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='identification_group']" position="after">
+                <group string=" Expense Claim" name="expense_claim">
+                    <field name="can_request_petty_cash"/>
+                    <field name="petty_cash_limit"
+                           attrs="{'invisible':[('can_request_petty_cash', '!=', True)]}"/>
+                    <field name="petty_cash_period" attrs="{'required': [('can_request_petty_cash', '=', True)],'invisible':[('can_request_petty_cash', '!=', True)]}"/>
+                    <field name="can_request_funds_expense"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

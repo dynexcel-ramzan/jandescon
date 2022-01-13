@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <template id="portal_layout" name="Portal layout: expense menu entry" inherit_id="portal.portal_breadcrumbs" priority="25">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'expense' or expense" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not expense else ''}">
+                <a t-if="expense" t-attf-href="/my/expenses?{{ keep_query() }}">expenses one</a>
+                <t t-else="">Expenses</t>
+            </li>
+            <li t-if="expense" class="breadcrumb-item active text-truncate col-8 col-lg-10">
+                <t t-esc="expense.name"/>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home" name="Show expenses / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="25">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Expenses</t>
+                <t t-set="url" t-value="'/my/expenses'"/>
+                <t t-set="placeholder_count" t-value="'expense_count'"/>
+            </t>
+        </xpath>  
+    </template>
+
+    <template id="portal_my_expenses" name="My Expenses">
+         <t t-set="foo" t-value="2 + 1"/>
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Expenses</t>
+            </t>
+            <t t-if="not grouped_expenses">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no Expenses.
+                </div>
+            </t>
+            <t t-if="grouped_expenses">
+                <t t-call="portal.portal_table">
+                    <t t-foreach="grouped_expenses" t-as="expenses">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left">No#</th>
+                                <th class="text-left">Expense Report</th>
+                                <th class="text-left">Employee</th>
+                                <th class="text-left">Manager</th>
+                                <th class="text-left">Payment By</th>
+                                <th class="text-left">Accounting Date</th>
+                                <th class="text-left">Total Amount</th>
+                                <th class="text-left">State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="expenses" t-as="expense">       
+                                <tr>
+                                    <td class="text-left">
+                                        #<span t-esc="expense.id" />
+                                    </td>
+                                     <td>
+                                        <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.name"/></a>
+                                    </td>
+                                     <td class="text-left">
+                                        <span t-esc="expense.employee_id.name" />
+                                    </td>
+                                     <td class="text-left">
+                                        <span t-esc="expense.user_id.name" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="expense.payment_mode" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="expense.accounting_date" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="expense.total_amount" />
+                                    </td>
+                                    <td class="text-left">
+                                        <t t-if="expense.state == 'draft'">
+                                            <i class="badge badge-pill badge-info" >Draft</i>
+                                        </t>
+                                        <t t-if="expense.state == 'submit'">
+                                            <i class="badge badge-pill badge-info" >Submitted</i>
+                                        </t>
+                                        <t t-if="expense.state == 'approve'">
+                                            <i class="badge badge-pill badge-info" >Approved</i>
+                                        </t>
+                                        <t t-if="expense.state == 'post'">
+                                            <i class="badge badge-pill badge-info" >Posted</i>
+                                        </t>
+                                        <t t-if="expense.state == 'done'">
+                                            <i class="badge badge-pill badge-info" >Paid</i>
+                                        </t>
+                                        <t t-if="expense.state == 'cancel'">
+                                            <i class="badge badge-pill badge-info" >Refused</i>
+                                        </t>
+                                    </td>
+                                    
+                                    
+                                 <!--   <td class="text-left">
+                                        <span t-esc="_approval_.category_id.name"/>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_approval_.request_owner_id.name"/>
+                                    </td>
+                                    
+                                    <td class="text-left">
+                                        <span t-esc="_approval_.partner_id.name"/>
+                                    </td>
+                                    <td class="text-left">
+                                        <span class="badge badge-pill badge-info" title="Current stage of the Approval is " t-esc="_approval_.request_status" />
+                                    </td> -->
+                                    
+                                    
+                                <!--   <td class="text-center">
+                                         <t t-foreach="expense.expense_line_ids" t-as="lines">
+                                            <t t-if="lines.user_id.id == uid">
+                                                <t t-if="lines.status == 'new'">
+                                                    <i class="badge badge-pill badge-info" >New</i>
+                                                </t>
+                                                <t t-if="lines.status == 'pending'">
+                                                    <i class="badge badge-pill badge-info" >To Approve</i>
+                                                </t>
+                                                <t t-if="lines.status == 'approved'">
+                                                    <i class="badge badge-pill badge-info" >Approved</i>
+                                                </t>
+                                                <t t-if="lines.status == 'refused'">
+                                                    <i class="badge badge-pill badge-info" >Refused</i>
+                                                </t>
+                                                <t t-if="lines.status == 'cancel'">
+                                                    <i class="badge badge-pill badge-info" >Cancel</i>
+                                                </t>
+                                             </t>
+                                        </t>
+                                    </td>	 -->
+                                    
+                                    
+                                 <!--  <td>  
+                                     <t t-foreach="_approval_.approver_ids" t-as="lines">
+                                        <t t-if="lines.user_id.id == uid">
+                                            <t t-if = "lines.status == 'pending'">
+                                                 <a t-attf-href="/approval/accept/#{_approval_.id}?" title="Approve"><div class="btn btn-primary"><i class="fa fa-check"></i></div></a>
+                                                 <a t-attf-href="/approval/reject/#{_approval_.id}?" title="Refuse"><div class="btn btn-warning"><i class="fa fa-times"></i></div></a> 
+                                               </t>
+                                             </t>   
+                                        </t> 
+                                    </td> -->
+                                </tr>
+                            </t>
+                            <tr>
+                                <div>
+                                    <t class="col-lg-7 col-md-8" >
+                                        <a href="/expense/create/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
+                                    </t>
+                                </div>
+                            </tr>   
+                        </tbody>
+                    </t>
+                </t>
+            </t>   
+        </t>
+    </template>
+     
+    <template id="portal_my_expense" name="My Expense">
+        <t t-call="portal.portal_layout">
+             <t t-set="o_portal_fullwidth_alert" groups="de_portal_expence.group_expense">
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#model=hr.expense.sheet&amp;id=%s&amp;view_type=form' % (expense.id)"/>
+                </t> 
+            </t>
+          
+            <div id="optional_placeholder"></div>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                    <div id="optional_placeholder"></div>
+                    <div class="container">
+                      <div class="card">
+                        <div class="card-header">
+                                <div class="row">
+                                    <div class="col-lg-11">
+                                        <h5 class="d-flex mb-1 mb-md-0 row">
+                                            <span t-field="expense.name" class="col-8 text-truncate"/>
+                                            <small class="text-muted d-none d-md-inline"> (#<span t-field="expense.id"/>)</small>
+                                            <div class="col-3 col-md-3 text-left">
+                                              <small class="text-right">State:</small>
+<!--                                               <t t-foreach="expense.approver_ids" t-as="lines"> -->
+<!--                                                   <t t-if="lines.user_id.id == uid"> -->
+                                                    <span t-field="expense.state" class=" badge badge-pill badge-info" title="Current stage of this Expense"/>
+<!--                                                   </t> -->
+<!--                                              </t> -->
+                                            </div>
+                                        </h5>
+                                    </div>
+                                    <t t-set="prev_record" t-value="1" /> 
+                                    <t t-set="next_record" t-value="2" /> 
+                                    <div style="float:right; text-align:right; width:0ox; margin-right:0px;" class=" btn-group col-lg-1" role="group">
+                                    <h5>  
+                                        <t t-if="pre_id">
+                                            <a role="button"  t-attf-href="/expense/pre/#{expense.id}?" ><i style="margin-right:10px; align:right" class="fa fa-chevron-left" role="img" aria-label="Previous" title="Previous"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="margin-right:10px; align:right; color:#B8B7B0" class="fa fa-chevron-left" aria-label="Previous" title="Previous"></i></a>
+
+                                        </t>
+                                        <t t-if="next_id">
+                                            <a role="button" t-attf-href="/expense/next/#{expense.id}?" ><i class="fa fa-chevron-right" role="img" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="color:#B8B7B0" class="fa fa-chevron-right" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                    </h5>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </t>
+               <t t-set="card_body">          
+                    <div class="row mb-4">
+                        <div class="col-12 col-md-6 mb-1">
+                            <strong>Date:</strong> <span t-field="expense.create_date" t-options='{"widget": "date"}'/>
+                        </div>
+                        <div class="col-12 col-md-6" t-if="expense.id">
+                            <strong>Manager:</strong> <span t-field="expense.user_id.name" />
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                         <div class="col-12 col-md-6 pb-2">
+                            <div class="row">
+                                <div class="col-md-6"> <strong>Employee : </strong>
+                                    <t t-if="expense.employee_id">
+                                        <span t-esc="expense.employee_id.name"/>
+                                    </t>
+                                </div>
+                            </div>
+                             <div class="row">            
+                                <div class="col-md-6"> <strong>Payed By : </strong>
+                                    <t t-if="expense.payment_mode">
+                                        <span t-esc="expense.payment_mode"/>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+<!--                         <div class="col-12 col-md-6 pb-2">
+                            <strong>Active User</strong>
+                            <div class="row">
+                                <div class="col flex-grow-0 pr-3">
+                                    <t t-if="approval.activity_user_id">
+                                    <img t-if="approval.activity_user_id.image_1024" class="rounded-circle mt-1 o_portal_contact_img" t-att-src="image_data_uri(approval.activity_user_id.image_1024)" alt="Contact"/>
+                                     </t>
+                                    <img t-else="" class="rounded-circle mt-1 o_portal_contact_img" src="/web/static/src/img/user_menu_avatar.png" alt="Contact"/>
+                                </div>
+                                <div class="col pl-md-0">
+                                    <t t-if="approval.activity_user_id">
+                                        <div t-field="approval.activity_user_id" t-options='{"widget": "contact", "fields": ["name", "email", "phone"]}'/>
+                                    </t>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div> 
+<!--                     <div class="row"> 
+                        <div t-attf-class="col-12 col-lg-12  mb-md-0 ">
+                            <hr class="mb-1"/>
+                            <div class="d-flex my-2">
+                                <strong>Description</strong>
+                            </div>
+                            <t t-if="approval.reason">                                        
+                                <div class="py-1 px-2 bg-100 small" t-field="approval.reason"/>
+                            </t>
+                        </div> 
+                    </div>
+                   <div class="row">
+                       <t t-foreach="approval.approver_ids" t-as="lines">
+                            <t t-if="lines.user_id.id == uid">
+                               <t t-if = "lines.status == 'pending'">
+                            <div class="offset-md-10 col-md-1" style="margin-top:20px;">
+                                <a t-attf-href="/app/ccpt/#{approval.id}?"><i  class="btn btn-primary">Approve</i></a>
+                            </div>                  
+                            <div class="col-md-1" style="margin-top:20px;">
+                                <a t-attf-href="/app/rjct/#{approval.id}?"><i class="btn btn-warning">Refuse</i></a>                   
+                            </div>
+                                </t>
+                           </t>
+                       </t>
+                    </div>  -->
+                </t> 
+            </t>
+            <div class="mt32">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="expense"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    
+
+    <template id="create_expense" name="My craet">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+                <t t-call="portal.portal_table">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Now you can also create new Expenses from here. Good Luck</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>  
+                                <div class="container">
+                                        <div class="row align-center">
+                                            <div class="col-md-8 col-xs-12 col-md-offset-2 sell-page-contact " style="align:center"> 
+                                                <form id="saleForm" data-toggle="validator" action="/my/expense/save" class="mt32">
+                                                   
+                                                    
+                                                    <div class="form-group row form-field o_website_form_custom o_website_form_required_custom">
+                                                        <div  class="col-xl">
+                                                            <label for="environment">Expense Report Summary :</label>
+                                                            <input name="expense_name" type="text" class="form-control o_website_form_input"/>                                    
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    
+                                                    <div class="form-group row form-field o_website_form_custom o_website_form_required_custom">
+                                                        <div  class="col-xl">
+                                                            <label for="environment">Employee :</label>
+                                                              <select class="form-control" name="emp">
+                                                                    <t t-foreach="employees" t-as="emps">
+                                                                        <option t-att-value="emps.id">
+                                                                            <t t-esc="emps.name"/>
+                                                                        </option>
+                                                                    </t>
+                                                             </select>
+                                                        </div>
+<!--                                                         <div style="float:right;"  class="col-xl">
+                                                                <strong class="d-block mb-2">Date End:</strong>
+                                                            <input name="date_end" type="date" class="form-control o_website_form_input"/>
+                                                        </div> -->
+                                                    </div>
+                                                    <div class="form-group">
+                                                          <label for="environment">Manager :</label>
+                                                              <select class="form-control" name="manager">
+                                                                    <t t-foreach="managers" t-as="manage">
+                                                                        <option t-att-value="manage.id">
+                                                                            <t t-esc="manage.name"/>
+                                                                        </option>
+                                                                    </t>
+                                                            </select>
+                                                    </div>
+                                                    <div class="form-group row form-field o_website_form_custom o_website_form_required_custom">
+                                                        <div class="col-md-2">
+                                                            <button type="submit"  class="btn btn-primary pull-left">Create</button>
+                                                        </div>
+                                                        <div class="col-md-7">
+                                                            <t t-if="success_flag" t-call="portal.portal_docs_entry">
+                                                                <t t-set="title">Expense has been Saved Success fully</t>
+                                                            </t> 
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <a href="/my/expenses"><div class="btn btn-warning pull-right" style="float:right; height:35px;line-height:100%;">All Expenses</div></a> 
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </t>
+                </t>
+        </template> 
+
+</odoo>
+
+
