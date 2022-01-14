@@ -12,7 +12,7 @@ class AdvanceAgainstExpenses(models.Model):
     _description = 'Advance Against Expenses Inh'
     
     
-    category_id = fields.Many2one('approval.category', related='employee_id.adv_exp_id')
+    categ_id = fields.Many2one('approval.category', string='Category')
     approval_request_id = fields.Many2one('approval.request', string="Approval")
     
             
@@ -28,7 +28,8 @@ class AdvanceAgainstExpenses(models.Model):
     @api.model
     def create(self, vals):
         sheet = super(AdvanceAgainstExpenses, self.with_context(mail_create_nosubscribe=True, mail_auto_subscribe_no_notify=True)).create(vals)
-        if sheet.category_id:
+        sheet.action_approval_category()
+        if sheet.categ_id:
             sheet.action_create_approval_request_adv_exp()
         return sheet
     
@@ -42,7 +43,7 @@ class AdvanceAgainstExpenses(models.Model):
                     'is_parent_approver': True,
                 }
                 expense_category = self.env['approval.category'].sudo().create(category)
-            line.category_id=expense_category.id
+            line.categ_id=expense_category.id
             
     def action_create_approval_request_adv_exp(self):
         approver_ids  = []
@@ -52,7 +53,7 @@ class AdvanceAgainstExpenses(models.Model):
             request_list.append({
                     'name': str(line.employee_id.name)+ ' Advance Ref# '+str(line.name),
                     'request_owner_id': line.employee_id.user_id.id,
-                    'category_id': line.category_id.id,
+                    'category_id': line.categ_id.id,
                     'exp_adv_id': line.id,
                     'reason': 'Advance',
                     'request_status': 'new',

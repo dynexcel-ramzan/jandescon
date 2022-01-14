@@ -8,21 +8,21 @@
                 
 				<xpath expr="//sheet/div" position="before">
 					<div class="oe_button_box" name="button_box">
-                        <button name="%(action_approval_request_view_adv_exp)d" type="action" class="oe_stat_button" icon="fa-check-square-o" string="Approvals" context="{'exp_adv_id':id,'category_id':category_id}" attrs="{'invisible': [('approval_request_id', '=', False)]}">
+                        <button name="%(action_approval_request_view_adv_exp)d" type="action" class="oe_stat_button" icon="fa-check-square-o" string="Approvals" context="{'exp_adv_id':id,'categ_id':categ_id}" attrs="{'invisible': [('approval_request_id', '=', False)]}">
                         </button>      
                     </div> 
 				</xpath>
                 
                  <xpath expr="//header//button[@name='action_approve']" position="replace">
                     <button name='action_approve' string="Approve" type="object" 
-						class='oe_danger' attrs="{'invisible': ['|',('category_id', '=', True),('state','=','waiting')]}" />
+						class='oe_danger' attrs="{'invisible': ['|',('categ_id', '=', True),('state','=','waiting')]}" />
                 </xpath>
                 <xpath expr="//header//button[@name='action_reject']" position="replace">
                     <button name='action_reject' string="Reject" type="object" 
-						class='oe_danger'   attrs="{'invisible': ['|', ('category_id', '=', True),('state','in',('draft','waiting'))]}"/>
+						class='oe_danger'   attrs="{'invisible': ['|', ('categ_id', '=', True),('state','in',('draft','waiting'))]}"/>
                 </xpath>
                      <xpath expr="//field[@name='description']" position="after">
-					<field name="category_id" invisible='1'/>
+					<field name="categ_id" invisible='1'/>
                      <field name="approval_request_id" readonly="True"/>
 		   </xpath>
 			</field>
