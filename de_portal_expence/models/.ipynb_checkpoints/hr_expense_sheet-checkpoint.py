@@ -33,7 +33,7 @@ class HrExpenseSheet(models.Model):
                 'code': 'expense.sheet.sequence',
                 'implementation': 'standard',
                 'number_next_actual': 1,
-                'prefix': 'ECV/',
+                'prefix': 'ECV#',
             }
             exist_sequence= self.env['ir.sequence'].create(seq_vals) 
         expense.name = self.env['ir.sequence'].next_by_code('expense.sheet.sequence') or _('New')
