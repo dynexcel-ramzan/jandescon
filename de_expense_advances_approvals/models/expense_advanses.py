@@ -29,9 +29,19 @@ class AdvanceAgainstExpenses(models.Model):
     def create(self, vals):
         sheet = super(AdvanceAgainstExpenses, self.with_context(mail_create_nosubscribe=True, mail_auto_subscribe_no_notify=True)).create(vals)
         sheet.action_approval_category()
+        sheet.action_amount_limitation()
         if sheet.categ_id:
             sheet.action_create_approval_request_adv_exp()
         return sheet
+    
+    
+    def action_amount_limitation(self):
+        for line in self:
+            ext_approver_line = self.env['advance.amount.approver.line'].sudo().search([('end_amount','<', line.amount),('company_id','=', line.employee_id.company_id.id)], order='end_amount desc', limit=1)
+            exceeding_limit = 0
+            if ext_approver_line:
+                exceeding_limit = ext_approver_line.end_amount
+                raise UserError('You Are Not Allow to Enter Amount Greater than '+str(round(exceeding_limit))) 
     
     def action_approval_category(self):
         for line in self:
