@@ -29,17 +29,6 @@
                         </tree>
                     </field>
                </page>  
-               <page string='Medical'> 
-                    <field name='medical_line_ids' >
-                        <tree editable='bottom'>
-                            <field name='sub_category_id' />
-                            <field name='limit' />
-                            <field name='ora_unit' /> 
-                            <field name='last_paid' string='Paid'/>
-                            <field name='employee_id' invisible='1'/>
-                        </tree>
-                    </field>
-               </page>   
             </xpath>
         </field>
     </record>

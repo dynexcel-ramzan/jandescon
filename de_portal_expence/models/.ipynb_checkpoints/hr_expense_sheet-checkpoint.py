@@ -49,7 +49,10 @@ class HrExpenseSheet(models.Model):
                 expense.account_move_id.update({
                     'expense_id': expense.id, 
                 })
-    
+            if expense.state=='submit':
+                expense.action_submit_sheet_reading()
+            if expense.state=='cancel':
+                expense.action_refuse_sheet_reading()    
                 
                 
                      
@@ -69,12 +72,6 @@ class HrExpenseSheet(models.Model):
                     vehicle_meter.update({
                        'opening_reading': line.previous_reading
                     })
-            for medical in line.employee_id.medical_line_ids:
-                if line.sub_category_id.id == medical.sub_category_id.id:
-                    total_amount = medical.last_paid - line.unit_amount 
-                    medical.update({
-                       'last_paid': total_amount,
-                    })
     
     
     def action_submit_sheet_reading(self):
@@ -87,15 +84,7 @@ class HrExpenseSheet(models.Model):
                     vehicle_meter.update({
                        'opening_reading': line.meter_reading
                     })
-            for medical in line.employee_id.medical_line_ids:
-                if line.sub_category_id.id == medical.sub_category_id.id:
-                    line.update({
-                        'medical_paid': medical.last_paid
-                    })
-                    total_amount = medical.last_paid + line.unit_amount 
-                    medical.update({
-                       'last_paid': total_amount,
-                    })
+            
                    
     
     def action_deposit(self):

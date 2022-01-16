@@ -6,32 +6,11 @@ class HrEmployee(models.Model):
     _inherit = 'hr.employee'
     
     vehicle_meter_line_ids = fields.One2many('vehicle.meter.reading', 'employee_id', string='Vehicle Meter Line')
-    medical_line_ids = fields.One2many('medical.reading', 'employee_id', string='Medical Line')
     vehicle_id = fields.Many2one('vehicle.meter.detail', string='Vehicle')
     expense_incharge_id = fields.Many2one('hr.employee', string='Expense Incharge')
 
-class MedicalLine(models.Model):
-    _name = 'medical.reading'
-    _description= 'Medical Reading'
-    
-    sub_category_id = fields.Many2one('expense.sub.category', string='Type', required=True, domain="[('ora_unit','=', 'amount')]")
-    limit = fields.Float(string='Limit')
-    last_paid = fields.Float(string='Paid')
-    ora_unit = fields.Selection(selection=[
-            ('amount', 'Amount'),
-            ('km', 'Km'),
-        ], string='Unit', 
-        )
-    employee_id = fields.Many2one('hr.employee', string='Employee')
-    
-    @api.onchange('sub_category_id')
-    def onchange_sub_category_id(self):
-        for line in self:
-            if line.sub_category_id:
-                line.update({
-                    'limit': line.sub_category_id.amount, 
-                    'ora_unit': line.sub_category_id.ora_unit,
-                })    
+class MedicalReading(models.Model):
+    _name='medical.reading'
     
 class VehicleMeterLine(models.Model):
     _name = 'vehicle.meter.reading'

@@ -15,6 +15,7 @@ class HrExpense(models.Model):
                                             string="Attachment")
     sub_category_id = fields.Many2one('expense.sub.category', string='Expense Sub-Category', required=True, copy=True)
     sheet_line_id = fields.Many2one('hr.expense.sheet.line', string='Sheet Lines')
+    percentage = fields.Float(string='Percentage')
     
     @api.onchange('product_id', 'date', 'account_id')
     def _onchange_product_id_date_account_id(self):
