@@ -43,15 +43,15 @@ class HrExpense(models.Model):
                 if line.fleet_id.id!=line.employee_id.vehicle_id.id:
                     raise UserError('You are not allow to select Vehicle rather than '+str(line.employee_id.vehicle_id.name))
                     
-            if line.meter_reading > 0.0 and line.product_id.meter_reading>0.0:
+            if line.meter_reading >= 0.0 and line.product_id.meter_reading>=0.0:
                 opening_vehicle_balance = 0
                 for reading_line  in line.employee_id.vehicle_meter_line_ids:
                     if line.sub_category_id.id==reading_line.sub_category_id.id:
                         opening_vehicle_balance = reading_line.opening_reading
-                if opening_vehicle_balance < line.meter_reading:
-                    current_reading = line.meter_reading - opening_vehicle_balance 
+                if opening_vehicle_balance <= line.meter_reading:
+                    current_reading = line.meter_reading + opening_vehicle_balance 
                     if line.sheet_id.exception!=True:
-                        if current_reading >= line.product_id.meter_reading:
+                        if current_reading >= (line.sub_category_id.meter_reading + opening_vehicle_balance):
                             pass
                         else:
                             raise UserError(_('Your Vehicle meter reading does not reach to limit. Current Reading ' +str(current_reading)+' Difference with opening balance less than limit! '+str(line.product_id.meter_reading)+' your previous opening reading is '+str(opening_vehicle_balance)))

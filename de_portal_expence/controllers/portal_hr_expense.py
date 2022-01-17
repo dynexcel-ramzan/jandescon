@@ -261,7 +261,7 @@ class CreateApproval(http.Controller):
             sum_current = sum + float(kw.get('unit_amount')) 
             if sum_current > limit and product.ora_unit!='km' and exception!=True:
                 limit_amount = limit-sum
-                warning_message="Already Claimed Amount: " + str(round(sum)) + " Due Amount: " + str(round(limit_amount if limit_amount > 0 else 0)) + " Current Amount: "+str(round(float(kw.get('unit_amount')))) +" You are not allow to enter amount greater than "+ str(round(limit_amount if limit_amount > 0 else 0))
+                warning_message="Already Claimed Amount: " + str(round(sum)) + "\n"+ " Due Amount: " + str(round(limit_amount if limit_amount > 0 else 0)) + "\n" + " Current Amount: "+str(round(float(kw.get('unit_amount')))) + "\n" +" You are not allow to enter amount greater than "+ str(round(limit_amount if limit_amount > 0 else 0))
                 return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))    
             else:
                 pass   
@@ -281,13 +281,13 @@ class CreateApproval(http.Controller):
                     if product.id==reading_line.sub_category_id.id:
                         opening_vehicle_balance = reading_line.opening_reading
                 if float(kw.get('meter_reading')) >= 0.0 and product.meter_reading>=0.0:
-                    if opening_vehicle_balance < float(kw.get('meter_reading')):
-                        current_reading = float(kw.get('meter_reading')) - opening_vehicle_balance 
+                    if opening_vehicle_balance <= float(kw.get('meter_reading')):
+                        current_reading = float(kw.get('meter_reading')) + opening_vehicle_balance 
                         if exception!=True:
                             if current_reading >= (product.meter_reading+opening_vehicle_balance):
                                 pass
                             else:
-                                warning_message='Last Reading: ' +str(round(opening_vehicle_balance))+' Due Reading: '+str(round(opening_vehicle_balance+product.meter_reading))+' Current Reading: '+str(round(float(kw.get('meter_reading'))))+' Please Enter Reading Greater than '+str(round(opening_vehicle_balance+product.meter_reading))
+                                warning_message='Last Reading: ' +str(round(opening_vehicle_balance))+ "\n"+' Due Reading: '+str(round(opening_vehicle_balance+product.meter_reading))+ "\n"+' Current Reading: '+str(round(float(kw.get('meter_reading'))))+ "\n"+' Please Enter Reading Greater than '+str(round(opening_vehicle_balance+product.meter_reading))
                                 return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
                     else:
                         warning_message='Please Enter Reading greater than your last Reading! '+str(opening_vehicle_balance)
@@ -301,6 +301,7 @@ class CreateApproval(http.Controller):
                 'implementation': 'standard',
                 'number_next_actual': 1,
                 'prefix': 'ECV#',
+                'company_id': employee.company_id.id,
             }
             exist_sequence= request.env['ir.sequence'].sudo().create(seq_vals) 
         expense_name = request.env['ir.sequence'].sudo().next_by_code('expense.sheet.sequence') or _('New')
@@ -357,6 +358,10 @@ class CreateApproval(http.Controller):
              })
             record_line.update({
                 'attachment_id': [(4, attachment_id.id)],
+            })
+            attachment_id.update({
+                'res_model': 'hr.expense.sheet.line',
+                'res_id': record_line.id, 
             })
 
         exist_split_line = 0        
@@ -517,7 +522,7 @@ class CreateApproval(http.Controller):
             sum_current = sum + float(kw.get('unit_amount')) 
             if sum_current > limit and product.ora_unit!='km' and expense_sheet.exception!=True:
                 limit_amount = limit-sum
-                warning_message="Already Claimed Amount: " + str(sum) + " Due Amount: " + str(round(limit_amount)) + " Current Amount: "+str(round(limit_amount if limit_amount > 0 else 0)) +" You are not allow to enter amount greater than "+ str(round(limit_amount))
+                warning_message="Already Claimed Amount: " + str(sum) + "\n"+ " Due Amount: " + str(round(limit_amount)) + "\n" + " Current Amount: "+str(round(limit_amount if limit_amount > 0 else 0))+ "\n" +" You are not allow to enter amount greater than "+ str(round(limit_amount))
                 
                 return request.render("de_portal_expence.portal_my_expense", expense_page_content(expense=expense_sudo.id, categ=ora_category.id, exception=expense_sheet.exception, warning=warning_message, forcasted=forcasted_data))
             else:
@@ -539,13 +544,13 @@ class CreateApproval(http.Controller):
                     if product.id==reading_line.sub_category_id.id:
                         opening_vehicle_balance = reading_line.opening_reading
                 if float(kw.get('meter_reading')) >= 0.0 and product.meter_reading>=0.0:
-                    if opening_vehicle_balance < float(kw.get('meter_reading')):
-                        current_reading = float(kw.get('meter_reading')) - opening_vehicle_balance
+                    if opening_vehicle_balance <= float(kw.get('meter_reading')):
+                        current_reading = float(kw.get('meter_reading')) + opening_vehicle_balance
                         if expense_sheet.exception!=True:
                             if current_reading >= (product.meter_reading+opening_vehicle_balance):
                                 pass
                             else:
-                                warning_message='Last Reading: ' +str(round(opening_vehicle_balance))+ "\n" + ' Due Reading: '+str(round(opening_vehicle_balance+product.meter_reading))+ "\n" +' Current Reading: '+str(round(float(kw.get('meter_reading'))))+' Please Enter Reading Greater than '+str(round(opening_vehicle_balance+product.meter_reading))
+                                warning_message='Last Reading: ' +str(round(opening_vehicle_balance))+ "\n" + ' Due Reading: '+str(round(opening_vehicle_balance+product.meter_reading))+ "\n" +' Current Reading: '+str(round(float(kw.get('meter_reading'))))+ "\n"+' Please Enter Reading Greater than '+str(round(opening_vehicle_balance+product.meter_reading))
                                 return request.render("de_portal_expence.portal_my_expense", expense_page_content(expense=expense_sheet.id, categ=ora_category.id, exception=expense_sheet.exception, warning=warning_message, forcasted=forcasted_data))
                     else:
                         warning_message='Please Enter Reading greater than your last Reading! '+str(opening_vehicle_balance)
@@ -595,7 +600,11 @@ class CreateApproval(http.Controller):
              })
             record_line.update({
                 'attachment_id': [(4, attachment_id.id)],
-            })                          
+            }) 
+            attachment_id.update({
+                'res_model': 'hr.expense.sheet.line',
+                'res_id': record_line.id, 
+            })
         exist_record_line = 0                            
         for analytic_line in analytic_cost_list:
             split_line_vals = {
@@ -635,23 +644,6 @@ class CreateApproval(http.Controller):
                 split_line.update({
                     'meter_reading': kw.get('meter_reading'),
                 })
-        if attachment_docs and exist_record_line != 0:
-            Attachments = request.env['ir.attachment']
-            name = attachment_docs.filename
-            file = attachment_docs
-            attachment_id = Attachments.sudo().create({
-            'name': name,
-            'type': 'binary',
-            'datas': base64.b64encode(file.read()),
-             })
-            exist_record_line.update({
-                'attachment_id': [(4, attachment_id.id)],
-            })
-            attachment_id.update({
-                'res_id': exist_record_line,
-                'res_model': 'hr.expense',
-                'res_name': exist_record_line.name,
-            })
         return request.redirect('/my/expense/%s'%(expense_sheet.id))
        
     
@@ -763,12 +755,11 @@ class CustomerPortal(CustomerPortal):
         expenses = request.env['hr.expense.sheet']
         employee =  request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))])
         searchbar_sortings = {
-            'ora_category_id': {'label': _('Sort by Url'), 'order': 'ora_category_id'},
-            'name': {'label': _('Sort by Name'), 'order': 'name'},
-            'id': {'label': _('Sort by ID'), 'order': 'id'},
+            'ora_category_id': {'label': _('Sort by Category'), 'order': 'ora_category_id'},
+            'name': {'label': _('Sort by ECV#'), 'order': 'name'},
         }
         # default sortby order
-        sort_order = searchbar_sortings.get(sortby, 'id')
+        sort_order = searchbar_sortings.get(sortby, 'name')
         domain = []
         if search:
             domain += []
@@ -804,12 +795,11 @@ class CustomerPortal(CustomerPortal):
         expenses = request.env['hr.expense.sheet']
         employee =  request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))])
         searchbar_sortings = {
-            'ora_category_id': {'label': _('Sort by Url'), 'order': 'ora_category_id'},
-            'name': {'label': _('Sort by Name'), 'order': 'name'},
-            'id': {'label': _('Sort by ID'), 'order': 'id'},
+            'ora_category_id': {'label': _('Sort by Category'), 'order': 'ora_category_id'},
+            'name': {'label': _('Sort by ECV#'), 'order': 'name'},
         }
         # default sortby order
-        sort_order = searchbar_sortings.get(sortby, 'id')
+        sort_order = searchbar_sortings.get(sortby, 'name')
         domain = []
         if search:
             domain += []

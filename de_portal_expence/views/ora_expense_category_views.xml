@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    
     <data>
         <!-- Views -->
         <!-- Form View -->
@@ -9,7 +8,6 @@
             <field name="model">ora.expense.category</field>
             <field name="arch" type="xml">
                 <form string="ORA Expense Cateogry">
-                  
                     <sheet>
                          <div class="oe_title">
                             <h1>

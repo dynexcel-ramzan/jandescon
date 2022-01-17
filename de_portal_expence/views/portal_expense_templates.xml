@@ -944,9 +944,7 @@
                       <t t-if='expense.ora_category_id.has_reading in ("optional","required")'>  
                         <th>Meter Reading</th>  
                       </t> 
-                      <t t-if='expense.ora_category_id.is_attachment in ("optional","required")'>   
-                        <th>Attachment</th>  
-                      </t>
+                     
                       <th>Control-Account</th>  
                       <th>Cost Center</th>
                       <th>Percentage</th>  
@@ -977,9 +975,7 @@
                               <t t-if='expense.ora_category_id.has_reading in ("optional","required")'>    
                                 <td><t t-esc="'{0:,}'.format(int(round(expense_line.meter_reading)))"/></td>
                               </t> 
-                              <t t-if='expense.ora_category_id.is_attachment in ("optional","required")'>
-                                  <td><a t-attf-href="/web/content/#{expense_line.attachment_id.id}?download=true" title="Download"><i class="fa fa-download"></i></a></td>
-                               </t> 
+                              
                               <td><t t-esc="expense_line.product_id.controlled_id.name"/></td>
                               <td><t t-esc="expense_line.analytic_account_id.name"/></td>
                               <td><t t-esc="expense_line.percentage"/></td> 
@@ -1482,7 +1478,12 @@
                                         <span style='color:#495057;'>Remarks</span>
                                     </label>
                                    <div class="col-sm" id='data_list'>
+                                       <t t-if='error_flag=="0"'>
                                           <textarea id="description" class="form-control s_website_form_input" name="description" ></textarea> 
+                                       </t>
+                                       <t t-if='error_flag=="1"'>
+                                          <input id="description" type='text' class="form-control s_website_form_input" name="description" t-att-value="forcasted['name']"  /> 
+                                       </t>
                                     </div>
                                 </div>
                               </div>
@@ -1497,7 +1498,12 @@
                                         <span style='color:#495057;'>Remarks *</span>
                                     </label>
                                    <div class="col-sm" id='data_list'>
-                                          <textarea id="description" class="form-control s_website_form_input" name="description" required="1"></textarea> 
+                                        <t t-if='error_flag=="0"'>
+                                          <textarea id="description" class="form-control s_website_form_input" name="description" required="1"></textarea>
+                                        </t>    
+                                       <t t-if='error_flag=="1"'>
+                                          <input id="description" type='text' class="form-control s_website_form_input" name="description" t-att-value="forcasted['name']"  /> 
+                                       </t>
                                     </div>
                                 </div>
                               </div>

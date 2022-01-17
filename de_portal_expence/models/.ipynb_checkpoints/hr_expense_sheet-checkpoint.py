@@ -23,6 +23,17 @@ class HrExpenseSheet(models.Model):
     grade = fields.Many2one(related='employee_id.grade_designation')
     department_id = fields.Many2one(related='employee_id.department_id')
     expense_sheet_line_ids = fields.One2many('hr.expense.sheet.line', 'sheet_id', string='Expense Sheet Lines', copy=False)
+    
+    def action_get_attachment_view(self):
+        res = self.env['ir.actions.act_window']._for_xml_id('base.action_attachment')
+        res['domain'] = [('res_model', '=', 'hr.expense.sheet.line'), ('res_id', 'in', self.expense_sheet_line_ids.ids)]
+        res['context'] = {
+            'default_res_model': 'hr.expense.sheet',
+            'default_res_id': self.id,
+            'create': False,
+            'edit': False,
+        }
+        return res
 
     
     def action_expnese_sequence(self):
@@ -143,15 +154,15 @@ class ExpenseSheetLine(models.Model):
                 if line.fleet_id.id!=line.employee_id.vehicle_id.id:
                     raise UserError('You are not allow to select Vehicle rather than '+str(line.employee_id.vehicle_id.name))
                     
-            if line.meter_reading > 0.0 and line.product_id.meter_reading>0.0:
+            if line.meter_reading >= 0.0 and line.product_id.meter_reading>=0.0:
                 opening_vehicle_balance = 0
                 for reading_line  in line.employee_id.vehicle_meter_line_ids:
                     if line.sub_category_id.id==reading_line.sub_category_id.id:
                         opening_vehicle_balance = reading_line.opening_reading
-                if opening_vehicle_balance < line.meter_reading:
-                    current_reading = line.meter_reading - opening_vehicle_balance 
+                if opening_vehicle_balance <= line.meter_reading:
+                    current_reading = line.meter_reading + opening_vehicle_balance 
                     if line.sheet_id.exception!=True:
-                        if current_reading >= line.product_id.meter_reading:
+                        if current_reading >= (line.sub_category_id.meter_reading+opening_vehicle_balance):
                             pass
                         else:
                             raise UserError(_('Your Vehicle meter reading does not reach to limit. Current Reading ' +str(current_reading)+' Difference with opening balance less than limit! '+str(line.product_id.meter_reading)+' your previous opening reading is '+str(opening_vehicle_balance)))
@@ -479,8 +490,8 @@ Or send your receipts at <a href="mailto:%(email)s?subject=Lunch%%20with%%20cust
     def action_get_attachment_view(self):
         self.ensure_one()
         res = self.env['ir.actions.act_window']._for_xml_id('base.action_attachment')
-        res['domain'] = [('res_model', '=', 'hr.expense'), ('res_id', 'in', self.ids)]
-        res['context'] = {'default_res_model': 'hr.expense', 'default_res_id': self.id}
+        res['domain'] = [('res_model', '=', 'hr.expense.sheet.line'), ('res_id', 'in', self.ids)]
+        res['context'] = {'default_res_model': 'hr.expense.sheet.line', 'default_res_id': self.id}
         return res
 
     # ----------------------------------------
