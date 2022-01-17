@@ -53,8 +53,7 @@ def expense_page_content(flag = 0, expense=0, categ=0, exception=0, subordinate=
         managers=sheet.employee_id.parent_id.name
         employees=sheet.employee_id
         if sheet.is_deposit==True:
-            is_expense_deposit=True
-            
+            is_expense_deposit=True        
     managers = request.env['res.users'].sudo().search([('id','=',http.request.env.context.get('uid'))])
     contract = request.env['hr.contract'].sudo().search([('employee_id','=', employees.id),('state','=','open')], limit=1)
     cost_center_count = 0
@@ -85,7 +84,6 @@ def expense_page_content(flag = 0, expense=0, categ=0, exception=0, subordinate=
     vehicles = request.env['vehicle.meter.detail'].sudo().search([('id','=',employees.vehicle_id.id)])
     company_info = request.env['res.users'].sudo().search([('id','=',http.request.env.context.get('uid'))])
     managers=employees.parent_id.name
-    
     product_list = []
     if exception==0:
         for exist_prod in products:
@@ -99,8 +97,6 @@ def expense_page_content(flag = 0, expense=0, categ=0, exception=0, subordinate=
     if warning !=0:
         errora_message = warning
         error_flag = '1'
-        
-     
     return {
         'managers': managers,
         'is_editable': is_editable,
@@ -675,14 +671,21 @@ class CustomerPortal(CustomerPortal):
     @http.route(['/action/vc/approval/<int:expense_id>'], type='http', auth="public", website=True)
     def action_add_vc_approval(self,expense_id , access_token=None, **kw):
         recrd = request.env['hr.expense.sheet'].sudo().browse(expense_id)
+        approval = False
         if recrd.employee_id.company_id.chanceller_id:
-            if recrd.employee_id.company_id.chanceller_id.user_id:
-                vals ={
-                    'user_id': recrd.employee_id.company_id.chanceller_id.user_id.id,
-                    'request_id': recrd.approval_request_id.id,
-                    'status': 'new',
-                }
-                approvers=request.env['approval.approver'].sudo().create(vals)
+            for approver in recrd.approval_request_id.approver_ids:
+                if approver.user_id.id== recrd.employee_id.company_id.chanceller_id.user_id.id:
+                    approval = True
+                    break
+                else:
+                    pass
+        if approval==False:
+            vals ={
+                'user_id': recrd.employee_id.company_id.chanceller_id.user_id.id,
+                'request_id': recrd.approval_request_id.id,
+                'status': 'new',
+            }
+            approvers=request.env['approval.approver'].sudo().create(vals)
         values = self._expense_get_page_view_values(recrd, **kw) 
         values.update({
             'is_approval_done': True
