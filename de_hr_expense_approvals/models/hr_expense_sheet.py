@@ -57,14 +57,15 @@ class HrExpenseSheet(models.Model):
                     'request_status': 'new',
                 })
                 approval_request_id = self.env['approval.request'].create(request_list)
-                if line.employee_id.work_location_id.approver_id.user_id:
+                
+                if line.employee_id.work_location_id.approver_id and line.ora_category_id.vehicle_meter_approval==True:
                     vals ={
                         'user_id': line.employee_id.work_location_id.approver_id.user_id.id,
                         'request_id': approval_request_id.id,
                         'status': 'new',
                     }
                     approvers=self.env['approval.approver'].sudo().create(vals)
-                if line.employee_id.parent_id.user_id.id != line.employee_id.work_location_id.approver_id.user_id:
+                if line.employee_id.parent_id.user_id.id != line.employee_id.work_location_id.approver_id.user_id.id:
                     vals ={
                         'user_id': line.employee_id.parent_id.user_id.id,
                         'request_id': approval_request_id.id,
@@ -106,7 +107,23 @@ class HrExpenseSheet(models.Model):
                     'request_status': 'new',
                 })
                 approval_request_id = self.env['approval.request'].create(request_list)
-                if line.employee_id.company_id.finance_partner_id.user_id:
+                if line.employee_id.work_location_id.approver_id.user_id and line.ora_category_id.vehicle_meter_approval==True:
+                    vals ={
+                        'user_id': line.employee_id.work_location_id.approver_id.user_id.id,
+                        'request_id': approval_request_id.id,
+                        'status': 'new',
+                    }
+                    approvers=self.env['approval.approver'].sudo().create(vals)
+                    
+                if line.employee_id.parent_id.user_id and line.employee_id.work_location_id.approver_id.user_id.id not in (line.employee_id.company_id.finance_partner_id.user_id.id, line.employee_id.work_location_id.approver_id.user_id.id)  and line.ora_category_id.vehicle_meter_approval==False:
+                        vals ={
+                            'user_id': line.employee_id.parent_id.user_id.id,
+                            'request_id': approval_request_id.id,
+                            'status': 'pending',
+                        }
+                        approvers=self.env['approval.approver'].sudo().create(vals)
+                        
+                if line.employee_id.company_id.finance_partner_id.user_id and line.employee_id.work_location_id.approver_id.user_id.id != line.employee_id.company_id.finance_partner_id.user_id.id and line.ora_category_id.vehicle_meter_approval==False:
                     vals ={
                         'user_id': line.employee_id.company_id.finance_partner_id.user_id.id,
                         'request_id': approval_request_id.id,
@@ -128,7 +145,14 @@ class HrExpenseSheet(models.Model):
                         'request_status': 'new',
                     })
                     approval_request_id = self.env['approval.request'].create(request_list)
-                    if line.employee_id.parent_id.user_id:
+                    if line.employee_id.work_location_id.approver_id.user_id and line.ora_category_id.vehicle_meter_approval==True:
+                        vals ={
+                            'user_id': line.employee_id.work_location_id.approver_id.user_id.id,
+                            'request_id': approval_request_id.id,
+                            'status': 'new',
+                        }
+                        approvers=self.env['approval.approver'].sudo().create(vals)
+                    if line.employee_id.parent_id.user_id and line.employee_id.work_location_id.approver_id.user_id.id != line.employee_id.parent_id.user_id.id and line.ora_category_id.vehicle_meter_approval==False:
                         vals ={
                             'user_id': line.employee_id.parent_id.user_id.id,
                             'request_id': approval_request_id.id,
