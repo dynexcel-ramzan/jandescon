@@ -302,6 +302,8 @@
                       </div>
                     </div>
                </div>
+            
+            
             <t t-if='expense.state!="draft"'>
              <div class="s_website_form_rows row s_col_no_bgcolor">
                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
@@ -310,7 +312,7 @@
                                 <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Cost Center</span>
                             </label>
                             <div class="col-sm" style='color:#666666;'>
-                                <t t-esc="expense.default_analytic.name" /> 
+                                <t t-esc="default_analytic" /> 
                         </div>
                     </div>
                 </div>

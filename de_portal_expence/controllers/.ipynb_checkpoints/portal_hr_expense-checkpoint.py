@@ -115,7 +115,7 @@ def expense_page_content(flag = 0, expense=0, categ=0, exception=0, subordinate=
         'subordinates': subordinates,
         'is_expense_deposit': is_expense_deposit,
         'vehicles': vehicles,
-        'default_analytic': default_analytic,
+        'default_analytic': default_analytic.name,
         'cost_centers': cost_centers,
         'exception': exception_granted,
         'fleets': vehicles,
@@ -263,7 +263,7 @@ class CreateApproval(http.Controller):
             sum_current = sum + float(kw.get('unit_amount')) 
             if sum_current > limit and product.ora_unit!='km' and exception!=True:
                 limit_amount = limit-sum
-                warning_message="Already Claimed Amount: " + str(round(sum)) + " Due Amount: " + str(round(limit_amount)) + " Current Amount: "+str(round(float(kw.get('unit_amount')))) +" You are not allow to enter amount greater than "+ str(round(limit_amount))
+                warning_message="Already Claimed Amount: " + str(round(sum)) + " Due Amount: " + str(round(limit_amount if limit_amount > 0 else 0)) + " Current Amount: "+str(round(float(kw.get('unit_amount')))) +" You are not allow to enter amount greater than "+ str(round(limit_amount if limit_amount > 0 else 0))
                 return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))    
             else:
                 pass   
@@ -282,7 +282,7 @@ class CreateApproval(http.Controller):
                 for reading_line  in employee.vehicle_meter_line_ids:
                     if product.id==reading_line.sub_category_id.id:
                         opening_vehicle_balance = reading_line.opening_reading
-                if float(kw.get('meter_reading')) > 0.0 and product.meter_reading>0.0:
+                if float(kw.get('meter_reading')) >= 0.0 and product.meter_reading>=0.0:
                     if opening_vehicle_balance < float(kw.get('meter_reading')):
                         current_reading = float(kw.get('meter_reading')) - opening_vehicle_balance 
                         if exception!=True:
@@ -540,7 +540,7 @@ class CreateApproval(http.Controller):
                 for reading_line  in employee.vehicle_meter_line_ids:
                     if product.id==reading_line.sub_category_id.id:
                         opening_vehicle_balance = reading_line.opening_reading
-                if float(kw.get('meter_reading')) > 0.0 and product.meter_reading>0.0:
+                if float(kw.get('meter_reading')) >= 0.0 and product.meter_reading>=0.0:
                     if opening_vehicle_balance < float(kw.get('meter_reading')):
                         current_reading = float(kw.get('meter_reading')) - opening_vehicle_balance
                         if expense_sheet.exception!=True:
@@ -552,7 +552,6 @@ class CreateApproval(http.Controller):
                     else:
                         warning_message='Please Enter Reading greater than your last Reading! '+str(opening_vehicle_balance)
                         return request.render("de_portal_expence.portal_my_expense", expense_page_content(expense=expense_sheet.id, categ=ora_category.id, exception=expense_sheet.exception, warning=warning_message, forcasted=forcasted_data))
-        
         line_vals = {
                     'name': product.name,
                     'reference': kw.get('reference'),
