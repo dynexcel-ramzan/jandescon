@@ -97,6 +97,7 @@ def expense_page_content(flag = 0, expense=0, categ=0, exception=0, subordinate=
     if warning !=0:
         errora_message = warning
         error_flag = '1'
+        
     return {
         'managers': managers,
         'is_editable': is_editable,
@@ -111,7 +112,8 @@ def expense_page_content(flag = 0, expense=0, categ=0, exception=0, subordinate=
         'subordinates': subordinates,
         'is_expense_deposit': is_expense_deposit,
         'vehicles': vehicles,
-        'default_analytic': default_analytic.name,
+        'default_analytic_name': default_analytic.name,
+        'default_analytic': default_analytic,
         'cost_centers': cost_centers,
         'exception': exception_granted,
         'fleets': vehicles,
@@ -282,10 +284,10 @@ class CreateApproval(http.Controller):
                     if opening_vehicle_balance < float(kw.get('meter_reading')):
                         current_reading = float(kw.get('meter_reading')) - opening_vehicle_balance 
                         if exception!=True:
-                            if current_reading >= product.meter_reading:
+                            if current_reading >= (product.meter_reading+opening_vehicle_balance):
                                 pass
                             else:
-                                warning_message='Last Reading: ' +str(round(opening_vehicle_balance))+' Due Reading: '+str(round(opening_vehicle_balance+product.meter_reading))+' Current Reading: '+str(round(float(kw.get('meter_reading'))))
+                                warning_message='Last Reading: ' +str(round(opening_vehicle_balance))+' Due Reading: '+str(round(opening_vehicle_balance+product.meter_reading))+' Current Reading: '+str(round(float(kw.get('meter_reading'))))+' Please Enter Reading Greater than '+str(round(opening_vehicle_balance+product.meter_reading))
                                 return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
                     else:
                         warning_message='Please Enter Reading greater than your last Reading! '+str(opening_vehicle_balance)
@@ -540,10 +542,10 @@ class CreateApproval(http.Controller):
                     if opening_vehicle_balance < float(kw.get('meter_reading')):
                         current_reading = float(kw.get('meter_reading')) - opening_vehicle_balance
                         if expense_sheet.exception!=True:
-                            if current_reading >= product.meter_reading:
+                            if current_reading >= (product.meter_reading+opening_vehicle_balance):
                                 pass
                             else:
-                                warning_message='Last Reading: ' +str(round(opening_vehicle_balance))+ "\n" + ' Due Reading: '+str(round(opening_vehicle_balance+product.meter_reading))+ "\n" +' Current Reading: '+str(round(float(kw.get('meter_reading'))))
+                                warning_message='Last Reading: ' +str(round(opening_vehicle_balance))+ "\n" + ' Due Reading: '+str(round(opening_vehicle_balance+product.meter_reading))+ "\n" +' Current Reading: '+str(round(float(kw.get('meter_reading'))))+' Please Enter Reading Greater than '+str(round(opening_vehicle_balance+product.meter_reading))
                                 return request.render("de_portal_expence.portal_my_expense", expense_page_content(expense=expense_sheet.id, categ=ora_category.id, exception=expense_sheet.exception, warning=warning_message, forcasted=forcasted_data))
                     else:
                         warning_message='Please Enter Reading greater than your last Reading! '+str(opening_vehicle_balance)

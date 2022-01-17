@@ -24,7 +24,8 @@
                               <field name="has_reading" widget="radio" options="{'horizontal': true}"/>  
                               <field name="has_dependent" widget="radio" options="{'horizontal': true}"/>
                               <field name="has_description" widget="radio" options="{'horizontal': true}"/>  
-                              <field name="is_manager" />  
+                              <field name="is_manager" />
+                              <field name="vehicle_meter_approval" />  
                               <field name="is_special"  invisible='1'/> 
                             </group>
                             <group>
