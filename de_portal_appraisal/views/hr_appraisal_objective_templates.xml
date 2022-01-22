@@ -93,103 +93,6 @@
                         </thead>
                         <tbody>
                             <t t-foreach="appraisals" t-as="appraisal">   
-                            <t t-if="appraisal.employee_id.parent_id.user_id.id == uid">   
-                              
-                                   <tr>
-                                      <td class="text-left">
-                                        #<span t-esc="appraisal.id" />
-                                    </td>
-                                     <td>
-                                        <a t-attf-href="/appraisal/objective/#{appraisal.id}?{{ keep_query() }}"><span t-field="appraisal.employee_id.name"/></a>
-                                    </td>
-                                     <td class="text-left">
-                                        <span t-esc="appraisal.description" />
-                                    </td>
-                                    
-                                     
-                                    <td class="text-left">
-                                          <t t-if="appraisal.objective_year == '2020'">
-                                            <i class="badge badge-pill badge-info" >FY 2020-21</i>
-                                        </t>
-                                         <t t-if="appraisal.objective_year == '2021'">
-                                            <i class="badge badge-pill badge-info" >FY 2021-22</i>
-                                        </t>
-                                         <t t-if="appraisal.objective_year == '2022'">
-                                            <i class="badge badge-pill badge-info" >FY 2022-23</i>
-                                        </t>
-                                         <t t-if="appraisal.objective_year == '2023'">
-                                            <i class="badge badge-pill badge-info" >FY 2023-24</i>
-                                        </t>
-                                         <t t-if="appraisal.objective_year == '2024'">
-                                            <i class="badge badge-pill badge-info" >FY 2024-25</i>
-                                        </t>
-                                         <t t-if="appraisal.objective_year == '2025'">
-                                            <i class="badge badge-pill badge-info" >FY 2025-26</i>
-                                        </t>
-                                        <t t-if="appraisal.objective_year == '2026'">
-                                            <i class="badge badge-pill badge-info" >FY 2026-27</i>
-                                        </t>
-                                        <t t-if="appraisal.objective_year == '2027'">
-                                            <i class="badge badge-pill badge-info" >FY 2027-28</i>
-                                        </t>
-                                        <t t-if="appraisal.objective_year == '2028'">
-                                            <i class="badge badge-pill badge-info" >FY 2028-29</i>
-                                        </t>
-                                        <t t-if="appraisal.objective_year == '2029'">
-                                            <i class="badge badge-pill badge-info" >FY 2029-30</i>
-                                        </t>
-                                        <t t-if="appraisal.objective_year == '2030'">
-                                            <i class="badge badge-pill badge-info" >FY 2030-31</i>
-                                        </t>
-                                        <t t-if="appraisal.objective_year == '2031'">
-                                            <i class="badge badge-pill badge-info" >FY 2031-32</i>
-                                        </t>
-                                        <t t-if="appraisal.objective_year == '2032'">
-                                            <i class="badge badge-pill badge-info" >FY 2032-33</i>
-                                        </t>
-                                        <t t-if="appraisal.objective_year == '2033'">
-                                            <i class="badge badge-pill badge-info" >FY 2033-34</i>
-                                        </t>
-                                     <t t-if="appraisal.objective_year == '2034'">
-                                            <i class="badge badge-pill badge-info" >FY 2034-35</i>
-                                        </t>
-                                     <t t-if="appraisal.objective_year == '2035'">
-                                            <i class="badge badge-pill badge-info" >FY 2035-36</i>
-                                        </t>
-                                     <t t-if="appraisal.objective_year == '2036'">
-                                            <i class="badge badge-pill badge-info" >FY 2036-37</i>
-                                        </t>
-                                     <t t-if="appraisal.objective_year == '2037'">
-                                            <i class="badge badge-pill badge-info" >FY 2037-38</i>
-                                        </t>
-                                    <t t-if="appraisal.objective_year == '2038'">
-                                            <i class="badge badge-pill badge-info" >FY 2038-39</i>
-                                        </t>
-                                    <t t-if="appraisal.objective_year == '2039'">
-                                            <i class="badge badge-pill badge-info" >FY 2039-39</i>
-                                        </t>
-                                    <t t-if="appraisal.objective_year == '2040'">
-                                            <i class="badge badge-pill badge-info" >FY 2040-41</i>
-                                        </t>
-                                    </td>
-                                   
-                                    <td class="text-left">
-                                        <t t-if="appraisal.state == 'draft'">
-                                            <i class="badge badge-pill badge-info" >Draft</i>
-                                        </t>
-                                        <t t-if="appraisal.state == 'waiting'">
-                                            <i class="badge badge-pill badge-warning" >Submitted</i>
-                                        </t>
-                                        <t t-if="appraisal.state == 'confirm'">
-                                            <i class="badge badge-pill badge-success" >Approved</i>
-                                        </t>
-                                       
-                                    </td>                                   
-                            
-                                </tr>
-                            </t>
-                                <t t-if="appraisal.employee_id.user_id.id == uid">   
-                                
                                 <tr>
                                       <td class="text-left">
                                         #<span t-esc="appraisal.id" />
@@ -283,7 +186,7 @@
                                 </tr>
                             </t>
                                 
-                            </t>    
+                            
 
                             <tr>
                                 <div>

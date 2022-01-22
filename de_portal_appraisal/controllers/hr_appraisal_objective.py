@@ -948,7 +948,7 @@ class CustomerPortal(CustomerPortal):
         return values
   
     def _appraisal_get_page_view_values(self,appraisal, next_id = 0,pre_id= 0, appraisal_user_flag = 0, access_token = None, **kwargs):
-        company_info = request.env['res.users'].search([('id','=',http.request.env.context.get('uid'))])
+        company_info = request.env['res.users'].sudo().search([('id','=',http.request.env.context.get('uid'))])
         categories = request.env['hr.objective.category'].sudo().search([])
         employees = request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))])
         status = request.env['hr.objective.status'].sudo().search([])
@@ -971,7 +971,7 @@ class CustomerPortal(CustomerPortal):
         return self._get_page_view_values(appraisal, access_token, values, 'my_appraisal_history', False, **kwargs)
 
     def _appraisal_edit_get_page_view_values(self,appraisal, edit_objective,manager_objective, next_id = 0,pre_id= 0, appraisal_user_flag = 0, access_token = None, **kwargs):
-        company_info = request.env['res.users'].search([('id','=',http.request.env.context.get('uid'))])
+        company_info = request.env['res.users'].sudo().search([('id','=',http.request.env.context.get('uid'))])
         categories = request.env['hr.objective.category'].sudo().search([])
         employees = request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))])
         status = request.env['hr.objective.status'].sudo().search([])
@@ -1021,7 +1021,7 @@ class CustomerPortal(CustomerPortal):
             'none': {'input': 'none', 'label': _('None')},
         }
 
-        appraisal_groups = request.env['hr.appraisal.objective'].search([])
+        appraisal_groups = request.env['hr.appraisal.objective'].sudo().search([])
 
         # default sort by value
         if not sortby:
@@ -1069,7 +1069,7 @@ class CustomerPortal(CustomerPortal):
         paging(0,0,1)
 
         paging(grouped_appraisals)
-        company_info = request.env['res.users'].search([('id','=',http.request.env.context.get('uid'))])
+        company_info = request.env['res.users'].sudo().search([('id','=',http.request.env.context.get('uid'))])
         values.update({
             'date': date_begin,
             'date_end': date_end,
@@ -1351,7 +1351,7 @@ class CustomerPortal(CustomerPortal):
             'none': {'input': 'none', 'label': _('None')},
         }
 
-        feedback_groups = request.env['hr.appraisal.feedback'].search([])
+        feedback_groups = request.env['hr.appraisal.feedback'].sudo().search([])
 
         # default sort by value
         if not sortby:
@@ -1379,7 +1379,7 @@ class CustomerPortal(CustomerPortal):
                 search_domain = OR([search_domain, [('state', 'ilike', search)]])
             domain += search_domain
         domain += ['|','|',('name.user_id', '=', http.request.env.context.get('uid')),('name.parent_id.user_id', '=', http.request.env.context.get('uid')),('name.department_id.manager_id.user_id', '=', http.request.env.context.get('uid'))]     
-        feedback_count = request.env['hr.appraisal.feedback'].search_count(domain)
+        feedback_count = request.env['hr.appraisal.feedback'].sudo().search_count(domain)
 
         pager = portal_pager(
             url="/appraisals/feedback",
@@ -1390,7 +1390,7 @@ class CustomerPortal(CustomerPortal):
             step=self._items_per_page
         )
 
-        _feedbacks = request.env['hr.appraisal.feedback'].search(domain, order=order, limit=self._items_per_page, offset=pager['offset'])
+        _feedbacks = request.env['hr.appraisal.feedback'].sudo().search(domain, order=order, limit=self._items_per_page, offset=pager['offset'])
         request.session['my_feedback_history'] = _feedbacks.ids[:100]
 
         grouped_feedbacks = [_feedbacks]
@@ -1398,7 +1398,7 @@ class CustomerPortal(CustomerPortal):
         paging(0,0,1)
 
         paging(grouped_feedbacks)
-        company_info = request.env['res.users'].search([('id','=',http.request.env.context.get('uid'))])
+        company_info = request.env['res.users'].sudo().search([('id','=',http.request.env.context.get('uid'))])
         values.update({
             'date': date_begin,
             'date_end': date_end,

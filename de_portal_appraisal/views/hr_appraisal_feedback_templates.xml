@@ -28,7 +28,7 @@
                         </thead>
                         <tbody>
                             <t t-foreach="feedbacks" t-as="feedback">   
-                            <t t-if="feedback.name.user_id.id == uid">   
+                            
                                 
                                 <tr>
                                       <td class="text-left">
@@ -117,7 +117,7 @@
                                           </t>
                                           <t t-if="feedback.state =='confirm'">
 
-                                              <i class="badge badge-pill badge-success" >Confirm</i>
+                                              <i class="badge badge-pill badge-success" >Send Of Manager Review</i>
                                           </t>
                                           <t t-if="feedback.state =='sent'">
 
@@ -156,289 +156,11 @@
                                           </t>
 
                                          <t t-if="feedback.state =='closed'">
-
                                               <i class="badge badge-pill badge-success" >Closed  </i>
                                           </t> 
-
                                     </td>
-                                    
-                            
                                 </tr>
-                            </t>
-                                <t t-if="feedback.name.parent_id.user_id.id == uid">   
-                                
-                                <tr>
-                                      <td class="text-left">
-                                        #<span t-esc="feedback.id" />
-                                    </td>
-                                     <td>
-                                        <a t-attf-href="/appraisal/feedback/#{feedback.id}?{{ keep_query() }}"><span t-field="feedback.name.name"/></a>
-                                    </td>                                   
-                                     
-                                   <td class="text-left">
-                                        <span t-esc="feedback.mid_year_date"  t-options='{"widget": "date"}' />
-                                    </td>
-                                    
-                                     <td class="text-left">
-                                        <span t-esc="feedback.end_year_date"  t-options='{"widget": "date"}' />
-                                    </td>
-                                   
-                                      <td class="text-left">
-                                          <t t-if="feedback.performance_period == '2020'">
-                                            <i class="badge badge-pill badge-info" >FY 2020-21</i>
-                                        </t>
-                                         <t t-if="feedback.performance_period == '2021'">
-                                            <i class="badge badge-pill badge-info" >FY 2021-22</i>
-                                        </t>
-                                         <t t-if="feedback.performance_period == '2022'">
-                                            <i class="badge badge-pill badge-info" >FY 2022-23</i>
-                                        </t>
-                                         <t t-if="feedback.performance_period == '2023'">
-                                            <i class="badge badge-pill badge-info" >FY 2023-24</i>
-                                        </t>
-                                         <t t-if="feedback.performance_period == '2024'">
-                                            <i class="badge badge-pill badge-info" >FY 2024-25</i>
-                                        </t>
-                                         <t t-if="feedback.performance_period == '2025'">
-                                            <i class="badge badge-pill badge-info" >FY 2025-26</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2026'">
-                                            <i class="badge badge-pill badge-info" >FY 2026-27</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2027'">
-                                            <i class="badge badge-pill badge-info" >FY 2027-28</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2028'">
-                                            <i class="badge badge-pill badge-info" >FY 2028-29</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2029'">
-                                            <i class="badge badge-pill badge-info" >FY 2029-30</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2030'">
-                                            <i class="badge badge-pill badge-info" >FY 2030-31</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2031'">
-                                            <i class="badge badge-pill badge-info" >FY 2031-32</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2032'">
-                                            <i class="badge badge-pill badge-info" >FY 2032-33</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2033'">
-                                            <i class="badge badge-pill badge-info" >FY 2033-34</i>
-                                        </t>
-                                     <t t-if="feedback.performance_period == '2034'">
-                                            <i class="badge badge-pill badge-info" >FY 2034-35</i>
-                                        </t>
-                                     <t t-if="feedback.performance_period == '2035'">
-                                            <i class="badge badge-pill badge-info" >FY 2035-36</i>
-                                        </t>
-                                     <t t-if="feedback.performance_period == '2036'">
-                                            <i class="badge badge-pill badge-info" >FY 2036-37</i>
-                                        </t>
-                                     <t t-if="feedback.performance_period == '2037'">
-                                            <i class="badge badge-pill badge-info" >FY 2037-38</i>
-                                        </t>
-                                    <t t-if="feedback.performance_period == '2038'">
-                                            <i class="badge badge-pill badge-info" >FY 2038-39</i>
-                                        </t>
-                                    <t t-if="feedback.performance_period == '2039'">
-                                            <i class="badge badge-pill badge-info" >FY 2039-39</i>
-                                        </t>
-                                    <t t-if="feedback.performance_period == '2040'">
-                                            <i class="badge badge-pill badge-info" >FY 2040-41</i>
-                                        </t>
-                                    </td>
-                                    <td>
-                                          <t t-if="feedback.state =='draft'">
-                                             <i class="badge badge-pill badge-success" >Draft</i>      
-                                          </t>
-                                          <t t-if="feedback.state =='confirm'">
 
-                                              <i class="badge badge-pill badge-success" >Confirm</i>
-                                          </t>
-                                          <t t-if="feedback.state =='sent'">
-
-                                              <i class="badge badge-pill badge-success" >Send For Employee Review </i>
-                                          </t>
-                                          <t t-if="feedback.state =='endorsed_employee'">
-
-                                              <i class="badge badge-pill badge-success" >Endorsed By Employee</i>
-                                          </t>
-                                         <t t-if="feedback.state =='endorsed_hod'">
-
-                                              <i class="badge badge-pill badge-success" >Endorsed By HOD </i>
-                                          </t>
-                                        <t t-if="feedback.state =='done'">
-
-                                              <i class="badge badge-pill badge-success" >Done </i>
-                                          </t> 
-                                          <t t-if="feedback.state =='end_year_appraisee_review'">
-
-                                              <i class="badge badge-pill badge-success" > End Year Appraisee Review</i>
-                                          </t>
-                                          <t t-if="feedback.state =='end_year_appraiser_review'">
-
-                                              <i class="badge badge-pill badge-success" >End Year Appraiser Review </i>
-                                          </t>
-                                           <t t-if="feedback.state =='end_year_sent_emp_view'">
-                                             <i class="badge badge-pill badge-success" >End Year Sent EMP Review</i>      
-                                          </t>
-                                          <t t-if="feedback.state =='end_year_endorsed_emp'">
-
-                                              <i class="badge badge-pill badge-success" >End Year Endorsed By Employee</i>
-                                          </t>
-                                          <t t-if="feedback.state =='end_year_endorse_hod'">
-
-                                              <i class="badge badge-pill badge-success" >End Year Endorsed By HOD</i>
-                                          </t>
-
-                                         <t t-if="feedback.state =='closed'">
-
-                                              <i class="badge badge-pill badge-success" >Closed  </i>
-                                          </t> 
-                                    </td>    
-
-                            
-                                </tr>
-                            </t>
-                                
-                                <t t-if="feedback.name.parent_id.user_id.id != uid">
-                                <t t-if="feedback.name.department_id.manager_id.user_id.id == uid">   
-                                
-                                <tr>
-                                      <td class="text-left">
-                                        #<span t-esc="feedback.id" />
-                                    </td>
-                                     <td>
-                                        <a t-attf-href="/appraisal/feedback/#{feedback.id}?{{ keep_query() }}"><span t-field="feedback.name.name"/></a>
-                                    </td>                                   
-                                     
-                                   <td class="text-left">
-                                        <span t-esc="feedback.mid_year_date" t-options='{"widget": "date"}' />
-                                    </td>
-                                    
-                                     <td class="text-left">
-                                        <span t-esc="feedback.end_year_date" t-options='{"widget": "date"}' />
-                                    </td>
-                                   
-                                      <td class="text-left">
-                                          <t t-if="feedback.performance_period == '2020'">
-                                            <i class="badge badge-pill badge-info" >FY 2020-21</i>
-                                        </t>
-                                         <t t-if="feedback.performance_period == '2021'">
-                                            <i class="badge badge-pill badge-info" >FY 2021-22</i>
-                                        </t>
-                                         <t t-if="feedback.performance_period == '2022'">
-                                            <i class="badge badge-pill badge-info" >FY 2022-23</i>
-                                        </t>
-                                         <t t-if="feedback.performance_period == '2023'">
-                                            <i class="badge badge-pill badge-info" >FY 2023-24</i>
-                                        </t>
-                                         <t t-if="feedback.performance_period == '2024'">
-                                            <i class="badge badge-pill badge-info" >FY 2024-25</i>
-                                        </t>
-                                         <t t-if="feedback.performance_period == '2025'">
-                                            <i class="badge badge-pill badge-info" >FY 2025-26</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2026'">
-                                            <i class="badge badge-pill badge-info" >FY 2026-27</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2027'">
-                                            <i class="badge badge-pill badge-info" >FY 2027-28</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2028'">
-                                            <i class="badge badge-pill badge-info" >FY 2028-29</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2029'">
-                                            <i class="badge badge-pill badge-info" >FY 2029-30</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2030'">
-                                            <i class="badge badge-pill badge-info" >FY 2030-31</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2031'">
-                                            <i class="badge badge-pill badge-info" >FY 2031-32</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2032'">
-                                            <i class="badge badge-pill badge-info" >FY 2032-33</i>
-                                        </t>
-                                        <t t-if="feedback.performance_period == '2033'">
-                                            <i class="badge badge-pill badge-info" >FY 2033-34</i>
-                                        </t>
-                                     <t t-if="feedback.performance_period == '2034'">
-                                            <i class="badge badge-pill badge-info" >FY 2034-35</i>
-                                        </t>
-                                     <t t-if="feedback.performance_period == '2035'">
-                                            <i class="badge badge-pill badge-info" >FY 2035-36</i>
-                                        </t>
-                                     <t t-if="feedback.performance_period == '2036'">
-                                            <i class="badge badge-pill badge-info" >FY 2036-37</i>
-                                        </t>
-                                     <t t-if="feedback.performance_period == '2037'">
-                                            <i class="badge badge-pill badge-info" >FY 2037-38</i>
-                                        </t>
-                                    <t t-if="feedback.performance_period == '2038'">
-                                            <i class="badge badge-pill badge-info" >FY 2038-39</i>
-                                        </t>
-                                    <t t-if="feedback.performance_period == '2039'">
-                                            <i class="badge badge-pill badge-info" >FY 2039-39</i>
-                                        </t>
-                                    <t t-if="feedback.performance_period == '2040'">
-                                            <i class="badge badge-pill badge-info" >FY 2040-41</i>
-                                        </t>
-                                    </td>
-                                    <td>
-                                       <t t-if="feedback.state =='draft'">
-                                         <i class="badge badge-pill badge-success" >Draft</i>      
-                                       </t>
-                                       <t t-if="feedback.state =='confirm'">
-
-                                          <i class="badge badge-pill badge-success" >Confirm</i>
-                                       </t>
-                                      <t t-if="feedback.state =='sent'">
-
-                                          <i class="badge badge-pill badge-success" >Send For Employee Review </i>
-                                      </t>
-                                      <t t-if="feedback.state =='endorsed_employee'">
-
-                                          <i class="badge badge-pill badge-success" >Endorsed By Employee</i>
-                                      </t>
-                                     <t t-if="feedback.state =='endorsed_hod'">
-
-                                          <i class="badge badge-pill badge-success" >Endorsed By HOD </i>
-                                      </t>
-                                    <t t-if="feedback.state =='done'">
-
-                                          <i class="badge badge-pill badge-success" >Done </i>
-                                      </t> 
-                                      <t t-if="feedback.state =='end_year_appraisee_review'">
-
-                                          <i class="badge badge-pill badge-success" > End Year Appraisee Review</i>
-                                      </t>
-                                      <t t-if="feedback.state =='end_year_appraiser_review'">
-
-                                          <i class="badge badge-pill badge-success" >End Year Appraiser Review </i>
-                                      </t>
-                                       <t t-if="feedback.state =='end_year_sent_emp_view'">
-                                         <i class="badge badge-pill badge-success" >End Year Sent EMP Review</i>      
-                                      </t>
-                                      <t t-if="feedback.state =='end_year_endorsed_emp'">
-
-                                          <i class="badge badge-pill badge-success" >End Year Endorsed By Employee</i>
-                                      </t>
-                                      <t t-if="feedback.state =='end_year_endorse_hod'">
-
-                                          <i class="badge badge-pill badge-success" >End Year Endorsed By HOD</i>
-                                      </t>
-
-                                     <t t-if="feedback.state =='closed'">
-
-                                          <i class="badge badge-pill badge-success" >Closed  </i>
-                                      </t> 
-                                    </td>    
-                                   
-                                </tr>
-                            </t>
-                             </t>                                
                             </t>                               
                         </tbody>
                     </t>
@@ -524,21 +246,149 @@
                                     </t>
                                  </t>
                 </div>
-                <div  class='pull-right'>
+                 <div  class='pull-right'>
                     <t t-if='feedback.state in ("sent","endorsed_employee", "endorsed_hod","done","end_year_sent_emp_view","end_year_endorsed_emp","end_year_endorsed_hod","closed")'>
-                      Rating:   <i class="badge badge-pill badge-info" ><t t-esc='feedback.rating_level'/></i>
-                    </t>  
+                      Appraiser Rating:   <i class="badge badge-pill badge-info" ><t t-esc='feedback.rating_level'/></i>
+                    </t> 
                      <t t-if='feedback.state in ("confirm","end_year_appraiser_review")'>
                      <t t-if='feedback.name.parent_id.user_id.id==uid'>
-                      Rating:   <i class="badge badge-pill badge-info" ><t t-esc='feedback.rating_level'/></i>
+                      Appraiser Rating:   <i class="badge badge-pill badge-info" ><t t-esc='feedback.rating_level'/></i>
                     </t>
-                    </t>     
-                </div>    
+                    </t>   
+                 </div>
+                
+                 <div  class='pull-right'>  
+                    <t t-if='feedback.state in ("draft", "confirm","sent","endorsed_employee", "endorsed_hod","done","end_year_sent_emp_view","end_year_endorsed_emp","end_year_endorsed_hod","closed")'>
+                        
+                       Appraise Rating:   <i class="badge badge-pill badge-info" ><t t-esc='feedback.employee_rating_level'/></i>
+                    
+                    </t>        
+                 </div>  
                     <br/>
                     <br/>
                                 
                         <div class="container">
-                        </div>    
+                        </div>
+
+
+                      <div class="s_website_form_rows row s_col_no_bgcolor">
+                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                     <div class="row s_col_no_resize s_col_no_bgcolor">
+                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="status">
+                                <span class="s_website_form_label_content">Status</span>
+                            </label>
+                     <div class="col-sm">
+                           <t t-if="feedback.state =='draft'">
+                             <i class="badge badge-pill badge-success" >Draft</i>      
+                          </t>
+                          <t t-if="feedback.state =='confirm'">
+
+                              <i class="badge badge-pill badge-success" >Send Of Manager Review</i>
+                          </t>
+                          <t t-if="feedback.state =='sent'">
+
+                              <i class="badge badge-pill badge-success" >Send For Employee Review </i>
+                          </t>
+                          <t t-if="feedback.state =='endorsed_employee'">
+
+                              <i class="badge badge-pill badge-success" >Endorsed By Employee</i>
+                          </t>
+                         <t t-if="feedback.state =='endorsed_hod'">
+
+                              <i class="badge badge-pill badge-success" >Endorsed By HOD </i>
+                          </t>
+                        <t t-if="feedback.state =='done'">
+
+                              <i class="badge badge-pill badge-success" >Done </i>
+                          </t> 
+                          <t t-if="feedback.state =='end_year_appraisee_review'">
+
+                              <i class="badge badge-pill badge-success" > End Year Appraisee Review</i>
+                          </t>
+                          <t t-if="feedback.state =='end_year_appraiser_review'">
+
+                              <i class="badge badge-pill badge-success" >End Year Appraiser Review </i>
+                          </t>
+                           <t t-if="feedback.state =='end_year_sent_emp_view'">
+                             <i class="badge badge-pill badge-success" >End Year Sent EMP Review</i>      
+                          </t>
+                          <t t-if="feedback.state =='end_year_endorsed_emp'">
+
+                              <i class="badge badge-pill badge-success" >End Year Endorsed By Employee</i>
+                          </t>
+                          <t t-if="feedback.state =='end_year_endorse_hod'">
+
+                              <i class="badge badge-pill badge-success" >End Year Endorsed By HOD</i>
+                          </t>
+                         
+                         <t t-if="feedback.state =='closed'">
+
+                              <i class="badge badge-pill badge-success" >Closed  </i>
+                          </t> 
+                                                   
+                     </div>
+                  </div>
+                </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="next_status">
+                                <span class="s_website_form_label_content">Next Status</span>
+                        </label>
+                        <div class="col-sm">
+                           <t t-if="feedback.state =='draft'">
+                             <i class="badge badge-pill badge-success" >Send Of Manager Review</i>      
+                          </t>
+                          <t t-if="feedback.state =='confirm'">
+
+                              <i class="badge badge-pill badge-success" >Send For Employee Review</i>
+                          </t>
+                          <t t-if="feedback.state =='sent'">
+
+                              <i class="badge badge-pill badge-success" >Endorsed By Employee </i>
+                          </t>
+                          <t t-if="feedback.state =='endorsed_employee'">
+
+                              <i class="badge badge-pill badge-success" >Endorsed By HOD </i>
+                          </t> 
+                        <t t-if="feedback.state =='done'">
+
+                              <i class="badge badge-pill badge-success" >End Year Appraisee Review </i>
+                          </t> 
+                          <t t-if="feedback.state =='end_year_appraisee_review'">
+
+                              <i class="badge badge-pill badge-success" > End Year Appraiser Review</i>
+                          </t>
+                          <t t-if="feedback.state =='end_year_appraiser_review'">
+
+                              <i class="badge badge-pill badge-success" >End Year Sent EMP Review </i>
+                          </t>
+                           <t t-if="feedback.state =='end_year_sent_emp_view'">
+                             <i class="badge badge-pill badge-success" >End Year Endorsed By Employee</i>      
+                          </t>
+                          <t t-if="feedback.state =='end_year_endorsed_emp'">
+
+                              <i class="badge badge-pill badge-success" >End Year Endorsed By HOD</i>
+                          </t>
+                          <t t-if="feedback.state =='end_year_endorsed_hod'">
+
+                              <i class="badge badge-pill badge-success" >Closed </i>
+                          </t>
+                          <t t-if="feedback.state =='endorsed_hod'">
+
+                              <i class="badge badge-pill badge-success" >Done </i>
+                          </t> 
+                         <t t-if="feedback.state =='end_year_endorse_hod'">
+
+                              <i class="badge badge-pill badge-success" >Done </i>
+                          </t> 
+                                                     
+                    </div>
+                  </div>
+                </div>
+               </div> 
+                
+    
                <div class="s_website_form_rows row s_col_no_bgcolor">
                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
                         <div class="row s_col_no_resize s_col_no_bgcolor">
@@ -685,123 +535,7 @@
                 </div>
                </div> 
                 
-                      <div class="s_website_form_rows row s_col_no_bgcolor">
-                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                     <div class="row s_col_no_resize s_col_no_bgcolor">
-                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="status">
-                                <span class="s_website_form_label_content">Status</span>
-                            </label>
-                     <div class="col-sm">
-                           <t t-if="feedback.state =='draft'">
-                             <i class="badge badge-pill badge-success" >Draft</i>      
-                          </t>
-                          <t t-if="feedback.state =='confirm'">
-
-                              <i class="badge badge-pill badge-success" >Confirm</i>
-                          </t>
-                          <t t-if="feedback.state =='sent'">
-
-                              <i class="badge badge-pill badge-success" >Send For Employee Review </i>
-                          </t>
-                          <t t-if="feedback.state =='endorsed_employee'">
-
-                              <i class="badge badge-pill badge-success" >Endorsed By Employee</i>
-                          </t>
-                         <t t-if="feedback.state =='endorsed_hod'">
-
-                              <i class="badge badge-pill badge-success" >Endorsed By HOD </i>
-                          </t>
-                        <t t-if="feedback.state =='done'">
-
-                              <i class="badge badge-pill badge-success" >Done </i>
-                          </t> 
-                          <t t-if="feedback.state =='end_year_appraisee_review'">
-
-                              <i class="badge badge-pill badge-success" > End Year Appraisee Review</i>
-                          </t>
-                          <t t-if="feedback.state =='end_year_appraiser_review'">
-
-                              <i class="badge badge-pill badge-success" >End Year Appraiser Review </i>
-                          </t>
-                           <t t-if="feedback.state =='end_year_sent_emp_view'">
-                             <i class="badge badge-pill badge-success" >End Year Sent EMP Review</i>      
-                          </t>
-                          <t t-if="feedback.state =='end_year_endorsed_emp'">
-
-                              <i class="badge badge-pill badge-success" >End Year Endorsed By Employee</i>
-                          </t>
-                          <t t-if="feedback.state =='end_year_endorse_hod'">
-
-                              <i class="badge badge-pill badge-success" >End Year Endorsed By HOD</i>
-                          </t>
-                         
-                         <t t-if="feedback.state =='closed'">
-
-                              <i class="badge badge-pill badge-success" >Closed  </i>
-                          </t> 
-                                                   
-                     </div>
-                  </div>
-                </div>
-                                    
-                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                <div class="row s_col_no_resize s_col_no_bgcolor">
-                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="next_status">
-                                <span class="s_website_form_label_content">Next Status</span>
-                        </label>
-                        <div class="col-sm">
-                           <t t-if="feedback.state =='draft'">
-                             <i class="badge badge-pill badge-success" >Confirm</i>      
-                          </t>
-                          <t t-if="feedback.state =='confirm'">
-
-                              <i class="badge badge-pill badge-success" >Send For Employee Review</i>
-                          </t>
-                          <t t-if="feedback.state =='sent'">
-
-                              <i class="badge badge-pill badge-success" >Endorsed By Employee </i>
-                          </t>
-                          <t t-if="feedback.state =='endorsed_employee'">
-
-                              <i class="badge badge-pill badge-success" >Endorsed By HOD </i>
-                          </t> 
-                        <t t-if="feedback.state =='done'">
-
-                              <i class="badge badge-pill badge-success" >End Year Appraisee Review </i>
-                          </t> 
-                          <t t-if="feedback.state =='end_year_appraisee_review'">
-
-                              <i class="badge badge-pill badge-success" > End Year Appraiser Review</i>
-                          </t>
-                          <t t-if="feedback.state =='end_year_appraiser_review'">
-
-                              <i class="badge badge-pill badge-success" >End Year Sent EMP Review </i>
-                          </t>
-                           <t t-if="feedback.state =='end_year_sent_emp_view'">
-                             <i class="badge badge-pill badge-success" >End Year Endorsed By Employee</i>      
-                          </t>
-                          <t t-if="feedback.state =='end_year_endorsed_emp'">
-
-                              <i class="badge badge-pill badge-success" >End Year Endorsed By HOD</i>
-                          </t>
-                          <t t-if="feedback.state =='end_year_endorsed_hod'">
-
-                              <i class="badge badge-pill badge-success" >Closed </i>
-                          </t>
-                          <t t-if="feedback.state =='endorsed_hod'">
-
-                              <i class="badge badge-pill badge-success" >Done </i>
-                          </t> 
-                         <t t-if="feedback.state =='end_year_endorse_hod'">
-
-                              <i class="badge badge-pill badge-success" >Done </i>
-                          </t> 
-                                                     
-                    </div>
-                  </div>
-                </div>
-               </div> 
-                
+                  
          
                                     
             
@@ -832,6 +566,7 @@
                             </div>  
                             <br/>
                              <h2><t t-esc='line.objective'/></h2>
+                              <p class="o_default_snippet_text"><t t-esc='line.obj_description'/></p>
                               <p class="o_default_snippet_text"><t t-esc='line.full_remarks'/></p>
                               <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating"> 
                                  <t t-set='ostar_count' t-value='0'/>   
@@ -930,7 +665,8 @@
                                 <i class="badge badge-pill badge-info pull-right" ><t t-esc='line.priority'/></i>            
                             </div>  
                             <br/>
-                             <h2><t t-esc='line.core_values'/></h2>                                   
+                             <h2><t t-esc='line.core_values'/></h2> 
+                              <p class="o_default_snippet_text"><t t-esc='line.core_description'/></p>                                   
                               <p class="o_default_snippet_text"><t t-esc='line.full_remarks'/></p>                                                          <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating"> 
                                  <t t-set='corehalfstar_count' t-value='0'/>   
                                  <i class="s_rating_icons o_not_editable">
@@ -1031,7 +767,8 @@
                                 <i class="badge badge-pill badge-info pull-right" ><t t-esc='line.priority'/></i>            
                             </div>  
                             <br/>
-                             <h2><t t-esc='line.objective'/></h2>                              
+                             <h2><t t-esc='line.objective'/></h2> 
+                              <p class="o_default_snippet_text"><t t-esc='line.obj_description'/></p>                             
                               <p class="o_default_snippet_text"><t t-esc='line.remarks'/></p>
                                 <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating"> 
                                  <t t-set='corefullstar_count' t-value='0'/>   
@@ -1132,7 +869,8 @@
                                 <i class="badge badge-pill badge-info pull-right" ><t t-esc='line.priority'/></i>            
                             </div>  
                             <br/>
-                             <h2><t t-esc='line.core_values'/></h2>       
+                             <h2><t t-esc='line.core_values'/></h2> 
+                              <p class="o_default_snippet_text"><t t-esc='line.core_description'/></p>      
                               <p class="o_default_snippet_text"><t t-esc='line.remarks'/></p>
                                <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating"> 
                                  <t t-set='core_emp_star_count' t-value='0'/>   
