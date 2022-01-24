@@ -40,6 +40,9 @@
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
+        'wizard/leave_ledger_wizard.xml',
+        'report/ledger_report.xml',
+        'report/ledger_report_template.xml',
         'views/hr_leave_template.xml',
         'views/hr_employee_views.xml',
         'views/hr_leave_type_views.xml',
