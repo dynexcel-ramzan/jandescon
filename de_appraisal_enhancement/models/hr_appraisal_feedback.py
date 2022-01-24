@@ -11,6 +11,29 @@ class HrAppraisalFeedback(models.Model):
 
     company_id = fields.Many2one('res.company', default=lambda self:self.env.company.id)
     description = fields.Char('Description')
+
+    def action_send_mail_appraisee(self):
+        mail_template = self.env.ref('de_appraisal_enhancement.mail_template_appraisal_objective_deadline')
+        ctx = {
+            'employee_to_name': self.name.name,
+            'recipient_users': self.name.user_id,
+            'url': '/mail/view?model=%s&res_id=%s' % ('hr.appraisal.objective', self.id),
+        }
+        RenderMixin = self.env['mail.render.mixin'].with_context(**ctx)
+        subject = RenderMixin._render_template(mail_template.subject, 'hr.appraisal.feedback', self.ids, post_process=True)[self.id]
+        body = RenderMixin._render_template(mail_template.body_html, 'hr.appraisal.feedback', self.ids, post_process=True)[self.id]
+        mail_values = {
+            'email_from': self.env.user.email_formatted,
+            'author_id': self.env.user.partner_id.id,
+            'model': None,
+            'res_id': None,
+            'subject': subject,
+            'body_html': body,
+            'auto_delete': True,
+            'email_to': self.name.work_email
+        }
+        activity= self.env['mail.mail'].sudo().create(mail_values)
+        activity.send()
     
     
     name = fields.Many2one('hr.employee',string = 'Name')
@@ -66,9 +89,70 @@ class HrAppraisalFeedback(models.Model):
     ], string='Rating Level', index=True, copy=False, compute='compute_total_rating_level')
     rating_score = fields.Float(string='Manager Rating Score', compute='compute_rating_level')
     rating_score_calc = fields.Float(string='Rating Score')
-    
+    employee_rating_level = fields.Selection([
+        ('Outstanding Performance', 'Outstanding Performance'),
+        ('Excellent Performance', 'Excellent Performance'),
+        ('Strong Performance', 'Strong Performance'),
+        ('Needs Improvement', 'Needs Improvement'),
+        ('Unsatisfactory', 'Unsatisfactory'),
+    ], string='Rating Level', index=True, copy=False, compute='compute_total_employee_rating_level')
+    employee_rating_score = fields.Float(string='Manager Rating Score', compute='compute_employee_rating_level')
+    employee_rating_score_calc = fields.Float(string='Employee Rating Score')
+
+
+    def compute_employee_rating_level(self):
+        for line in self:
+            total_grand = 0
+            half_year_obj_score = 0
+            half_year_core_score = 0
+            full_year_obj_score = 0
+            full_year_core_score = 0
+            for half_year_obj_line in line.feedback_objective_appraisee_lines:
+                half_year_obj_score += half_year_obj_line.employee_rating_score
+            for half_year_core_line in line.feedback_values_appraisee_lines:
+                half_year_obj_score += half_year_obj_line.employee_rating_score    
+            for full_year_obj_line in line.feedback_objective_lines:
+                full_year_obj_score += full_year_obj_line.employee_rating_score
+            for full_year_core_line in line.feedback_values_lines:
+                full_year_obj_score += full_year_obj_line.employee_rating_score        
+            total_grand = (half_year_obj_score/5) +  (half_year_core_score/5) + (full_year_obj_score/5) + (full_year_core_score/5) 
+            line.update({
+                'employee_rating_score': total_grand,
+                'employee_rating_score_calc': total_grand,
+            })  
     
 
+    @api.depends('employee_rating_score')
+    def compute_total_employee_rating_level(self):
+        for line in self:
+            if line.employee_rating_score >= 1 and line.employee_rating_score <= 1.4:
+                line.update({
+                    'employee_rating_level': 'Unsatisfactory'
+                })
+            elif line.employee_rating_score >= 1.5 and line.employee_rating_score <= 2.4:
+                line.update({
+                    'employee_rating_level': 'Needs Improvement'
+                })   
+            elif line.employee_rating_score >= 2.5 and line.employee_rating_score <= 3.4:
+                line.update({
+                    'employee_rating_level': 'Strong Performance'
+                })   
+            elif line.employee_rating_score >= 3.5 and line.employee_rating_score <= 4.4:
+                line.update({
+                    'employee_rating_level': 'Excellent Performance'
+                })
+            elif line.employee_rating_score >= 4.5 and line.employee_rating_score <= 5:
+                line.update({
+                    'employee_rating_level': 'Outstanding Performance'
+                })
+            elif line.employee_rating_score > 5:
+                line.update({
+                    'employee_rating_level': 'Outstanding Performance'
+                })    
+            else:
+                line.update({
+                    'employee_rating_level': False
+                })           
     
     
     def compute_rating_level(self):
