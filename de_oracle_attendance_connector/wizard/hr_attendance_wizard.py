@@ -35,6 +35,9 @@ class HrAttendanceProcess(models.Model):
                         attendee.update({
                             'check_out': next_day_attendance.check_in,
                         })
+                        next_day_attendance.update({
+                            'check_in': False
+                        })
                         
 
 
