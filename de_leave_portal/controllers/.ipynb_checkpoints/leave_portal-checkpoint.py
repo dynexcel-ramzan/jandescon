@@ -41,6 +41,7 @@ def timeoff_page_content(flag = 0):
             leave_taken_count += leave_count.number_of_days
         if uniq_allocation_leave.max_leaves > 0.0:
             allocation_list.append({
+                'alloc_id': uniq_allocation_leave.id,
                 'leave_categ': uniq_allocation_leave.holiday_status_id.name,
                 'leave_max': round(uniq_allocation_leave.max_leaves,2),
                 'leave_taken': round(leave_taken_count,2),
@@ -49,7 +50,7 @@ def timeoff_page_content(flag = 0):
     company_info = request.env['res.users'].sudo().search([('id','=',http.request.env.context.get('uid'))])
     managers = employees.line_manager
     employee_name = employees
-    req = self.env['hr.leave.type'].sudo().search([('fiscal_year','=',fields.date.today().year),('company_id','=',employees.company_id.id),('validity_stop','!=',False),('validity_start','!=',False)], limit=1)
+    req = request.env['hr.leave.type'].sudo().search([('fiscal_year','=',fields.date.today().year),('company_id','=',employees.company_id.id),('validity_stop','!=',False),('validity_start','!=',False)], limit=1)
     return {
         'leave_type' : leave_type,
         'allocation_list': allocation_list,
@@ -99,11 +100,8 @@ class CreateTimeOff(http.Controller):
         if kw.get('leave_category_id') == 'day':
             date_start1 = datetime.strptime(kw.get('date_start') , '%Y-%m-%d')
             date_end1 =  datetime.strptime(kw.get('date_end') , '%Y-%m-%d')
-            
             days = (date_end1 - date_start1).days
-            
             date_weekday = datetime.strptime(kw.get('date_start') , '%Y-%m-%d')
-            
             weekday = date_weekday.weekday()
             hours_from = 8
             hours_to = 16
@@ -117,22 +115,15 @@ class CreateTimeOff(http.Controller):
             
             date_start =  date_start1 + relativedelta(hours =+ hours_from) 
             date_end = date_end1 + relativedelta(hours =+ hours_to)
-            
             if kw.get('attachment'):
                 Attachments = request.env['ir.attachment']
-
                 name = kw.get('attachment').filename
-
                 file = kw.get('attachment')
                 attachment_id = Attachments.sudo().create({
-
                 'name': name,
-
                 'type': 'binary',
-
                 'datas': base64.b64encode(file.read()),
                  })
-               
                 timeoff_val = {
                     'holiday_status_id': int(kw.get('leave_type_id')),
                     'employee_id': int(kw.get('employee_id')),            
@@ -187,11 +178,8 @@ class CreateTimeOff(http.Controller):
                             gazetted_date_to = gazetted_day.date_to + relativedelta(hours=+5)
                             if str(shift_line.date.strftime('%y-%m-%d')) >= str(gazetted_date_from.strftime('%y-%m-%d')) and str(shift_line.date.strftime('%y-%m-%d')) <= str(gazetted_date_to.strftime('%y-%m-%d')):
                                 
-                                tot_rest_days -= 1    
-                                
+                                tot_rest_days -= 1          
                         tot_rest_days += 1    
-                    
-                   
                 if dddelta.days == 0.0:
                     record.update({
                     'number_of_days': 1
@@ -201,9 +189,7 @@ class CreateTimeOff(http.Controller):
             date_from = kw.get('half_day_date') 
             date_start = kw.get('half_day_date') 
             date_end =  kw.get('half_day_date') 
-
             date_weekday = datetime.strptime(kw.get('half_day_date') , '%Y-%m-%d')
-            
             weekday = date_weekday.weekday()
             employee11 = request.env['hr.employee'].search([('id','=', int(kw.get('employee_id')))], limit=1)
             hour_to =  str((employee11.shift_id.hours_per_day/2))
@@ -217,11 +203,9 @@ class CreateTimeOff(http.Controller):
                 hours_to = emp_schedule.hour_to               
                 if emp_schedule.dayofweek == weekday:
                     hours_from = emp_schedule.hour_from
-                    hours_to = emp_schedule.hour_to
-                    
+                    hours_to = emp_schedule.hour_to       
             date_start =  date_start1 + relativedelta(hours =+ hours_from) 
             date_end = date_start2 + relativedelta(hours =+ hours_to)  
-            
             day_period = 'am'
             if day_half == 'Morning':
                 day_period = 'am'
@@ -230,14 +214,11 @@ class CreateTimeOff(http.Controller):
             elif day_half == 'Evening':
                 day_period = 'pm'
                 date_start =  date_start + relativedelta(hours =+ float(employee_schedule.shift_id.hours_per_day)/2) 
-           
-            
             leave_period_half = 'first_half'
             request_date_from_period = 'am'
             if day_half == 'Evening':
                 leave_period_half = 'second_half' 
-                request_date_from_period = 'pm'
-                
+                request_date_from_period = 'pm'    
             timeoff_val = {
                 'holiday_status_id': int(kw.get('leave_type_id')),
                 'employee_id': int(kw.get('employee_id')),            
@@ -277,9 +258,7 @@ class CreateTimeOff(http.Controller):
                  })
         
         attachment = 0
-        if kw.get('leave_category_id') == 'hours':
-           
-             
+        if kw.get('leave_category_id') == 'hours': 
             hour_from = kw.get('time_from') 
             employee11 = request.env['hr.employee'].search([('id','=', int(kw.get('employee_id')))], limit=1)
             hour_to =  str(float(kw.get('time_from').replace(":",".")) + (employee11.shift_id.hours_per_day/4))
@@ -311,16 +290,11 @@ class CreateTimeOff(http.Controller):
             })
             if kw.get('attachment'):
                 Attachments = request.env['ir.attachment']
-
                 name = kw.get('attachment').filename
-
                 file = kw.get('attachment')
                 attachment_id = Attachments.create({
-
                 'name': name,
-
                 'type': 'binary',
-
                 'datas': base64.b64encode(file.read()),
                 })
                 record.update({

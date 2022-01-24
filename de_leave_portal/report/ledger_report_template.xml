@@ -11,7 +11,7 @@
                <span  t-esc="datetime.datetime.strptime(str(datetime.datetime.now()+ relativedelta(hours =+ 5)), '%Y-%m-%d %H:%M:%S.%f').strftime('%d-%b-%y %H:%M %p')"/>
             </div>
             
-            <div  style="position: relative; max-width: 400px; color:blue;">
+            <div  style="position: relative; max-width: 400px; color:blue;font-size:20px;">
                <strong>Leave Ledger</strong> <br/>
             </div>
             

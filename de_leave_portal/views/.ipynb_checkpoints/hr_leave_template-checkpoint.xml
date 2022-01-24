@@ -926,19 +926,26 @@
             <t t-if="leave_allocation">
                 <t t-call="portal.portal_table">
                         <thead>
-                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
-                               
+                            <tr style='background-color:#875A7B; color:white;'>
                                 <th class="text-left">Leave Type</th>
-                                <th class="text-left">Availed/Total</th>
                                 <th class="text-left">Balance</th>
+                                <th class="text-left">To Approve</th>
+                                <th class="text-left">Availed/Total</th>
                             </tr>
                         </thead>
                         <tbody>
                           <t t-foreach="allocation_list" t-as="allocate">
                                 <tr>
+                                     <t t-set='leave_balance' t-value='0' />   
+                                      <t t-foreach="request.env['hr.leave'].sudo().search([('employee_id','=',employee_name.id),('state','=','confirm'),('holiday_status_id','=',allocate['alloc_id'])])" t-as="leave">
+                                          <t t-set='leave_balance' t-value='leave_balance + leave.number_of_days' /> 
+                                      </t> 
                                     <td><span t-esc='allocate["leave_categ"]'/></td>
-                                    <td><span t-esc='allocate["leave_taken"]'/>/<span t-esc='allocate["leave_max"]'/></td>
-                                    <td><span t-esc='allocate["balance"]'/></td>
+                                    <td><span t-esc='round((int(allocate["balance"])-leave_balance),2)'/></td>
+                                     <td>
+                                      <span t-esc='leave_balance' />    
+                                    </td>
+                                    <td><span t-esc='allocate["leave_taken"]'/>/<span t-esc='allocate["leave_max"]'/></td>  
                                 </tr>    
                             </t>    
                             
