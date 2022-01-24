@@ -35,7 +35,7 @@ def timeoff_page_content(flag = 0):
     uniq_leave_allocation = set(leave_type_list)
     for uniq_allocate in uniq_leave_allocation:
         uniq_allocation_leave = request.env['hr.leave.allocation'].sudo().search([('holiday_status_id','=',uniq_allocate),('employee_id.user_id', '=', http.request.env.context.get('uid')), ('state','=','validate')], limit=1)
-        uniq_leave_taken = request.env['hr.leave'].sudo().search([('holiday_status_id','=',uniq_allocate),('employee_id.user_id', '=', http.request.env.context.get('uid')), ('state','=','validate')])
+        uniq_leave_taken = request.env['hr.leave'].sudo().search([('holiday_status_id','=',uniq_allocate),('employee_id.user_id', '=', http.request.env.context.get('uid')),('state','in', ('validate', 'confirm'))])
         leave_taken_count = 0
         for leave_count in uniq_leave_taken:
             leave_taken_count += leave_count.number_of_days

@@ -3,7 +3,6 @@
 
 
 <odoo>  
-      
     
     <template id="portal_layout" name="Portal layout: timeoff menu entry" inherit_id="portal.portal_breadcrumbs" priority="20">
         <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
@@ -17,11 +16,6 @@
         </xpath>
     </template>
 
-    
-    
-    
-
-    
     <template id="portal_my_home" name="Show timeoffs / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="40">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry" >
@@ -32,10 +26,6 @@
         </xpath>
     </template>
 
-    
-    
-    
-    
     <template id="portal_my_timeoffs" name="My timeoffs">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
@@ -63,9 +53,7 @@
                         </thead>
                         <tbody>
                             <t t-foreach="all_timeoffs" t-as="_timeoff_">
-                             
                                 <tr>
-
                                      <td>
                                         <a t-attf-href="/my/timeoff/#{_timeoff_.id}?{{ keep_query() }}"><span t-field="_timeoff_.employee_id.name"/></a>
                                     </td>
@@ -81,16 +69,12 @@
                                     <td class="text-left">
                                         <t t-if="_timeoff_.date_to"> 
                                          <span t-esc="_timeoff_.request_date_to" t-options='{"widget": "date"}'/>
-                                       </t>
-                                        
+                                       </t>  
                                     </td>
                                     <td class="text-left">
                                         <span t-esc="_timeoff_.number_of_days"/>
                                     </td> 
                                     <td class="text-left">
-                                        
-                                      
-                                        
                                         <t t-if="_timeoff_.state == 'draft'">
                                             <i class="badge badge-pill badge-info" >To Submit</i>
                                         </t>
@@ -110,8 +94,6 @@
                                             <i class="badge badge-pill badge-success" >Approved</i>
                                         </t>                                                                               
                                     </td> 
-                                     
-                                    
                                 </tr>
                             </t>
                             <tr>
@@ -123,7 +105,7 @@
                                         <a href="/leave/balance" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%; ">Leave Balance</div> </a> 
                                     </t>
                                     <t class="col-lg-7 col-md-8" >
-                                        <a href="/leave/ledger/print/" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%;margin-right:5px;">Ledger Report</div> </a> 
+                                        <a href="/leave/ledger/print/" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%;margin-right:5px;">Leave Ledger Report</div> </a> 
                                     </t>
                                 </div>
                             </tr>   
@@ -154,39 +136,35 @@
                         <thead>
                             <tr style='background-color:#875A7B; color:white;'>
                                 <th class="text-left">Time off Type</th>
+                                <th class="text-left">Total</th>
                                 <th class="text-left">Availed</th>
                                 <th class="text-left">To Approve</th>
-                                <th class="text-left">Total</th>
                                <th class="text-left">Balance</th>
                             </tr>
                         </thead>
                         <tbody>
                             <t t-foreach="all_allocations" t-as="alloc">
-                             
                                 <tr>
-                                
                                     <td class="text-left">
                                         <span t-esc="alloc.holiday_status_id.name" />
                                     </td>
                                     <td class="text-left">
+                                        <span t-esc="round((alloc.max_leaves),2)"/>
+                                    </td>
+                                    <td class="text-left">
                                          <span t-esc="alloc.leaves_taken" />
-                                       </td>
+                                    </td>
+                                     
                                     <td class="text-left">
                                         <t t-set='leave_balance' t-value='0'/>
                                         <t t-foreach="request.env['hr.leave'].sudo().search([('employee_id.user_id','=',uid),('holiday_status_id','=',alloc.holiday_status_id.id),('state','=','confirm')])" t-as="leave">
                                             <t t-set='leave_balance' t-value='leave_balance+leave.number_of_days'/>
                                         </t>    
                                          <span t-esc="round(leave_balance,2)" />
-                                        
                                     </td>
-                                    <td class="text-left">
-                                        <span t-esc="round((alloc.max_leaves),2)"/>
-                                    </td> 
                                     <td class="text-left">
                                         <span t-esc="round((alloc.max_leaves-alloc.leaves_taken-leave_balance),2)"/>
                                     </td> 
-                                    
-                                    
                                 </tr>
                             </t>
                             <tr>
@@ -929,29 +907,37 @@
                             <tr style='background-color:#875A7B; color:white;'>
                                 <th class="text-left">Leave Type</th>
                                 <th class="text-left">Balance</th>
-                                <th class="text-left">To Approve</th>
-                                <th class="text-left">Availed/Total</th>
+<!--                                 <th class="text-left">To Approve</th>
+                                <th class="text-left">Availed/Total</th> -->
                             </tr>
                         </thead>
                         <tbody>
                           <t t-foreach="allocation_list" t-as="allocate">
                                 <tr>
-                                     <t t-set='leave_balance' t-value='0' />   
-                                      <t t-foreach="request.env['hr.leave'].sudo().search([('employee_id','=',employee_name.id),('state','=','confirm'),('holiday_status_id','=',allocate['alloc_id'])])" t-as="leave">
-                                          <t t-set='leave_balance' t-value='leave_balance + leave.number_of_days' /> 
-                                      </t> 
                                     <td><span t-esc='allocate["leave_categ"]'/></td>
-                                    <td><span t-esc='round((int(allocate["balance"])-leave_balance),2)'/></td>
-                                     <td>
+                                    <td>
+                                        
+                                        <span t-esc='allocate["balance"]'/>
+                                    </td>
+<!--                                      <td>
                                       <span t-esc='leave_balance' />    
                                     </td>
-                                    <td><span t-esc='allocate["leave_taken"]'/>/<span t-esc='allocate["leave_max"]'/></td>  
+                                    <td><span t-esc='allocate["leave_taken"]'/>/<span t-esc='allocate["leave_max"]'/></td>   -->
                                 </tr>    
                             </t>    
                             
                         </tbody>
                     </t>
                             </t>
+                             <br/>
+                            <div>
+                                    <t class="col-lg-7 col-md-8" >
+                                        <a href="/leave/balance" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Leave Balance</div> </a> 
+                                    </t>
+                                    <t class="col-lg-7 col-md-8" >
+                                        <a href="/leave/ledger/print/" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%;margin-right:5px;">Leave Ledger Report</div> </a> 
+                                    </t>
+                                </div>
         
         
     </div>
