@@ -56,7 +56,6 @@
                         
                        <group>
                          <field name="date_from" />
-                         <field name="is_filter" /> 
                       </group>
                         
                       <group>
