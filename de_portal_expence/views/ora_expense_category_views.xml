@@ -29,7 +29,13 @@
                             <group>
                                 <field name="company_id" />
                             </group>
-                        </group> 
+                        </group>
+                        <notebook>
+                            <page string='Companies'>
+                                <field name='company_ids' />
+                                                                    
+                            </page>
+                        </notebook> 
                     </sheet>
                   
                 </form>

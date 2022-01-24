@@ -74,7 +74,7 @@ def expense_page_content(flag = 0, expense=0, categ=0, exception=0, subordinate=
     if cost_center_count > 1:
         is_multi_cost_center = True
     cost_centers = contract.cost_center_information_line    
-    expense_categories = request.env['ora.expense.category'].sudo().search([])
+    expense_categories = request.env['ora.expense.category'].sudo().search([('company_ids','=', employees.company_id.id)])
     exp_product_list = []
     if categ !=0:
         expense_categories = request.env['ora.expense.category'].sudo().search([('id', '=', categ)])
@@ -183,6 +183,9 @@ class CreateApproval(http.Controller):
             'product_id': int(kw.get('controll_id')),
             'attachment': kw.get('attachment'),
             'member_id': '0',
+            'name': '',
+            'fleet_id': 0,
+            'meter_reading': 0,
         }
         if kw.get('description'): 
             forcasted_data.update({
@@ -269,6 +272,9 @@ class CreateApproval(http.Controller):
             if not kw.get('attachment'):
                  warning_message='Please Add Attachment! You are not allow to submit '+str(ora_category.name)+ ' Expense claim without attachments.' 
                  return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
+        if not kw.get('fleet_id'):
+            warning_message='You are not allow to Submit Vehicle Maintenance Expense Claim!'
+            return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
         if kw.get('fleet_id'): 
             fleet = request.env['vehicle.meter.detail'].search([('id','=',int(kw.get('fleet_id')))], limit=1)    
             if fleet:
@@ -441,6 +447,9 @@ class CreateApproval(http.Controller):
             'product_id': int(kw.get('controll_id')),
             'attachment': kw.get('attachment'),
             'member_id': '0',
+            'name': '',
+            'fleet_id': 0,
+            'meter_reading': 0,
         }
         if kw.get('description'): 
             forcasted_data.update({
@@ -763,7 +772,9 @@ class CustomerPortal(CustomerPortal):
         domain = []
         if search:
             domain += []
-        expenses = request.env['hr.expense.sheet'].search([('employee_id','=',employee.id)])        
+        expenses = request.env['hr.expense.sheet'].search([('employee_id','=',employee.id)]) 
+        subordinates = request.env['hr.employee'].sudo().search([('expense_incharge_id','=', employee.id)])
+       
         expenses_count = len(expenses)
         step = 50
         pager = portal_pager(
@@ -777,6 +788,7 @@ class CustomerPortal(CustomerPortal):
         values = {
             'pager': pager,
             'pages': pages,
+            'subordinates': subordinates, 
             'expenses': expenses,
             'search': search,
             'sortby': sortby,
@@ -804,7 +816,8 @@ class CustomerPortal(CustomerPortal):
         if search:
             domain += []
         subordinate_list = request.env['hr.employee'].search([('expense_incharge_id','=',employee.id)])    
-        expenses = request.env['hr.expense.sheet'].search([('employee_id','in',subordinate_list.ids)])        
+        expenses = request.env['hr.expense.sheet'].search([('employee_id','in',subordinate_list.ids)]) 
+        subordinates = request.env['hr.employee'].sudo().search([('expense_incharge_id','=', employee.id)])       
         expenses_count = len(expenses)
         step = 50
         pager = portal_pager(
@@ -818,6 +831,7 @@ class CustomerPortal(CustomerPortal):
         values = {
             'pager': pager,
             'pages': pages,
+            'subordinates':subordinates,
             'expenses': expenses,
             'search': search,
             'sortby': sortby,
