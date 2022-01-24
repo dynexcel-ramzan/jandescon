@@ -110,12 +110,12 @@ class HrAppraisalFeedback(models.Model):
             for half_year_obj_line in line.feedback_objective_appraisee_lines:
                 half_year_obj_score += half_year_obj_line.employee_rating_score
             for half_year_core_line in line.feedback_values_appraisee_lines:
-                half_year_obj_score += half_year_obj_line.employee_rating_score    
+                half_year_core_score += half_year_obj_line.employee_rating_score    
             for full_year_obj_line in line.feedback_objective_lines:
                 full_year_obj_score += full_year_obj_line.employee_rating_score
             for full_year_core_line in line.feedback_values_lines:
-                full_year_obj_score += full_year_obj_line.employee_rating_score        
-            total_grand = (half_year_obj_score/5) +  (half_year_core_score/5) + (full_year_obj_score/5) + (full_year_core_score/5) 
+                full_year_core_score += full_year_obj_line.employee_rating_score        
+            total_grand = (((half_year_obj_score/5) * 90)/100) +  (((half_year_core_score/5) * 10)/100) + (((full_year_obj_score/5)*90)/100) + (((full_year_core_score/5)*10)/100) 
             line.update({
                 'employee_rating_score': total_grand,
                 'employee_rating_score_calc': total_grand,
@@ -125,19 +125,19 @@ class HrAppraisalFeedback(models.Model):
     @api.depends('employee_rating_score')
     def compute_total_employee_rating_level(self):
         for line in self:
-            if line.employee_rating_score >= 1 and line.employee_rating_score <= 1.4:
+            if line.employee_rating_score >= 1 and line.employee_rating_score < 1.5:
                 line.update({
                     'employee_rating_level': 'Unsatisfactory'
                 })
-            elif line.employee_rating_score >= 1.5 and line.employee_rating_score <= 2.4:
+            elif line.employee_rating_score >= 1.5 and line.employee_rating_score < 2.5:
                 line.update({
                     'employee_rating_level': 'Needs Improvement'
                 })   
-            elif line.employee_rating_score >= 2.5 and line.employee_rating_score <= 3.4:
+            elif line.employee_rating_score >= 2.5 and line.employee_rating_score < 3.5:
                 line.update({
                     'employee_rating_level': 'Strong Performance'
                 })   
-            elif line.employee_rating_score >= 3.5 and line.employee_rating_score <= 4.4:
+            elif line.employee_rating_score >= 3.5 and line.employee_rating_score < 4.5:
                 line.update({
                     'employee_rating_level': 'Excellent Performance'
                 })
@@ -165,12 +165,12 @@ class HrAppraisalFeedback(models.Model):
             for half_year_obj_line in line.feedback_objective_appraisee_lines:
                 half_year_obj_score += half_year_obj_line.manager_rating_score
             for half_year_core_line in line.feedback_values_appraisee_lines:
-                half_year_obj_score += half_year_obj_line.manager_rating_score    
+                half_year_core_score += half_year_obj_line.manager_rating_score    
             for full_year_obj_line in line.feedback_objective_lines:
                 full_year_obj_score += full_year_obj_line.manager_rating_score
             for full_year_core_line in line.feedback_values_lines:
-                full_year_obj_score += full_year_obj_line.manager_rating_score        
-            total_grand = (half_year_obj_score/5) +  (half_year_core_score/5) + (full_year_obj_score/5) + (full_year_core_score/5) 
+                full_year_core_score += full_year_obj_line.manager_rating_score
+            total_grand = (((half_year_obj_score/5) * 90)/100) +  (((half_year_core_score/5) * 10)/100) + (((full_year_obj_score/5)*90)/100) + (((full_year_core_score/5)*10)/100)          
             line.update({
                 'rating_score': total_grand,
                 'rating_score_calc': total_grand,
@@ -180,19 +180,19 @@ class HrAppraisalFeedback(models.Model):
     @api.depends('rating_score')
     def compute_total_rating_level(self):
         for line in self:
-            if line.rating_score >= 1 and line.rating_score <= 1.4:
+            if line.rating_score >= 1 and line.rating_score < 1.5:
                 line.update({
                     'rating_level': 'Unsatisfactory'
                 })
-            elif line.rating_score >= 1.5 and line.rating_score <= 2.4:
+            elif line.rating_score >= 1.5 and line.rating_score < 2.5:
                 line.update({
                     'rating_level': 'Needs Improvement'
                 })   
-            elif line.rating_score >= 2.5 and line.rating_score <= 3.4:
+            elif line.rating_score >= 2.5 and line.rating_score < 3.5:
                 line.update({
                     'rating_level': 'Strong Performance'
                 })   
-            elif line.rating_score >= 3.5 and line.rating_score <= 4.4:
+            elif line.rating_score >= 3.5 and line.rating_score < 4.5:
                 line.update({
                     'rating_level': 'Excellent Performance'
                 })

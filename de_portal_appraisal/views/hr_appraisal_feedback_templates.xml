@@ -506,7 +506,7 @@
                                 <span class="s_website_form_label_content">End Year Review Date</span>
                         </label>
                         <div class="col-sm">
-                        <t t-esc="feedback.mid_year_date" t-options='{"widget": "date"}'/>                                         </div>
+                        <t t-esc="feedback.end_year_date" t-options='{"widget": "date"}'/>                                         </div>
                   </div>
                 </div>
                </div>  
