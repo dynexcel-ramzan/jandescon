@@ -22,3 +22,4 @@ class OraExpenseCategory(models.Model):
     is_manager = fields.Boolean(string='Line Manager Approval')
     vehicle_meter_approval = fields.Boolean(string='Vehicle Meter Approval')
     company_ids = fields.Many2many('res.company', string='Companies')
+    hr_approval = fields.Boolean(string='HR Approval')

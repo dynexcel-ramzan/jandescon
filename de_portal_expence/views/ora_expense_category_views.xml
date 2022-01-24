@@ -23,6 +23,7 @@
                               <field name="has_dependent" widget="radio" options="{'horizontal': true}"/>
                               <field name="has_description" widget="radio" options="{'horizontal': true}"/>  
                               <field name="is_manager" />
+                              <field name="hr_approval" /> 
                               <field name="vehicle_meter_approval" />  
                               <field name="is_special"  invisible='1'/> 
                             </group>

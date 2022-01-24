@@ -18,4 +18,5 @@ class ExpenseSubCategory(models.Model):
     amount = fields.Float(string='Amount')
     meter_reading = fields.Float(string='Meter Reading')
     is_petty_cash = fields.Boolean(string='Petty Cash')
+    management_approval = fields.Boolean(string='CEO Approval')
    
