@@ -173,8 +173,7 @@ class CreateApproval(http.Controller):
         exception = True if kw.get('ora_exception')=='yes' else False
         ora_category=request.env['ora.expense.category'].sudo().search([('id','=',int(kw.get('ora_category')))], limit=1)
         product = request.env['expense.sub.category'].search([('id','=',int(kw.get('product_id')))], limit=1)
-        controller = request.env['product.product'].search([('ora_category_id','=', ora_category.id),('controlled_id','=',int(kw.get('controll_id')))], limit=1)
-        default_cost_center = int(kw.get('default_cost_center'))
+        
         cost_center_count = 0
         forcasted_data = {
             'expense_type': product.id,
@@ -206,7 +205,17 @@ class CreateApproval(http.Controller):
         if kw.get('meter_reading'):
             forcasted_data.update({
                 'meter_reading': kw.get('meter_reading'),
-            })
+            }) 
+        if not kw.get('controll_id'):
+            warning_message='You are not allow to Submit Expense Claim! Your Control-Account is not set. Please contact with HR Department.'
+            return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))    
+        controller = request.env['product.product'].search([('ora_category_id','=', ora_category.id),('controlled_id','=',int(kw.get('controll_id')))], limit=1)
+        
+        if not kw.get('default_cost_center'):
+            warning_message='You are not allow to Submit Expense Claim! Your Default Cost Center is not set. Please contact with HR Department.'
+            return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))        
+        default_cost_center = int(kw.get('default_cost_center'))
+        
         contract = request.env['hr.contract'].sudo().search([('employee_id','=', employee.id),('state','=','open')], limit=1)
         for cost_info in contract.cost_center_information_line:
             cost_center_count += 1
@@ -219,7 +228,10 @@ class CreateApproval(http.Controller):
                     analytic_vals_list = ast.literal_eval(kw.get('create_expense_line_vals'))
                     inner_cost_center_count = 0
                     for analytic_cost in analytic_vals_list:
-                        if inner_cost_center_count < (cost_center_count): 
+                        if inner_cost_center_count < (cost_center_count):
+                            
+                            if analytic_cost['col2'] == '':
+                                analytic_cost['col2'] = 0    
                             if int(analytic_cost['col2']) > 0:
                                 analytic_account=request.env['account.analytic.account'].sudo().search([                                 
                                 ('company_id','=',employee.company_id.id),('name','=',analytic_cost['col1'])], limit=1)
@@ -272,7 +284,7 @@ class CreateApproval(http.Controller):
             if not kw.get('attachment'):
                  warning_message='Please Add Attachment! You are not allow to submit '+str(ora_category.name)+ ' Expense claim without attachments.' 
                  return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
-        if not kw.get('fleet_id'):
+        if not kw.get('fleet_id') and product.ora_unit=='km':
             warning_message='You are not allow to Submit Vehicle Maintenance Expense Claim!'
             return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
         if kw.get('fleet_id'): 
@@ -484,6 +496,8 @@ class CreateApproval(http.Controller):
                     inner_cost_center_count = 0
                     for analytic_cost in analytic_vals_list:
                         if inner_cost_center_count < (cost_center_count):
+                            if analytic_cost['col2'] == '':
+                                analytic_cost['col2'] = 0
                             if int(analytic_cost['col2']) > 0:
                                 analytic_account=request.env['account.analytic.account'].sudo().search([                                     
                                 ('company_id','=',expense_sheet.company_id.id),('name','=',analytic_cost['col1'])], limit=1)
@@ -766,15 +780,21 @@ class CustomerPortal(CustomerPortal):
         searchbar_sortings = {
             'ora_category_id': {'label': _('Sort by Category'), 'order': 'ora_category_id'},
             'name': {'label': _('Sort by ECV#'), 'order': 'name'},
+            'total_amount': {'label': _('Sort by Amount'), 'order': 'total_amount'},
+            'state': {'label': _('Sort by Status'), 'order': 'state'},
         }
         # default sortby order
-        sort_order = searchbar_sortings.get(sortby, 'name')
+        sort_order = searchbar_sortings.get(sortby, 'name')['order'] + ', name desc, id'
+        expenses = request.env['hr.expense.sheet'].search([('employee_id','=',employee.id)]) 
+        subordinates = request.env['hr.employee'].sudo().search([('expense_incharge_id','=', employee.id)]) 
+        
         domain = []
         if search:
-            domain += []
-        expenses = request.env['hr.expense.sheet'].search([('employee_id','=',employee.id)]) 
-        subordinates = request.env['hr.employee'].sudo().search([('expense_incharge_id','=', employee.id)])
-       
+            domain += ['|','|','|', ('ora_category_id', 'ilike', search), ('name', 'ilike', search), ('total_amount', 'ilike', search),('state', 'ilike', search)]
+            
+        domain += [('employee_id','=',employee.id)]    
+        expenses = expenses.search(domain, order=sort_order)  
+               
         expenses_count = len(expenses)
         step = 50
         pager = portal_pager(
@@ -809,15 +829,21 @@ class CustomerPortal(CustomerPortal):
         searchbar_sortings = {
             'ora_category_id': {'label': _('Sort by Category'), 'order': 'ora_category_id'},
             'name': {'label': _('Sort by ECV#'), 'order': 'name'},
+            'total_amount': {'label': _('Sort by Amount'), 'order': 'total_amount'},
+            'state': {'label': _('Sort by Status'), 'order': 'state'},
         }
         # default sortby order
-        sort_order = searchbar_sortings.get(sortby, 'name')
-        domain = []
-        if search:
-            domain += []
+        sort_order = searchbar_sortings.get(sortby, 'name')['order'] + ', name desc, id'
         subordinate_list = request.env['hr.employee'].search([('expense_incharge_id','=',employee.id)])    
         expenses = request.env['hr.expense.sheet'].search([('employee_id','in',subordinate_list.ids)]) 
-        subordinates = request.env['hr.employee'].sudo().search([('expense_incharge_id','=', employee.id)])       
+        subordinates = request.env['hr.employee'].sudo().search([('expense_incharge_id','=', employee.id)]) 
+        
+        domain = []
+        if search:
+            domain += ['|','|','|', ('ora_category_id', 'ilike', search), ('name', 'ilike', search), ('total_amount', 'ilike', search),('state', 'ilike', search)]
+            
+        domain += [('employee_id','in',subordinate_list.ids)]    
+        expenses = expenses.search(domain, order=sort_order)          
         expenses_count = len(expenses)
         step = 50
         pager = portal_pager(

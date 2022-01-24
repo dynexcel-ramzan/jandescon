@@ -51,7 +51,9 @@
           <div>
                 <t class="col-lg-7 col-md-8" >
                     <a href="/expense/request/category/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a>
-                    <a href="/subordinate/expenses" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;">Subordinate's Expense</div> </a>
+                    <t t-if='subordinates'>
+                      <a href="/subordinate/expenses" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;">Subordinate's Expense</div> </a>
+                    </t>
                 </t>
           </div>
           
