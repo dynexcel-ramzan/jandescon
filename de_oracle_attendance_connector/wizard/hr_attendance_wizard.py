@@ -21,7 +21,7 @@ class HrAttendanceProcess(models.Model):
         for employee in self.employee_ids:
             attendances = self.env['hr.attendance'].sudo().search([('employee_id','=', employee.id),('att_date','>=',self.date_from),('att_date','<=',self.date_to),('shift_id.shift_type','=', 'night')], order='check_in asc')
             for attendee in attendances:
-                if attendee.check_out == False:
+                if attendee.check_out == False and attendee.shift_id.shift_type == 'night':
                     next_day_attendance=self.env['hr.attendance'].sudo().search([('employee_id','=', employee.id),('att_date','=',attendee.att_date+timedelta(1)) ], limit=1)
                     if next_day_attendance.check_in and next_day_attendance.check_out:
                         attendee.update({
@@ -38,6 +38,7 @@ class HrAttendanceProcess(models.Model):
                         next_day_attendance.update({
                             'check_in': False
                         })
+                        #next_day_attendance.unlink()
                         
 
 
