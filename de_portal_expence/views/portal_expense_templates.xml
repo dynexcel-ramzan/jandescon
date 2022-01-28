@@ -114,7 +114,12 @@
                                    </t>     
                                 </t>
                                 <t t-if="expense.state == 'submit'">
-                                    <i class="badge badge-pill badge-warning" >To Approve</i>
+                                    <t t-if='not expense.approval_request_id' >
+                                       <i class="badge badge-pill badge-warning" >To Validate</i>
+                                    </t>  
+                                    <t t-if='expense.approval_request_id' >
+                                       <i class="badge badge-pill badge-warning" >To Approve</i> 
+                                    </t>
                                 </t>
                                 <t t-if="expense.state == 'cancel'">
                                     <i class="badge badge-pill badge-danger" >Refused</i>
@@ -233,8 +238,18 @@
                        <i class="badge badge-pill badge-info" > 
                             <t t-if='is_deposit!=True'>
                               <t t-if='expense.state!="done"'>  
-                               <span t-esc='expense.state'/>
-                            </t> 
+                                    <t t-if='expense.state!="submit" '>   
+                                       <span t-esc='expense.state'/>
+                                     </t>    
+                                    <t t-if='expense.state=="submit" '>
+                                        <t t-if='not expense.approval_request_id' >
+                                          <i class="badge badge-pill badge-warning">To Validate</i>
+                                        </t>  
+                                        <t t-if='expense.approval_request_id' >
+                                           <i class="badge badge-pill badge-warning">To Approve</i> 
+                                        </t> 
+                                    </t>     
+                              </t> 
                             </t>     
                             <t t-if='is_deposit==True'>  
                               <span t-esc='expense.state'/>
@@ -1077,6 +1092,7 @@
 	                                           </div>
 	                                       </div>
 	                                   </div>
+
                                        <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
 	                                       <div class="row s_col_no_resize s_col_no_bgcolor">
 	                                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="exception">
@@ -1088,6 +1104,39 @@
 	                                       </div>
 	                                   </div>
 	                               </div>
+
+                                       <!-- Expense Date -->
+                                      <input id='start_accounting_date' type="hidden" class="form-control s_website_form_input" name="start_accounting_date"     t-att-value='start_accounting_date'/>
+                                      <input id='end_accounting_date' type="hidden" class="form-control s_website_form_input" name="end_accounting_date"    t-att-value='end_accounting_date'/>   
+                                       <script type="text/javascript">
+                                         function validatedateFormExpense(event) {
+                                           const selected_date=event.target.value;
+                                           let start_accounting_date = document.getElementById("start_accounting_date").value;
+                                           let end_accounting_date = document.getElementById("end_accounting_date").value;                          
+                                           if (new Date(selected_date) > new Date(end_accounting_date) ) {
+                                                 alert("Not Allow to Enter date greater than. "+ end_accounting_date);
+                                                 event.target.value= end_accounting_date;
+                                           }
+                                           if (new Date(start_accounting_date) > new Date(selected_date) ) {
+                                              alert("Not Allow to Enter date less than "+start_accounting_date);
+                                              event.target.value= start_accounting_date;
+                                           }
+                                         }                     
+                                      </script>            
+                                     <!-- Expense Date --> 
+
+                                      <div class="s_website_form_rows row s_col_no_bgcolor">
+                                       <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                          <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="expense_date">
+                                            <span class="s_website_form_label_content">Expense Date</span>
+                                          </label>
+                                         <div class="col-sm">
+                                          <input type="date" class="form-control s_website_form_input date_from_edit" name="accounting_date"   required="1"  t-att-value='expected_accounting_date'/>
+                                         </div>
+                                     </div>
+                                   </div>
+                                  </div>
                                 
                                 <input type="hidden" class="form-control s_website_form_input" name="is_subordinate"  id='is_subordinate'  t-att-value='has_subordinate'/>
                                 
@@ -1259,28 +1308,50 @@
                             </div>
                         </div>
                       
-                 
-                     
-                        <div class="o_notebook" data-name="_default_">
-                          <div class="o_notebook_headers">
-                              <ul class="nav nav-tabs">
-                                  <li class="nav-item">
-                                    <a data-toggle="tab" disable_anchor="true" href="#notebook_page_3337" class="nav-link active" role="tab">Expense Lines</a>
-                                  </li>
-                                  <!--<li class="nav-item">
-                                      <a data-toggle="tab" disable_anchor="true" href="#notebook_page_3340" class="nav-link" role="tab">Other Info</a>
-                                  </li> -->
-                              </ul>
-                          </div>   
-                        </div>
+               
                             
                         &#160;&#160;&#160;&#160;&#160;
-                      <form  id="portal_expense_form_line"  data-toggle="validator" action="/my/expense/line/save" method="post"  enctype="multipart/form-data">
-                          
+                      <form  id="portal_expense_form_line"  data-toggle="validator" action="/my/expense/line/save" method="post"  enctype="multipart/form-data"> 
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <input type="hidden" name="ora_category" t-att-value="expense_categories.id"/>
                         <input id="ora_exception" type="hidden" name="ora_exception" t-att-value="exception"/> 
-                       
+                          
+                     
+                               <!-- Expense Date -->
+                  <input id='start_accounting_date' type="hidden" class="form-control s_website_form_input" name="start_accounting_date"   required="1"  t-att-value='start_accounting_date'/>
+                  <input id='end_accounting_date' type="hidden" class="form-control s_website_form_input" name="end_accounting_date"   required="1"  t-att-value='end_accounting_date'/>   
+                  <script type="text/javascript">
+                     function validatedateFormExpensec(event) {
+                          const selected_date=event.target.value;
+                          let start_accounting_date = document.getElementById("start_accounting_date").value;
+                          let end_accounting_date = document.getElementById("end_accounting_date").value;
+                          
+                          if (new Date(selected_date) > new Date(end_accounting_date) ) {
+                            alert("Not Allow to Enter date greater than. "+ end_accounting_date);
+                            event.target.value= end_accounting_date;
+                          }
+                          if (new Date(start_accounting_date) > new Date(selected_date) ) {
+                            alert("Not Allow to Enter date less than "+start_accounting_date);
+                            event.target.value= start_accounting_date;
+                          }
+                      }
+                     
+                  </script>            
+                  <!-- Expense Date -->    
+                                
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                        <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                               <div class="row s_col_no_resize s_col_no_bgcolor">
+                                   <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="expense_date">
+                                       <span class="s_website_form_label_content">Expense Date</span>
+                                   </label>
+                                   <div class="col-sm">
+                                        <input type="date" class="form-control s_website_form_input date_from_edit" name="accounting_date"   required="1"  t-att-value='accounting_date' onchange='validatedateFormExpensec(event)'/>
+                                   </div>
+                               </div>
+                           </div>
+                    </div>
+                           
                         <div class="s_website_form_rows row s_col_no_bgcolor">
                          <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
                             <div class="row s_col_no_resize s_col_no_bgcolor">

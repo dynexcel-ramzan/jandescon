@@ -276,8 +276,8 @@ class CreateApproval(http.Controller):
             sum_current = sum + float(kw.get('unit_amount')) 
             if sum_current > limit and product.ora_unit!='km' and exception!=True:
                 limit_amount = limit-sum
-                warning_message="Already Claimed Amount: " + str(round(sum)) + "\n"+ " Due Amount: " + str(round(limit_amount if limit_amount > 0 else 0)) + "\n" + " Current Amount: "+str(round(float(kw.get('unit_amount')))) + "\n" +" You are not allow to enter amount greater than "+ str(round(limit_amount if limit_amount > 0 else 0))
-                return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))    
+                warning_message="Limit ("+str(product.name)+'): '+ str(limit) + "\n"+ " Already Claimed: " + str(round(sum)) + "\n" + " Remaining Amount: "+str(round(limit_amount if limit_amount > 0 else 0))+ "\n" +" You are not allowed to enter amount greater than remaining amount. "+ "\n" +" You may use Exception Option. "
+                return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
             else:
                 pass   
         if ora_category.is_attachment=='required':
@@ -545,9 +545,8 @@ class CreateApproval(http.Controller):
             sum_current = sum + float(kw.get('unit_amount')) 
             if sum_current > limit and product.ora_unit!='km' and expense_sheet.exception!=True:
                 limit_amount = limit-sum
-                warning_message="Already Claimed Amount: " + str(sum) + "\n"+ " Due Amount: " + str(round(limit_amount)) + "\n" + " Current Amount: "+str(round(limit_amount if limit_amount > 0 else 0))+ "\n" +" You are not allow to enter amount greater than "+ str(round(limit_amount))
-                
-                return request.render("de_portal_expence.portal_my_expense", expense_page_content(expense=expense_sudo.id, categ=ora_category.id, exception=expense_sheet.exception, warning=warning_message, forcasted=forcasted_data))
+                warning_message="Limit ("+str(product.name)+'): '+ str(limit) + "\n"+ " Already Claimed: " + str(round(sum)) + "\n" + " Remaining Amount: "+str(round(limit_amount if limit_amount > 0 else 0))+ "\n" +" You are not allowed to enter amount greater than remaining amount. "+ "\n" +" You may use Exception Option. "
+                return request.render("de_portal_expence.portal_my_expense", expense_page_content(expense=expense_sheet.id, categ=ora_category.id, exception=expense_sheet.exception, warning=warning_message, forcasted=forcasted_data))
             else:
                 pass    
         if expense_sheet.ora_category_id.is_attachment=='required':
