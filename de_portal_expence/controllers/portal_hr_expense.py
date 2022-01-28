@@ -24,7 +24,7 @@ def action_check_expense_warning(warning):
         'company_info': company_info
     }
 
-def expense_page_content(flag = 0, expense=0, categ=0, exception=0, subordinate=0, employee=0, warning=0, forcasted=0):
+def expense_page_content(flag = 0, expense=0, categ=0, exception=0, subordinate=0, employee=0, warning=0, forcasted=0, acounting_date=0):
     products = request.env['expense.sub.category'].sudo().search([])       
     is_subordinate_expense = False
     has_subordinate = 0
@@ -97,13 +97,16 @@ def expense_page_content(flag = 0, expense=0, categ=0, exception=0, subordinate=
     if warning !=0:
         errora_message = warning
         error_flag = '1'
-        
     return {
         'managers': managers,
         'is_editable': is_editable,
         'forcasted': forcasted,
         'employees' : employees,
         'controllers': controllers,
+        'expected_accounting_date': fields.date.today(),
+        'start_accounting_date': '2022-01-16',
+        'end_accounting_date': fields.date.today(),
+        'accounting_date': acounting_date if acounting_date else fields.date.today(),
         'default_controlled_account': default_controlled_account,
         'has_subordinate': has_subordinate,
         'error_flag': error_flag,
@@ -173,7 +176,7 @@ class CreateApproval(http.Controller):
         exception = True if kw.get('ora_exception')=='yes' else False
         ora_category=request.env['ora.expense.category'].sudo().search([('id','=',int(kw.get('ora_category')))], limit=1)
         product = request.env['expense.sub.category'].search([('id','=',int(kw.get('product_id')))], limit=1)
-        
+        acounting_date=kw.get('acounting_date')
         cost_center_count = 0
         forcasted_data = {
             'expense_type': product.id,
@@ -208,12 +211,12 @@ class CreateApproval(http.Controller):
             }) 
         if not kw.get('controll_id'):
             warning_message='You are not allow to Submit Expense Claim! Your Control-Account is not set. Please contact with HR Department.'
-            return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))    
+            return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data, acounting_date=kw.get('acounting_date')))    
         controller = request.env['product.product'].search([('ora_category_id','=', ora_category.id),('controlled_id','=',int(kw.get('controll_id')))], limit=1)
         
         if not kw.get('default_cost_center'):
             warning_message='You are not allow to Submit Expense Claim! Your Default Cost Center is not set. Please contact with HR Department.'
-            return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))        
+            return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data, acounting_date=kw.get('acounting_date')))        
         default_cost_center = int(kw.get('default_cost_center'))
         
         contract = request.env['hr.contract'].sudo().search([('employee_id','=', employee.id),('state','=','open')], limit=1)
@@ -243,7 +246,7 @@ class CreateApproval(http.Controller):
                             inner_cost_center_count += 1    
                     if total_percentage_amount > 100 or total_percentage_amount < 100:
                         warning_message='Your Cost Center Distribution must equal to 100!'    
-                        return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
+                        return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data, acounting_date=kw.get('acounting_date')))
         if not analytic_cost_list:
             analytic_cost_list.append({
                         'analytic_account': default_cost_center,
@@ -262,7 +265,7 @@ class CreateApproval(http.Controller):
         expense_period_date = fields.date.today() - relativedelta(years=period)
         if flag == False and exception!=True:
             warning_message="You are not allowed to make Claim against the selected expense type"
-            return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
+            return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data, acounting_date=kw.get('acounting_date')))
         else:
             employee_expenses = request.env['hr.expense'].search(
                 [('sub_category_id', '=', product.id), ('employee_id', '=', employee.id)
@@ -277,7 +280,8 @@ class CreateApproval(http.Controller):
             if sum_current > limit and product.ora_unit!='km' and exception!=True:
                 limit_amount = limit-sum
                 warning_message="Limit ("+str(product.name)+'): '+ str(limit) + "\n"+ " Already Claimed: " + str(round(sum)) + "\n" + " Remaining Amount: "+str(round(limit_amount if limit_amount > 0 else 0))+ "\n" +" You are not allowed to enter amount greater than remaining amount. "+ "\n" +" You may use Exception Option. "
-                return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
+                #raise UserError(str(acounting_date))
+                return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data, acounting_date=kw.get('acounting_date')))
             else:
                 pass   
         if ora_category.is_attachment=='required':
@@ -286,13 +290,13 @@ class CreateApproval(http.Controller):
                  return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
         if not kw.get('fleet_id') and product.ora_unit=='km':
             warning_message='You are not allow to Submit Vehicle Maintenance Expense Claim!'
-            return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
+            return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data, acounting_date=kw.get('acounting_date')))
         if kw.get('fleet_id'): 
             fleet = request.env['vehicle.meter.detail'].search([('id','=',int(kw.get('fleet_id')))], limit=1)    
             if fleet:
                 if fleet.id!=employee.vehicle_id.id:
                     warning_message='You are not allow to select Vehicle rather than '+str(employee.vehicle_id.name)
-                    return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))  
+                    return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data, acounting_date=kw.get('acounting_date')))  
             if kw.get('meter_reading'):
                 opening_vehicle_balance = 0
                 for reading_line  in employee.vehicle_meter_line_ids:
@@ -306,10 +310,10 @@ class CreateApproval(http.Controller):
                                 pass
                             else:
                                 warning_message='Last Reading: ' +str(round(opening_vehicle_balance))+ "\n"+' Due Reading: '+str(round(opening_vehicle_balance+product.meter_reading))+ "\n"+' Current Reading: '+str(round(float(kw.get('meter_reading'))))+ "\n"+' Please Enter Reading Greater than '+str(round(opening_vehicle_balance+product.meter_reading))
-                                return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
+                                return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data, acounting_date=kw.get('acounting_date')))
                     else:
                         warning_message='Please Enter Reading greater than your last Reading! '+str(opening_vehicle_balance)
-                        return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data))
+                        return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data, acounting_date=kw.get('acounting_date')))
         
         exist_sequence=request.env['ir.sequence'].sudo().search([('code','=','expense.sheet.sequence'),('company_id','=', employee.company_id.id)], limit=1)
         if not exist_sequence:
@@ -422,7 +426,6 @@ class CreateApproval(http.Controller):
                 })
 
         if kw.get('attachment') and exist_split_line!=0:
-
             Attachments = request.env['ir.attachment']
             name = kw.get('attachment').filename
             file = kw.get('attachment')
@@ -440,6 +443,7 @@ class CreateApproval(http.Controller):
                 'res_name': exist_split_line.name,
             })
         return request.redirect('/my/expense/%s'%(record.id))
+    
     
     @http.route('/expense/edit/line/save', type="http", auth="public", website=True)
     def create_expenses_lines(self, **kw):
