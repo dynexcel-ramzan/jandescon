@@ -17,6 +17,7 @@ class HrExpenseSheet(models.Model):
     ora_category_id = fields.Many2one('ora.expense.category', string='Expense Category')
     document_received = fields.Boolean(string='Document Received')
     is_deposit = fields.Boolean(string='Deposit')
+    is_deposit_sign = fields.Boolean(string='Deposit Sign')
     is_deposit_adjusted = fields.Boolean(string='Deposit')
     exception = fields.Boolean(string='Exception')
     employee_number = fields.Char(related='employee_id.emp_number')
@@ -52,7 +53,7 @@ class HrExpenseSheet(models.Model):
     @api.constrains('state')
     def _check_state(self):
         for expense in self:
-            if  expense.state=='done' and expense.is_deposit==False:
+            if  expense.state=='done' and expense.is_deposit_sign==False:
                 expense.update({
                     'is_deposit_adjusted': True
                 })
