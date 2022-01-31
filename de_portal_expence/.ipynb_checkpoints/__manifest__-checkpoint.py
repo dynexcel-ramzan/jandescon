@@ -30,6 +30,7 @@
         'web_tour',
         'de_payroll_accounting',
         'digest',
+        'de_employee_overtime',
         'base',
         'hr_expense', 'hr','de_hr_portal_user','de_expense_enhancement','de_employee_family','de_employee_enhancement'],
 
@@ -43,6 +44,7 @@
         'views/ora_expense_category_views.xml',
         'views/hr_expense_sheet_views.xml',
         'views/hr_employee_views.xml',
+        'views/hr_work_location_views.xml',
         'views/account_move_views.xml',
         'views/hr_expense_views.xml',
         'views/account_account_views.xml',

@@ -557,7 +557,7 @@ class CreateAppraisal(http.Controller):
         appraisal_objective_list = []
         active_user = request.env['res.users'].sudo().search([('id','=',http.request.env.context.get('uid'))])
         active_employee = request.env['hr.employee'].search([('user_id','=',active_user.id)], limit=1)
-        if active_employee.company_id.id==2:
+        if active_employee.company_id.id==2 and active_employee.id != 4308:
             return request.render("de_portal_appraisal.re_appraisal_submited_expire",{})
         return request.render("de_portal_appraisal.submit_appraisal_objective",appraisal_page_content()) 
     

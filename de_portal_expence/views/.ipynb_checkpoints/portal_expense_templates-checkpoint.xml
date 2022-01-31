@@ -25,9 +25,9 @@
         </xpath>  
     </template>
     
-    <template id="portal_my_expenses" name="Expense Management">
-  <t t-call="website.layout">
-    <div id="wrap">
+  <template id="portal_my_expenses" name="Expense Management">
+    <t t-call="website.layout">
+     <div id="wrap">
       <div class="container" id="portal_my_expenses">
           <form class="mt8 float-right" role="search" t-attf-action="/my/expenses" method="get">
               <t t-call="website.website_search_box"/>
@@ -51,7 +51,9 @@
           <div>
                 <t class="col-lg-7 col-md-8" >
                     <a href="/expense/request/category/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a>
-                    <a href="/subordinate/expenses" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;">Subordinate's Expense</div> </a>
+                    <t t-if='subordinates'>
+                      <a href="/subordinate/expenses" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;">Subordinate's Expense</div> </a>
+                    </t>
                 </t>
           </div>
           
@@ -112,7 +114,12 @@
                                    </t>     
                                 </t>
                                 <t t-if="expense.state == 'submit'">
-                                    <i class="badge badge-pill badge-warning" >To Approve</i>
+                                    <t t-if='not expense.approval_request_id' >
+                                       <i class="badge badge-pill badge-warning" >To Validate</i>
+                                    </t>  
+                                    <t t-if='expense.approval_request_id' >
+                                       <i class="badge badge-pill badge-warning" >To Approve</i> 
+                                    </t>
                                 </t>
                                 <t t-if="expense.state == 'cancel'">
                                     <i class="badge badge-pill badge-danger" >Refused</i>
@@ -154,13 +161,23 @@
     <div id="wrap" class="oe_structure oe_empty">
     <section class="s_quotes_carousel_wrapper o_colored_level" data-vxml="001" data-vcss="001" data-snippet="s_quotes_carousel" data-name="Quotes" style="">
     <div class="s_card card bg-white w-100" data-snippet="s_card" data-name="Card">   
-        <t t-set="o_portal_fullwidth_alert"  >
-                <t t-call="portal.portal_back_in_edit_mode">
-                    <span t-esc='warning_message' />
-                </t> 
-            </t>
         <div class="card-header" style="height:50px;">
-        
+                        <script  src="/de_portal_expence/static/src/js/jquery_1_2.js"></script>
+                        <script  src="/de_portal_expence/static/src/js/jquery_min.js"></script>
+                        <script  src="/de_portal_expence/static/src/js/jquery_ui.js"></script>
+                        <script>
+                            $(function () {
+                                error_flag=document.getElementById("error_flag").value;
+                                errora_message=document.getElementById("errora_message").value;
+                                if (error_flag=='1') {
+                                  alert(errora_message)
+                                }
+                            });
+                         </script>
+            
+                         <input id='error_flag' type="hidden" class="form-control s_website_form_input" name="error_flag"  t-att-value='error_flag'/>
+                          <input id='errora_message' type="hidden" class="form-control s_website_form_input" name="errora_message"  t-att-value='errora_message'/>
+            
                        <t t-if='expense.state=="draft"'>
                          <t t-if='expense.employee_id.user_id.id==uid or expense.employee_id.expense_incharge_id.user_id.id==uid'>
                               <a t-attf-href="/action/submit/expense/#{expense.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; margin-left:5px;color:white;">Submit</div> </a> 
@@ -215,20 +232,32 @@
                           <a t-attf-href="/request/refuse/#{expense.approval_request_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Refuse</div> </a> 
                             
                         </t>
-                       
                     </t>      
                 
                 <span class='pull-right'>status: 
-                      <i class="badge badge-pill badge-info" > 
-                        <t t-if='is_expense_deposit!=True'>
-                          <t t-if='expense.state!="done"'>  
-                           <span t-esc='expense.state'/>
-                        </t> 
-                        </t>     
-                        <t t-if='is_expense_deposit==True'>  
-                          <span t-esc='expense.state'/>
-                        </t>    
-                      </i>
+                       <i class="badge badge-pill badge-info" > 
+                            <t t-if='is_deposit!=True'>
+                              <t t-if='expense.state!="done"'>  
+                                    <t t-if='expense.state!="submit" '>   
+                                       <span t-esc='expense.state'/>
+                                     </t>    
+                                    <t t-if='expense.state=="submit" '>
+                                        <t t-if='not expense.approval_request_id' >
+                                          <i class="badge badge-pill badge-warning">To Validate</i>
+                                        </t>  
+                                        <t t-if='expense.approval_request_id' >
+                                           <i class="badge badge-pill badge-warning">To Approve</i> 
+                                        </t> 
+                                    </t>     
+                              </t> 
+                            </t>     
+                            <t t-if='is_deposit==True'>  
+                              <span t-esc='expense.state'/>
+                            </t>
+                            <t t-if='is_deposit_adjusted==True'>  
+                              Adjusted
+                            </t>  
+                       </i>
                 </span>
              
         </div>
@@ -260,7 +289,6 @@
                   </div>
                 </div>
                </div> 
-                
               
                 <div class="s_website_form_rows row s_col_no_bgcolor">
                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
@@ -292,6 +320,32 @@
                     </div>
                </div>
             
+            
+            <t t-if='expense.state!="draft"'>
+             <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="cost_center">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Cost Center</span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="default_analytic_name" /> 
+                        </div>
+                    </div>
+                </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="control_account">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);' >Control-Account</span>
+                        </label>
+                        <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="default_controlled_account" />
+                        </div>
+                  </div>
+                </div>
+               </div> 
+            </t>
              
               <div class="o_notebook" data-name="_default_">
                           <div class="o_notebook_headers">
@@ -324,7 +378,11 @@
                                 </label>
                                <div class="col-sm" id='data_list'>
                                        <select id="expense_type" class="form-control  o_website_form_input" name="product_id" readonly="1" required="1">                  
-                                            
+                                             <t t-if='error_flag=="1"'>    
+                                              <option t-att-value="forcasted['expense_type']">
+                                                 <t t-esc="request.env['expense.sub.category'].search([('id','=',forcasted['expense_type'])]).name"  />
+                                               </option>
+                                           </t> 
                                             <t t-foreach="products" t-as="product">
                                                 <option t-att-value="product.id">
                                                     <t t-esc="product.name"  />
@@ -340,8 +398,13 @@
                                 <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="reference">
                                              <span class="s_website_form_label_content" style='color:#495057;'>Bill Reference No *</span>
                                 </label>
-                                    <div class="col-sm">           
-                                        <input id='reference' type="char" class="form-control s_website_form_input" name="reference" required="True"/>
+                                    <div class="col-sm"> 
+                                        <t t-if='error_flag=="0"'>
+                                          <input id='reference' type="char" class="form-control s_website_form_input" name="reference" required="True"/> 
+                                        </t>    
+                                         <t t-if='error_flag=="1"'> 
+                                            <input id='reference' type="char" class="form-control s_website_form_input" name="reference" required="True"  t-att-value="forcasted['reference']"/>
+                                        </t> 
                                     </div>
                                 </div>
                             </div>  
@@ -376,8 +439,13 @@
                                 <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="reading">
                                              <span class="s_website_form_label_content" style='color:#495057;'>Vehicle Reading *</span>
                                 </label>
-                                    <div class="col-sm">           
+                                    <div class="col-sm">
+                                      <t t-if='error_flag=="0"'>   
                                         <input id='fleet_reading' type="float" class="form-control s_website_form_input" name="meter_reading"  />
+                                        </t>    
+                                        <t t-if='error_flag=="1"'> 
+                                        <input id='fleet_reading' type="float" class="form-control s_website_form_input" name="meter_reading"  t-att-value="forcasted['meter_reading']"/>
+                                        </t>
                                     </div>
                                 </div>
                              </div>
@@ -391,7 +459,12 @@
                                             <span class="s_website_form_label_content" style='color:#495057;'>Amount *</span>
                                     </label>
                                     <div class="col-sm">
+                                        <t t-if='error_flag=="0"'> 
                                            <input id='unit_amount' type="number" class="form-control s_website_form_input" name="unit_amount" required="True"/>
+                                        </t>    
+                                        <t t-if='error_flag=="1"'> 
+                                           <input id='unit_amount' type="number" class="form-control s_website_form_input" name="unit_amount" required="True"  t-att-value="forcasted['unit_amount']"/>
+                                        </t> 
                                     </div>
                               </div>
                             </div>   
@@ -419,9 +492,17 @@
                                     </label>
                                     <div class="col-sm">
                                             <select id="dependent" class="form-control  o_website_form_input" name="member_id" readonly="1" >
-                                                <option value="0">
-                                                    Self
-                                                </option>
+                                                <t t-if="error_flag=='0' or forcasted['member_id']=='0'">
+                                                    <option value="0">
+                                                        Self
+                                                    </option>
+                                                </t>
+                                        
+                                                <t t-if="error_flag=='1' and forcasted['member_id']!='0'">
+                                                   <option t-att-value="forcasted['member_id']">
+                                                       <t t-esc="request.env['hr.employee.family'].search([('id','=',forcasted['member_id'])]).name"  />
+                                                   </option>
+                                                </t>
                                             <t t-foreach="emp_members" t-as="emp_member">
                                                 <option t-att-value="emp_member.id">
                                                     <t t-esc="emp_member.name"  />
@@ -438,10 +519,15 @@
                              <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
                                 <div class="row s_col_no_resize">
                                     <label class="col-form-label col-sm-auto" style="width: 200px" for="attachment">
-                                        <span style='color:#495057;'>Control-account</span>
+                                        <span style='color:#495057;'>Control-Account</span>
                                     </label>
                                    <div class="col-sm" id='data_list'>
                                            <select id="controlaccount" class="form-control  o_website_form_input" name="controll_id" readonly="1" >
+                                            <t t-if='error_flag=="1"'>
+                                                   <option t-att-value="forcasted['product_id']">
+                                                       <t t-esc="request.env['controlled.account'].sudo().search([('id','=',forcasted['product_id'])]).name"  />
+                                                   </option>
+                                            </t>   
                                             <t t-foreach="controllers" t-as="controller">
                                                 <option t-att-value="controller.id">
                                                     <t t-esc="controller.name"  />
@@ -458,7 +544,13 @@
                                             <span style='color:#495057;'>Attachments</span>
                                         </label>
                                        <div class="col-sm" id='data_list'>
+                                           <t t-if='error_flag=="0"'>
                                               <input id='files' type="file" class="form-control s_website_form_input" name="attachment" multiple='1'/>       
+                                           </t>
+                                           
+                                           <t t-if='error_flag=="1"'>
+                                              <input id='files' type="file" class="form-control s_website_form_input" name="attachment" multiple='1' t-att-value="forcasted['attachment']" /> 
+                                           </t>
                                         </div>
                                     </div>
                                   </div>
@@ -468,13 +560,18 @@
                             
                         <t t-if='expense.ora_category_id.has_description=="optional"'>    
                             <div class="s_website_form_rows row">
-                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                             <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
                                 <div class="row s_col_no_resize">
                                     <label class="col-form-label col-sm-auto" style="width: 200px" for="description">
                                         <span style='color:#495057;'>Remarks</span>
                                     </label>
                                    <div class="col-sm" id='data_list'>
+                                       <t t-if='error_flag=="0"'>
                                           <textarea id="description" class="form-control s_website_form_input" name="description" ></textarea> 
+                                       </t>
+                                       <t t-if='error_flag=="1"'>
+                                          <input id="description" type='text' class="form-control s_website_form_input" name="description" t-att-value="forcasted['name']" /> 
+                                       </t>
                                     </div>
                                 </div>
                               </div>
@@ -489,7 +586,13 @@
                                         <span style='color:#495057;'>Remarks *</span>
                                     </label>
                                    <div class="col-sm" id='data_list'>
+                                       
+                                       <t t-if='error_flag=="0"'>
                                           <textarea id="description" class="form-control s_website_form_input" name="description" required="1"></textarea> 
+                                       </t> 
+                                       <t t-if='error_flag=="1"'>
+                                          <input id="description" type='text' class="form-control s_website_form_input" name="description" t-att-value="forcasted['name']" required="1" /> 
+                                       </t>
                                     </div>
                                 </div>
                               </div>
@@ -520,7 +623,7 @@
                            
                             
                     <div id='cost_center_detail' class="s_website_form_rows row s_col_no_bgcolor">
-                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">                                                   <table id="expenselineTable" class='table tabel-responsive'>
+                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">                                       <table id="expenselineTable" class='table tabel-responsive'>
                             <tbody> 
                              <t t-foreach="cost_centers" t-as="cost_center">
                                  <tr>
@@ -662,7 +765,7 @@
                                 <td><t t-esc="'{0:,}'.format(int(round(sheet_line.meter_reading)))"/></td>
                               </t> 
                               <t t-if='expense.ora_category_id.is_attachment in ("optional","required")'>
-                                  <td><a t-attf-href="/web/content/#{sheet_line.attachment_id.ids}?download=true" title="Download"><i class="fa fa-download"></i></a></td>
+                                  <td><a t-attf-href="/web/content/#{sheet_line.attachment_id.id}?download=true" title="Download"><i class="fa fa-download"></i></a></td>
                                </t>  
                               <td><t t-esc="'{0:,}'.format(int(round(sheet_line.total_amount)))"/></td> 
                                <td class="action_delete">
@@ -718,10 +821,9 @@
                             </div>
                       </div>
                     </div>
-               </div>
-            
-                
+               </div>  
                <t t-if='expense.state!="draft"'>
+                   <t t-if='expense.approval_request_id'>
                         <table id="expenseapporoverTable" class='table tabel-responsive'>
                          <thead> 
                             <tr style='background-color:#875A7B; color:white;'>
@@ -762,7 +864,8 @@
                              </t>    
                         </tbody>
                       </table>
-                     </t>   
+                     </t>
+                    </t>
                
                
             
@@ -858,9 +961,10 @@
                       <t t-if='expense.ora_category_id.has_reading in ("optional","required")'>  
                         <th>Meter Reading</th>  
                       </t> 
-                      <t t-if='expense.ora_category_id.is_attachment in ("optional","required")'>   
-                        <th>Attachment</th>  
-                      </t>   
+                     
+                      <th>Control-Account</th>  
+                      <th>Cost Center</th>
+                      <th>Percentage</th>  
                       <th>Amount</th>
                          
                       <th></th>
@@ -879,9 +983,8 @@
                                   </t>
                                     <t t-if='not expense_line.member_id'>  
                                       Self
-                                  </t>
-                                    
-                                  </td>
+                                  </t>  
+                                </td>
                               </t>    
                               <t t-if='expense.ora_category_id.has_vehicle in ("optional","required")'>   
                                 <td><t t-esc='expense_line.fleet_id.name'/></td>
@@ -889,9 +992,10 @@
                               <t t-if='expense.ora_category_id.has_reading in ("optional","required")'>    
                                 <td><t t-esc="'{0:,}'.format(int(round(expense_line.meter_reading)))"/></td>
                               </t> 
-                              <t t-if='expense.ora_category_id.is_attachment in ("optional","required")'>
-                                  <td><a t-attf-href="/web/content/#{expense_line.attachment_id.id}?download=true" title="Download"><i class="fa fa-download"></i></a></td>
-                               </t> 
+                              
+                              <td><t t-esc="expense_line.product_id.controlled_id.name"/></td>
+                              <td><t t-esc="expense_line.analytic_account_id.name"/></td>
+                              <td><t t-esc="expense_line.percentage"/></td> 
                               <td><t t-esc="'{0:,}'.format(int(round(expense_line.total_amount)))"/></td>
                                  
                                <td class="action_delete">
@@ -988,6 +1092,7 @@
 	                                           </div>
 	                                       </div>
 	                                   </div>
+
                                        <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
 	                                       <div class="row s_col_no_resize s_col_no_bgcolor">
 	                                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="exception">
@@ -1088,7 +1193,21 @@
 <div id="wrap" class="oe_structure oe_empty">
 <section class="s_quotes_carousel_wrapper o_colored_level" data-vxml="001" data-vcss="001" data-snippet="s_quotes_carousel" data-name="Quotes" style="">
 <div class="s_card card bg-white w-100" data-snippet="s_card" data-name="Card">
-    
+         <script  src="/de_portal_expence/static/src/js/jquery_1_2.js"></script>
+         <script  src="/de_portal_expence/static/src/js/jquery_min.js"></script>
+         <script  src="/de_portal_expence/static/src/js/jquery_ui.js"></script>
+         <script>
+             $(function () {
+                 error_flag=document.getElementById("error_flag").value;
+                 errora_message=document.getElementById("errora_message").value;
+                 if (error_flag=='1') {
+                   alert(errora_message)
+                 }
+             });
+          </script>
+           <input id='error_flag' type="hidden" class="form-control s_website_form_input" name="error_flag"  t-att-value='error_flag'/>
+           <input id='errora_message' type="hidden" class="form-control s_website_form_input" name="errora_message"  t-att-value='errora_message'/>
+          
         <h4 class="card-header" style="height:40px;">
         <font style="color: rgb(61, 66, 70);">
         <div class="o_form_statusbar">
@@ -1156,28 +1275,50 @@
                             </div>
                         </div>
                       
-                 
-                     
-                        <div class="o_notebook" data-name="_default_">
-                          <div class="o_notebook_headers">
-                              <ul class="nav nav-tabs">
-                                  <li class="nav-item">
-                                    <a data-toggle="tab" disable_anchor="true" href="#notebook_page_3337" class="nav-link active" role="tab">Expense Lines</a>
-                                  </li>
-                                  <!--<li class="nav-item">
-                                      <a data-toggle="tab" disable_anchor="true" href="#notebook_page_3340" class="nav-link" role="tab">Other Info</a>
-                                  </li> -->
-                              </ul>
-                          </div>   
-                        </div>
+               
                             
                         &#160;&#160;&#160;&#160;&#160;
-                      <form  id="portal_expense_form_line"  data-toggle="validator" action="/my/expense/line/save" method="post"  enctype="multipart/form-data">
-                          
+                      <form  id="portal_expense_form_line"  data-toggle="validator" action="/my/expense/line/save" method="post"  enctype="multipart/form-data"> 
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <input type="hidden" name="ora_category" t-att-value="expense_categories.id"/>
                         <input id="ora_exception" type="hidden" name="ora_exception" t-att-value="exception"/> 
-                       
+                          
+                     
+                               <!-- Expense Date -->
+                  <input id='start_accounting_date' type="hidden" class="form-control s_website_form_input" name="start_accounting_date"   required="1"  t-att-value='start_accounting_date'/>
+                  <input id='end_accounting_date' type="hidden" class="form-control s_website_form_input" name="end_accounting_date"   required="1"  t-att-value='end_accounting_date'/>   
+                  <script type="text/javascript">
+                     function validatedateFormExpensec(event) {
+                          const selected_date=event.target.value;
+                          let start_accounting_date = document.getElementById("start_accounting_date").value;
+                          let end_accounting_date = document.getElementById("end_accounting_date").value;
+                          
+                          if (new Date(selected_date) > new Date(end_accounting_date) ) {
+                            alert("Not Allow to Enter date greater than. "+ end_accounting_date);
+                            event.target.value= end_accounting_date;
+                          }
+                          if (new Date(start_accounting_date) > new Date(selected_date) ) {
+                            alert("Not Allow to Enter date less than "+start_accounting_date);
+                            event.target.value= start_accounting_date;
+                          }
+                      }
+                     
+                  </script>            
+                  <!-- Expense Date -->    
+                                
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                        <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                               <div class="row s_col_no_resize s_col_no_bgcolor">
+                                   <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="expense_date">
+                                       <span class="s_website_form_label_content">Expense Date</span>
+                                   </label>
+                                   <div class="col-sm">
+                                        <input type="date" class="form-control s_website_form_input date_from_edit" name="accounting_date"   required="1"  t-att-value='accounting_date' onchange='validatedateFormExpensec(event)'/>
+                                   </div>
+                               </div>
+                           </div>
+                    </div>
+                           
                         <div class="s_website_form_rows row s_col_no_bgcolor">
                          <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
                             <div class="row s_col_no_resize s_col_no_bgcolor">
@@ -1186,7 +1327,11 @@
                                 </label>
                                <div class="col-sm" id='data_list'>
                                        <select id="expense_type" class="form-control  o_website_form_input" name="product_id" readonly="1" required="1">                  
-                                                
+                                          <t t-if='error_flag=="1"'>    
+                                            <option t-att-value="forcasted['expense_type']">
+                                                 <t t-esc="request.env['expense.sub.category'].search([('id','=',forcasted['expense_type'])]).name"  />
+                                            </option>
+                                           </t>    
                                             <t t-foreach="products" t-as="product">
                                                 <option t-att-value="product.id">
                                                     <t t-esc="product.name"  />
@@ -1201,8 +1346,13 @@
                                 <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="reference">
                                              <span class="s_website_form_label_content" style='color:#495057;'>Bill Reference No *</span>
                                 </label>
-                                    <div class="col-sm">           
-                                        <input id='reference' type="char" class="form-control s_website_form_input" name="reference" required="True"/>
+                                    <div class="col-sm">  
+                                       <t t-if='error_flag=="0"'> 
+                                        <input id='reference' type="char" class="form-control s_website_form_input" name="reference" required="True"  />
+                                        </t> 
+                                        <t t-if='error_flag=="1"'> 
+                                        <input id='reference' type="char" class="form-control s_website_form_input" name="reference" required="True"  t-att-value="forcasted['reference']"/>
+                                        </t> 
                                     </div>
                                 </div>
                             </div>  
@@ -1231,7 +1381,7 @@
                                 </label>
                                <div class="col-sm" id='data_list'>
                                        <select id="employee_fleet" class="form-control  o_website_form_input" name="fleet_id" readonly="1" required="1">
-                                             
+                                          
                                             <t t-foreach="fleets" t-as="fleet">
                                                 <option t-att-value="fleet.id">
                                                     <t t-esc="fleet.name"  />
@@ -1249,8 +1399,13 @@
                                 <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="reading">
                                              <span class="s_website_form_label_content" style='color:#495057;'>Vehicle Reading *</span>
                                 </label>
-                                    <div class="col-sm">           
+                                    <div class="col-sm"> 
+                                       <t t-if='error_flag=="0"'> 
                                         <input id='fleet_reading' type="float" class="form-control s_website_form_input" name="meter_reading"  />
+                                        </t>
+                                        <t t-if='error_flag=="1"'> 
+                                        <input id='fleet_reading' type="float" class="form-control s_website_form_input" name="meter_reading"  t-att-value="forcasted['meter_reading']"/>
+                                        </t>
                                     </div>
                                 </div>
                              </div>
@@ -1266,7 +1421,12 @@
                                             <span class="s_website_form_label_content" style='color:#495057;'>Amount *</span>
                                     </label>
                                     <div class="col-sm">
-                                           <input id='unit_amount' type="number" class="form-control s_website_form_input" name="unit_amount" required="True"/>
+                                        <t t-if='error_flag=="0"'> 
+                                           <input id='unit_amount' type="number" class="form-control s_website_form_input" name="unit_amount" required="True"  />
+                                        </t> 
+                                        <t t-if='error_flag=="1"'> 
+                                           <input id='unit_amount' type="number" class="form-control s_website_form_input" name="unit_amount" required="True"  t-att-value="forcasted['unit_amount']"/>
+                                        </t> 
                                     </div>
                               </div>
                             </div>   
@@ -1281,9 +1441,16 @@
                                     </label>
                                     <div class="col-sm">
                                             <select id="dependent" class="form-control  o_website_form_input" name="member_id" readonly="1" >
-                                                <option value="0">
-                                                    Self
-                                                </option>
+                                                <t t-if="error_flag=='0' or forcasted['member_id']=='0'">
+                                                   <option value="0">
+                                                      Self
+                                                   </option>
+                                                </t>
+                                                <t t-if="error_flag=='1' and forcasted['member_id']!='0'">
+                                                   <option t-att-value="forcasted['member_id']">
+                                                       <t t-esc="request.env['hr.employee.family'].search([('id','=',forcasted['member_id'])]).name"  />
+                                                   </option>
+                                                </t>
                                             <t t-foreach="emp_members" t-as="emp_member">
                                                 <option t-att-value="emp_member.id">
                                                     <t t-esc="emp_member.name"  />
@@ -1305,6 +1472,12 @@
                                     </label>
                                    <div class="col-sm" id='data_list'>
                                            <select id="controlaccount" class="form-control  o_website_form_input" name="controll_id" readonly="1" >
+                                               
+                                            <t t-if='error_flag=="1"'>
+                                                   <option t-att-value="forcasted['product_id']">
+                                                       <t t-esc="request.env['controlled.account'].sudo().search([('id','=',forcasted['product_id'])]).name"  />
+                                                   </option>
+                                            </t>   
                                             <t t-foreach="controllers" t-as="controller">
                                                 <option t-att-value="controller.id">
                                                     <t t-esc="controller.name"  />
@@ -1321,7 +1494,14 @@
                                             <span style='color:#495057;'>Attachments</span>
                                         </label>
                                        <div class="col-sm" id='data_list'>
-                                              <input id='files' type="file" class="form-control s_website_form_input" name="attachment" multiple='1'/>       
+                                           
+                                           <t t-if='error_flag=="1"'>
+                                              <input id='files' type="file" class="form-control s_website_form_input" name="attachment" multiple='1' t-att-value="forcasted['attachment']" /> 
+                                           </t>
+                                           
+                                           <t t-if='error_flag=="0"'>
+                                              <input id='files' type="file" class="form-control s_website_form_input" name="attachment" multiple='1' /> 
+                                           </t>
                                         </div>
                                     </div>
                                   </div>
@@ -1338,7 +1518,12 @@
                                         <span style='color:#495057;'>Remarks</span>
                                     </label>
                                    <div class="col-sm" id='data_list'>
+                                       <t t-if='error_flag=="0"'>
                                           <textarea id="description" class="form-control s_website_form_input" name="description" ></textarea> 
+                                       </t>
+                                       <t t-if='error_flag=="1"'>
+                                          <input id="description" type='text' class="form-control s_website_form_input" name="description" t-att-value="forcasted['name']"  /> 
+                                       </t>
                                     </div>
                                 </div>
                               </div>
@@ -1353,7 +1538,12 @@
                                         <span style='color:#495057;'>Remarks *</span>
                                     </label>
                                    <div class="col-sm" id='data_list'>
-                                          <textarea id="description" class="form-control s_website_form_input" name="description" required="1"></textarea> 
+                                        <t t-if='error_flag=="0"'>
+                                          <textarea id="description" class="form-control s_website_form_input" name="description" required="1"></textarea>
+                                        </t>    
+                                       <t t-if='error_flag=="1"'>
+                                          <input id="description" type='text' class="form-control s_website_form_input" name="description" t-att-value="forcasted['name']"  /> 
+                                       </t>
                                     </div>
                                 </div>
                               </div>
@@ -1388,7 +1578,7 @@
                                  <tr>
                                     <td class='cost_center'><span t-esc='cost_center.cost_center.name'/></td>
                                     <td class='percentagea'> 
-                                        <input id='percent' type="integer" class="form-control s_website_form_input" name="percentage" multiple='1'  t-att-value='round(cost_center.percentage_charged)'/>   
+                                        <input id='percent' type="integer" class="form-control s_website_form_input" name="percentage" multiple='1'  t-att-value='round(cost_center.percentage_charged)'/>%   
                                     </td>
                                      <td class='control_account'> 
                                        <span t-esc='cost_center.controlled_id.name'/> 

@@ -33,10 +33,15 @@ def expense_adv_page_content(flag = 0):
     employees = request.env['hr.employee'].sudo().search([('user_id','=',http.request.env.context.get('uid'))])
     company_info = request.env['res.users'].sudo().search([('id','=',http.request.env.context.get('uid'))])
     categories = request.env['ora.expense.category'].sudo().search([])
+    ext_approver_line = request.env['advance.amount.approver.line'].sudo().search([('company_id','=', employees.company_id.id)], order='end_amount desc', limit=1)
+    exceeding_limit = 0
+    if ext_approver_line:
+        exceeding_limit = ext_approver_line.end_amount
     date = fields.date.today()
     return {
         'employees' : employees,
         'categories': categories,
+        'exceeding_limit': exceeding_limit,
         'date': date.strftime('%d/%b/%Y'),
         'success_flag' : flag,
         'company_info' : company_info

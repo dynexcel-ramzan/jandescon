@@ -103,7 +103,7 @@ class HrOvertimeAllocate(models.TransientModel):
         
     def action_create_overtime(self):
         
-        attendances=self.env['hr.attendance'].search([('employee_id.allow_overtime','=',True),('is_overtime','=',False),('check_in','!=',False),('check_out','!=',False),('att_date','>=',self.date_start),('att_date','<=',self.date_end)])
+        attendances=self.env['hr.attendance'].search([('employee_id.allow_overtime','=',True),('employee_id.company_id.id','!=',2),('is_overtime','=',False),('check_in','!=',False),('check_out','!=',False),('att_date','>=',self.date_start),('att_date','<=',self.date_end)])
         for att in attendances:
             day_min_ovt = 0
             overtime_rule = self.env['hr.overtime.rule'].search([('company_id','=',att.employee_id.company_id.id)])

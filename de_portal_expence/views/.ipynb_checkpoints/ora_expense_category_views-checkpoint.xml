@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    
     <data>
         <!-- Views -->
         <!-- Form View -->
@@ -9,7 +8,6 @@
             <field name="model">ora.expense.category</field>
             <field name="arch" type="xml">
                 <form string="ORA Expense Cateogry">
-                  
                     <sheet>
                          <div class="oe_title">
                             <h1>
@@ -24,13 +22,21 @@
                               <field name="has_reading" widget="radio" options="{'horizontal': true}"/>  
                               <field name="has_dependent" widget="radio" options="{'horizontal': true}"/>
                               <field name="has_description" widget="radio" options="{'horizontal': true}"/>  
-                              <field name="is_manager" />  
+                              <field name="is_manager" />
+                              <field name="hr_approval" /> 
+                              <field name="vehicle_meter_approval" />  
                               <field name="is_special"  invisible='1'/> 
                             </group>
                             <group>
-                                <field name="company_id" />
+                                <field name="company_id" invisible='1'/>
                             </group>
-                        </group> 
+                        </group>
+                        <notebook>
+                            <page string='Companies'>
+                                <field name='company_ids' />
+                                                                    
+                            </page>
+                        </notebook> 
                     </sheet>
                   
                 </form>

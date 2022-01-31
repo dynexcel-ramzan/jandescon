@@ -35,10 +35,11 @@ def timesheet_page_content(flag=0):
     employees = request.env['hr.employee'].sudo().search([])
     partners = request.env['res.ora.client'].sudo().search([])
     company_info = request.env['res.users'].sudo().search([('id', '=', http.request.env.context.get('uid'))])
-    projects = request.env['project.project'].sudo().search([('ora_enabled','=', True),('ora_close_date','>=',fields.date.today()),('ora_status','=','approved'),('company_id','=',company_info.company_id.id)])
+    projects = request.env['project.project'].sudo().search([('ora_enabled','=', True),('ora_status','=','approved'),('company_id','=',company_info.company_id.id)])
+    final_projects = projects.search(['|',('ora_close_date','>=', fields.date.today()),('ora_close_date','=', False),('company_id','=',company_info.company_id.id)])
     employee_name = employees
     return {
-        'projects': projects,
+        'projects': final_projects,
         'partners': partners,
         'employees': employees,
         'success_flag': flag,

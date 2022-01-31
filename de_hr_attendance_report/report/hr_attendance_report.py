@@ -78,7 +78,6 @@ class HrAttendanceReport(models.AbstractModel):
                     elif leave_day.state=='confirm':
                         leave_status = 'confirm'                       
                     leave_number_of_days += leave_day.number_of_days
-
                 rectification = self.env['hr.attendance.rectification'].search([('employee_id','=',employee.id),('check_in','<=', start_date),('check_out','>=', start_date),('state','in',('submitted','approved'))], limit=1)
                 for attendee in exist_attendances:
                     check_in_time = attendee.check_in
@@ -94,7 +93,7 @@ class HrAttendanceReport(models.AbstractModel):
                     absent = '0'
                     if holiday == '1':
                         rest_day_count -= 1    
-                elif (working_hours < (current_shift.hours_per_day-1.5)) and (working_hours >(current_shift.hours_per_day/2)):
+                elif (working_hours < (current_shift.hours_per_day-1.5)) and (working_hours > ((current_shift.hours_per_day)/2)-1.5):
                     attendance_day_count += 0.5
                     remarks = 'Half Present'
                     if holiday != '1':
@@ -106,16 +105,16 @@ class HrAttendanceReport(models.AbstractModel):
                             remarks = 'Leave (Approved)[0.5]'
                             leave_day_count += 0.5
                             absent = '0'
-                            
                         elif leave_status=='validate' and leave_number_of_days == 0.25:
                             remarks = 'Half Present (Leave[Approved] (0.25))'
-                            if working_hours < ((current_shift.hours_per_day/4)*3):
+                            if working_hours < (((current_shift.hours_per_day-1.5)/4)*3):
                                 absent = '1'
-                                absent_day_count += 0.25
+                                absent_day_count += 0.25 
+                                leave_day_count += 0.25   
                             else:
                                 remarks = 'Attendance Present (Leave[Approved] (0.25))' 
-                                leave_day_count += 0.25
                                 attendance_day_count += 0.25
+                                absent = '0'           
                         elif rectification.state=='submitted':
                             absent = '1'
                             remarks = 'Half Present (Rectification [To Approve])'
@@ -129,12 +128,16 @@ class HrAttendanceReport(models.AbstractModel):
                                 absent = '1'
                                 remarks = 'Half Present (Leave [To Approve] (0.25))'
                                 absent_day_count += 0.5
+                            else:
+                                absent = '1'
+                                absent_day_count += 0.5     
                         else:
                              absent = '1'
                              absent_day_count += 0.5  
                     else:
                         if holiday == '1': 
                             attendance_day_count -= 0.5 
+                
                 else:
                     if holiday == '0':
                         if rectification.state=='approved':
@@ -180,8 +183,8 @@ class HrAttendanceReport(models.AbstractModel):
                                 absent = '1'
                                 absent_day_count += 1    
                         else:
-                             absent = '1'
-                             absent_day_count += 1   
+                            absent = '1'
+                            absent_day_count += 1   
                 attendances.append({
                     'date': start_date.strftime('%d/%b/%Y'),
                     'day':  start_date.strftime('%A'),
@@ -309,7 +312,7 @@ class PortalAttendanceReport(models.AbstractModel):
                     absent = '0'
                     if holiday == '1':
                         rest_day_count -= 1     
-                elif (working_hours < (current_shift.hours_per_day-1.5)) and (working_hours >(current_shift.hours_per_day/2)):
+                elif (working_hours < (current_shift.hours_per_day-1.5)) and (working_hours >((current_shift.hours_per_day)/2)-1.5):
                     attendance_day_count += 0.5
                     remarks = 'Half Present'    
                     if holiday != '1':
@@ -324,12 +327,12 @@ class PortalAttendanceReport(models.AbstractModel):
                             
                         elif leave_status=='validate' and leave_number_of_days == 0.25:
                             remarks = 'Half Present (Leave[Approved] (0.25))'
-                            if working_hours < ((current_shift.hours_per_day/4)*3):
+                            if working_hours < (((current_shift.hours_per_day-1.5)/4)*3):
                                 absent = '1'
+                                leave_day_count += 0.25
                                 absent_day_count += 0.25
                             else:
                                 remarks = 'Attendance Present (Leave[Approved] (0.25))' 
-                                leave_day_count += 0.25
                                 attendance_day_count += 0.25
                                 absent = '0'
                         elif rectification.state=='submitted':
@@ -384,7 +387,6 @@ class PortalAttendanceReport(models.AbstractModel):
                             else:
                                 absent = '1'
                                 absent_day_count += 1
-
                         elif leave_status=='validate':
                             if leave_number_of_days >= 0.5:
                                 absent = '1'
@@ -400,8 +402,8 @@ class PortalAttendanceReport(models.AbstractModel):
                                 absent = '1'
                                 absent_day_count += 1     
                         else:
-                             absent = '1'
-                             absent_day_count += 1   
+                            absent = '1'
+                            absent_day_count += 1   
                 attendances.append({
                     'date': start_date.strftime('%d/%b/%Y'),
                     'day':  start_date.strftime('%A'),

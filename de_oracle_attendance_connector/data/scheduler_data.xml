@@ -33,8 +33,8 @@
 			<field name="model_id" ref="model_hr_attendance_wizard" />
 			<field name="user_id" ref="base.user_root" />
 			<field name="state">code</field>
-			<field name="interval_number">42</field>
-			<field name="interval_type">minutes</field>
+			<field name="interval_number">1</field>
+			<field name="interval_type">days</field>
 			<field name="numbercall">-1</field>
 			<field eval="False" name="doall" />
 			<field name="code">model.cron_download_oracle_missing_attendance_a()</field>
@@ -44,58 +44,15 @@
 			<field name="model_id" ref="model_hr_attendance_wizard" />
 			<field name="user_id" ref="base.user_root" />
 			<field name="state">code</field>
-			<field name="interval_number">42</field>
-			<field name="interval_type">minutes</field>
+			<field name="interval_number">1</field>
+			<field name="interval_type">days</field>
 			<field name="numbercall">-1</field>
 			<field eval="False" name="doall" />
 			<field name="code">model.cron_download_oracle_missing_attendance_aa()</field>
 		</record>
-		<record id="ir_cron_scheduler_ebs_download_hr_user_attendance_mb" model="ir.cron">
-			<field name="name">Download Missing Oracle attendances b</field>
-			<field name="model_id" ref="model_hr_attendance_wizard" />
-			<field name="user_id" ref="base.user_root" />
-			<field name="state">code</field>
-			<field name="interval_number">42</field>
-			<field name="interval_type">minutes</field>
-			<field name="numbercall">-1</field>
-			<field eval="False" name="doall" />
-			<field name="code">model.cron_download_oracle_missing_attendance_b()</field>
-		</record>
-		<record id="ir_cron_scheduler_ebs_download_hr_user_attendance_mc" model="ir.cron">
-			<field name="name">Download Missing Oracle attendances c</field>
-			<field name="model_id" ref="model_hr_attendance_wizard" />
-			<field name="user_id" ref="base.user_root" />
-			<field name="state">code</field>
-			<field name="interval_number">42</field>
-			<field name="interval_type">minutes</field>
-			<field name="numbercall">-1</field>
-			<field eval="False" name="doall" />
-			<field name="code">model.cron_download_oracle_missing_attendance_c()</field>
-		</record>
-
-               <record id="ir_cron_scheduler_ebs_download_hr_user_attendance_md" model="ir.cron">
-			<field name="name">Download Missing Oracle attendances d</field>
-			<field name="model_id" ref="model_hr_attendance_wizard" />
-			<field name="user_id" ref="base.user_root" />
-			<field name="state">code</field>
-			<field name="interval_number">42</field>
-			<field name="interval_type">minutes</field>
-			<field name="numbercall">-1</field>
-			<field eval="False" name="doall" />
-			<field name="code">model.cron_download_oracle_missing_attendance_d()</field>
-		</record>
-                <record id="ir_cron_scheduler_ebs_download_hr_user_attendance_me" model="ir.cron">
-			<field name="name">Download Missing Oracle attendances e</field>
-			<field name="model_id" ref="model_hr_attendance_wizard" />
-			<field name="user_id" ref="base.user_root" />
-			<field name="state">code</field>
-			<field name="interval_number">42</field>
-			<field name="interval_type">minutes</field>
-			<field name="numbercall">-1</field>
-			<field eval="False" name="doall" />
-			<field name="code">model.cron_download_oracle_missing_attendance_e()</field>
-		</record>
-
+		
+		
+               
         
         	
 

@@ -9,7 +9,7 @@
             </li>
 
         </xpath>
-     </template>
+    </template>
 
     <template id="portal_my_home" name="Show Approvals / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="25">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
@@ -55,19 +55,7 @@
                                 <t t-if="lines.status == 'pending'"> 
                                 <tr>
                                     <td class="text-left">
-                                          <a t-attf-href="/my/approval/#{_approval_.id}?{{ keep_query() }}">
-                                            <t t-if="_approval_.exp_adv_id">
-                                                <span t-field="_approval_.exp_adv_id.name"/>
-                                            </t>  
-                                            <t t-if="_approval_.expense_id">
-                                                <span t-field="_approval_.expense_id.name"/>
-                                            </t>  
-                                            <t t-if="not _approval_.expense_id">
-                                              <t t-if="not _approval_.exp_adv_id">  
-                                                <span t-field="_approval_.id"/>
-                                              </t>    
-                                            </t>    
-                                          </a>
+                                          <a t-attf-href="/my/approval/#{_approval_.id}?{{ keep_query() }}">#<span t-field="_approval_.id"/></a>
                                     </td>
                                      <td>
                                         <a t-attf-href="/my/approval/#{_approval_.id}?{{ keep_query() }}"><span t-field="_approval_.name"/></a>
@@ -88,30 +76,24 @@
                                            
                                            <t t-if="not _approval_.leave_id">
                                            <t t-if="not _approval_.rectification_id">
-                                             <t t-if="not _approval_.expense_id">  
                                               <span t-esc="_approval_.reason"/>
-                                             </t> 
-                                           </t>      
-                                          </t>
-                                           <t t-if="not _approval_.leave_id">
-                                            <t t-if="not _approval_.rectification_id">
-                                              <t t-if="_approval_.expense_id">
-                                                  <t t-if='_approval_.expense_id.exception==True'>
-                                                    <p style='color:red;'><span  t-esc="_approval_.reason"/></p>
-                                                  </t>
-                                                  <t t-if='_approval_.expense_id.exception==False'>
-                                                    <span  t-esc="_approval_.reason"/>
-                                                  </t>
-                                              </t>
-                                            </t>    
-                                           </t>
+                                         
+                                          </t> 
+                                          </t>   
                                            <t t-if="_approval_.rectification_id">
-                                              <span t-esc="_approval_.rectification_id.partial"/>                         
-                                           </t>   
+                                       
+                                              <span t-esc="_approval_.rectification_id.partial"/>
+                                                                             
+                                          </t>   
                                        </td>
+                                        
+                                   
                                     <td class="text-left">
                                         <span t-esc="_approval_.category_id.name"/>
                                     </td>
+                                    
+                                   
+                                  
                                     <td class="text-center">
                                          <t t-foreach="_approval_.approver_ids" t-as="lines">
                                             <t t-if="lines.user_id.id == uid">
@@ -158,7 +140,7 @@
         </t>
     </template>
     
-    <template id="portal_my_approval" name="My Approval">
+      <template id="portal_my_approval" name="My Approval">
         <t t-call="portal.portal_layout">
              
           

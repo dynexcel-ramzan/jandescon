@@ -9,11 +9,11 @@
             </li>
 
         </xpath>
-     </template>
+    </template>
 
     <template id="portal_my_home" name="Show Approvals / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="25">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
-            <t t-call="portal.portal_docs_entry" >
+            <t t-call="portal.portal_docs_entry" groups='de_portal_approvals.group_approval_access'>
                 <t t-set="title">Approval Notification</t>
                 <t t-set="url" t-value="'/my/approvals'"/>
                 <t t-set="placeholder_count" t-value="'approval_count'"/>
@@ -35,7 +35,7 @@
             </t>
             <t t-if="grouped_approvals">
                 <t t-call="portal.portal_table">
-                    
+                    <t t-foreach="grouped_approvals" t-as="all_approvals">
                         <thead>
                             <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
                                 <th class="text-left">Ref</th>
@@ -46,28 +46,14 @@
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
-                        <t t-foreach="grouped_approvals" t-as="all_approvals">
                         <tbody>
-                            
                             <t t-foreach="all_approvals" t-as="_approval_">  
                                <t t-foreach="_approval_.approver_ids" t-as="lines">
                                <t t-if="lines.user_id.id == uid">
                                 <t t-if="lines.status == 'pending'"> 
                                 <tr>
                                     <td class="text-left">
-                                          <a t-attf-href="/my/approval/#{_approval_.id}?{{ keep_query() }}">
-                                            <t t-if="_approval_.exp_adv_id">
-                                                <span t-field="_approval_.exp_adv_id.name"/>
-                                            </t>  
-                                            <t t-if="_approval_.expense_id">
-                                                <span t-field="_approval_.expense_id.name"/>
-                                            </t>  
-                                            <t t-if="not _approval_.expense_id">
-                                              <t t-if="not _approval_.exp_adv_id">  
-                                                <span t-field="_approval_.id"/>
-                                              </t>    
-                                            </t>    
-                                          </a>
+                                          <a t-attf-href="/my/approval/#{_approval_.id}?{{ keep_query() }}">#<span t-field="_approval_.id"/></a>
                                     </td>
                                      <td>
                                         <a t-attf-href="/my/approval/#{_approval_.id}?{{ keep_query() }}"><span t-field="_approval_.name"/></a>
@@ -88,30 +74,24 @@
                                            
                                            <t t-if="not _approval_.leave_id">
                                            <t t-if="not _approval_.rectification_id">
-                                             <t t-if="not _approval_.expense_id">  
                                               <span t-esc="_approval_.reason"/>
-                                             </t> 
-                                           </t>      
-                                          </t>
-                                           <t t-if="not _approval_.leave_id">
-                                            <t t-if="not _approval_.rectification_id">
-                                              <t t-if="_approval_.expense_id">
-                                                  <t t-if='_approval_.expense_id.exception==True'>
-                                                    <p style='color:red;'><span  t-esc="_approval_.reason"/></p>
-                                                  </t>
-                                                  <t t-if='_approval_.expense_id.exception==False'>
-                                                    <span  t-esc="_approval_.reason"/>
-                                                  </t>
-                                              </t>
-                                            </t>    
-                                           </t>
+                                         
+                                          </t> 
+                                          </t>   
                                            <t t-if="_approval_.rectification_id">
-                                              <span t-esc="_approval_.rectification_id.partial"/>                         
-                                           </t>   
+                                       
+                                              <span t-esc="_approval_.rectification_id.partial"/>
+                                                                             
+                                          </t>   
                                        </td>
+                                        
+                                   
                                     <td class="text-left">
                                         <span t-esc="_approval_.category_id.name"/>
                                     </td>
+                                    
+                                   
+                                  
                                     <td class="text-center">
                                          <t t-foreach="_approval_.approver_ids" t-as="lines">
                                             <t t-if="lines.user_id.id == uid">
@@ -169,13 +149,6 @@
                     <div class="container">
                       <div class="card">
                         <div class="card-header">
-                            
-                                 <t class="col-lg-7 col-md-8" >
-                                     <a t-attf-href="/app/approval/approve/#{approval.id}?"><i  class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Approve</i></a>
-                                    </t>
-                                 <t class="col-lg-7 col-md-8" >
-                                        <a t-attf-href="/app/approval/refuse/#{approval.id}?"><i class="btn btn-warning pull-left" style="height:30px; line-height:100%;margin-left:5px;margin-right:5px;">Refuse</i></a>           
-                                    </t>
                                  <t t-if="approval.loan_id ">
                                     <t class="col-lg-7 col-md-8" >
                                         <a t-attf-href="/loan/edit/#{approval.loan_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Edit</div> </a> 
@@ -184,16 +157,6 @@
                                   <t t-if="approval.site_id ">
                                     <t class="col-lg-7 col-md-8" >
                                         <a t-attf-href="/hr/site/attendance/#{approval.site_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">View</div> </a> 
-                                    </t>
-                                 </t>
-                                  <t t-if="approval.timesheet_id">
-                                    <t class="col-lg-7 col-md-8" >
-                                        <a t-attf-href="/project/timesheet/#{approval.timesheet_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">View</div> </a> 
-                                    </t>
-                                 </t> 
-                                 <t t-if="approval.expense_id">
-                                    <t class="col-lg-7 col-md-8" >
-                                        <a t-attf-href="/my/expense/#{approval.expense_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">View</div> </a> 
                                     </t>
                                  </t> 
                                 <div class="row">
@@ -211,197 +174,67 @@
                                             </div>
                                         </h5>
                                     </div>
+                                    <t t-set="prev_record" t-value="1" /> 
+                                    <t t-set="next_record" t-value="2" /> 
+                                    <div style="float:right; text-align:right; width:0ox; margin-right:0px;" class=" btn-group col-lg-1" role="group">
+                                    <h5>  
+                                        <t t-if="pre_id">
+                                            <a role="button"  t-attf-href="/approval/pre/#{approval.id}?" ><i style="margin-right:10px; align:right" class="fa fa-chevron-left" role="img" aria-label="Previous" title="Previous"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="margin-right:10px; align:right; color:#B8B7B0" class="fa fa-chevron-left" aria-label="Previous" title="Previous"></i></a>
+
+                                        </t>
+                                        <t t-if="next_id">
+                                            <a role="button" t-attf-href="/approval/next/#{approval.id}?" ><i class="fa fa-chevron-right" role="img" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="color:#B8B7B0" class="fa fa-chevron-right" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                    </h5>
+                                </div>
                             </div>
                           </div>
                         </div>
                     </div>
                 </t>
                <t t-set="card_body"> 
-                  
-                   <t t-if='approval.expense_id or approval.exp_adv_id'>
-                   <div class="s_website_form_rows row s_col_no_bgcolor">
-                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                                <div class="row s_col_no_resize s_col_no_bgcolor">
-                                    <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
-                                        <span class="s_website_form_label_content" >
-                                           <t t-if='approval.expense_id'> 
-                                             <t t-esc='approval.expense_id.name'/> 
-                                           </t>
-                                           <t t-if='approval.exp_adv_id'> 
-                                             <t t-esc='approval.exp_adv_id.name'/> 
-                                           </t> 
-                                        </span>
-                                    </label>
-                                    <div class="col-sm" style='color:#666666;'>
-                                       
+                    <div class="row mb-4">
+                         <div class="col-12 col-md-6 pb-2">
+                            <div class="row">
+                                <div class="col-md-6"> <strong>Requested By : </strong>
+                                    <t t-if="approval.request_owner_id">
+                                        <span t-esc="approval.request_owner_id.name"/>
+                                    </t>
                                 </div>
-                             </div>
                             </div>
-                                    
-                           <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                            <div class="row s_col_no_resize s_col_no_bgcolor">
-                              <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
-                                        <span class="s_website_form_label_content"  ></span>
-                              </label>
-                              <div class="col-sm" style='color:#666666;'>
-                                 
-                              </div>
-                             </div>
-                           </div>
-                       </div> 
-                       </t>  
-                   
-                   <div class="s_website_form_rows row s_col_no_bgcolor">
-                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                                <div class="row s_col_no_resize s_col_no_bgcolor">
-                                    <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
-                                        <span class="s_website_form_label_content" >Requested By</span>
-                                    </label>
-                                    <div class="col-sm" style='color:#666666;'>
-                                        <t t-if="approval.request_owner_id">
-                                          <span t-esc="approval.request_owner_id.name"/>
-                                        </t>
-                                </div>
-                             </div>
-                            </div>
-                                    
-                           <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                            <div class="row s_col_no_resize s_col_no_bgcolor">
-                              <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
-                                        <span class="s_website_form_label_content"  >Email</span>
-                              </label>
-                              <div class="col-sm" style='color:#666666;'>
-                                  <span t-field="request.env['hr.employee'].sudo().search([('user_id','=',approval.request_owner_id.id)], limit=1).work_email" />
-                              </div>
-                             </div>
-                           </div>
-                      
-                       
+                             
+                        </div>
                         
-                       <t t-if='approval.leave_id'> 
-                            <div class="col-12 col-md-6 mb-1">
-                                <strong>Phone:</strong> <span t-field="approval.leave_id.employee_id.work_phone" />
-                            </div>
-                            <div class="col-12 col-md-6" t-if="approval.id">
-                                <strong>Email:</strong> <span t-field="approval.leave_id.employee_id.work_email" />
-                            </div>
-                       </t> 
-                      
-                       <t t-if='approval.timesheet_id'> 
-                            <div class="col-12 col-md-6 mb-1">
-                                <strong>Phone:</strong> <span t-field="approval.timesheet_id.incharge_id.work_phone" />
-                            </div>
-                            <div class="col-12 col-md-6" t-if="approval.id">
-                                <strong>Email:</strong> <span t-field="approval.timesheet_id.incharge_id.work_email" />
-                            </div>
-                       </t>    
-                    </div>
-                   
-                     <div class="s_website_form_rows row s_col_no_bgcolor">
-                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                        <div class="row s_col_no_resize s_col_no_bgcolor">
-                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
-                                <span class="s_website_form_label_content" >Date</span>
-                            </label>
-                            <div class="col-sm" style='color:#666666;'>
-                                <span t-field="approval.create_date" t-options='{"widget": "date"}'/>
+                    </div> 
+                    <br/>
+                    <div class="row mb-4">
+                        <div class="col-12 col-md-6 mb-1">
+                            <strong>Phone:</strong> <span t-field="approval.leave_id.employee_id.work_phone" />
                         </div>
-                     </div>
+                        <div class="col-12 col-md-6" t-if="approval.id">
+                            <strong>Email:</strong> <span t-field="approval.leave_id.employee_id.work_email" />
+                        </div>
                     </div>
-                                    
-                   <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                    <div class="row s_col_no_resize s_col_no_bgcolor">
-                      <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
-                                <span class="s_website_form_label_content" >Category</span>
-                      </label>
-                      <div class="col-sm" style='color:#666666;'>
-                            <span t-field="approval.category_id.name" />
-                      </div>
-                     </div>
-                   </div>
-                 </div>
-                   
                     
+                   <br/>
+                     <div class="row mb-4">
+                        <div class="col-12 col-md-6 mb-1">
+                            <strong>Date:</strong> <span t-field="approval.create_date" t-options='{"widget": "date"}'/>
+                        </div>
+                        <div class="col-12 col-md-6" t-if="approval.id">
+                            <strong>Category:</strong> <span t-field="approval.category_id.name" />
+                        </div>
+                    </div>
+                   <br/>
                    
-                   <t t-if='approval.expense_id'>
+                   
                        
-                    <div class="s_website_form_rows row s_col_no_bgcolor">
-                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                        <div class="row s_col_no_resize s_col_no_bgcolor">
-                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
-                                <span class="s_website_form_label_content" >Type</span>
-                            </label>
-                            <div class="col-sm" style='color:#666666;'>
-                                <t t-esc="approval.expense_id.ora_category_id.name"    />
-                        </div>
-                     </div>
-                    </div>
-                                    
-                   <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                    <div class="row s_col_no_resize s_col_no_bgcolor">
-                      <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
-                                <span class="s_website_form_label_content" >Total Amount</span>
-                      </label>
-                      <div class="col-sm" style='color:#666666;'>
-                            <t t-esc="round(approval.expense_id.total_amount)"    />
-                      </div>
-                     </div>
-                   </div>
-                 </div>
-                <div class="s_website_form_rows row s_col_no_bgcolor">
-                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                        <div class="row s_col_no_resize s_col_no_bgcolor">
-                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
-                                <span class="s_website_form_label_content" >
-                                  <t t-if='approval.expense_id.exception==True'><p style='color:red;'>Exception</p></t>
-                                  <t t-if='approval.expense_id.exception==False'>Exception</t>
-                                </span>
-                            </label>
-                            <div class="col-sm" style='color:#666666;'>
-                                <t t-if='approval.expense_id.exception==True'><p style='color:red;'>Yes</p></t>
-                                <t t-if='approval.expense_id.exception==False'>No</t>
-                        </div>
-                     </div>
-                    </div>
-                                    
-                   <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                    <div class="row s_col_no_resize s_col_no_bgcolor">
-                      <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
-                                <span class="s_website_form_label_content" ></span>
-                      </label>
-                      <div class="col-sm" style='color:#666666;'>
-                          
-                      </div>
-                   </div>
-                  </div>
-                </div>        
-              </t>
-                   
-                   <t t-if='approval.exp_adv_id'>
-                      <div class="s_website_form_rows row s_col_no_bgcolor">
-                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                                <div class="row s_col_no_resize s_col_no_bgcolor">
-                                    <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
-                                        <span class="s_website_form_label_content" >Total Amount</span>
-                                    </label>
-                                    <div class="col-sm" style='color:#666666;'>
-                                        <t t-esc="round(approval.exp_adv_id.amount)"    />
-                                </div>
-                             </div>
-                            </div>
-                                    
-                           <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
-                            <div class="row s_col_no_resize s_col_no_bgcolor">
-                              <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
-                                        <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);' ></span>
-                              </label>
-                              <div class="col-sm" style='color:#666666;'>
-                              </div>
-                             </div>
-                           </div>
-                         </div> 
-                      
-                   </t>      
                  
                    <t t-if='approval.leave_id'>
                    <h3><p style='color:blue;'>Details</p></h3>
@@ -414,6 +247,7 @@
                             <strong>Duration Type:</strong> <span t-field="approval.leave_id.leave_category" />
                         </div>
                     </div>
+                   <br/>
                    </t>  
                    
                    <t t-if='approval.leave_id'>
@@ -425,6 +259,7 @@
                             <strong>Request To:</strong> <span t-field="approval.leave_id.date_to"  t-options='{"widget": "date"}'/>
                         </div>
                     </div>
+                   <br/>
                    </t> 
                    
                    <t t-if='approval.leave_id'>
@@ -436,45 +271,23 @@
                             <strong></strong> 
                         </div>
                     </div>
+                   <br/>
                    </t> 
-
-
                     <t t-if='approval.leave_id'>
                    <div class="row mb-4">
                         <div class="col-12 col-md-6 mb-1">
-                            <strong>Remarks : </strong>  <span t-field="approval.leave_id.name"/>
+                            <strong>Remakrs : </strong>  <span t-field="approval.leave_id.name"/>
                         </div>
                         <div class="col-12 col-md-6" t-if="approval.id">
                             <strong></strong> 
                         </div>
                     </div>
-                   </t>
-                   
-                   
-                     <t t-if='approval.timesheet_id'>
-                   <h3><p style='color:blue;'>Details</p></h3>
-                      
-                   <div class="row mb-4">
-                        <div class="col-12 col-md-6 mb-1">
-                            <strong>Date From:</strong> <span t-field="approval.timesheet_id.date_from"  t-options='{"widget": "date"}' />
-                        </div>
-                        <div class="col-12 col-md-6" >
-                            <strong>Date To:</strong> <span t-field="approval.timesheet_id.date_to"  t-options='{"widget": "date"}'/>
-                        </div>
-                    </div>
-                     <div class="row mb-4">
-                        <div class="col-12 col-md-6 mb-1">
-                            <strong>Client:</strong> <span t-field="approval.timesheet_id.partner_id.name"   />
-                        </div>
-                        <div class="col-12 col-md-6" >
-                            <strong>Project:</strong> <span t-field="approval.timesheet_id.project_id.name"  />
-                        </div>
-                    </div>     
+                   <br/>
                    </t>
                    
                    <t t-if='approval.rectification_id'>
                    <h3><p style='color:blue;'>Details</p></h3>
-                   <br/>    
+                       <br/>    
                    
                   
                    
@@ -499,6 +312,7 @@
                             <strong></strong> 
                         </div>
                     </div>
+                   <br/>
                    </t> 
                     <t t-if='approval.rectification_id'>
                    <div class="row mb-4">
@@ -509,6 +323,7 @@
                             <strong></strong> 
                         </div>
                     </div>
+                   <br/>
                    </t>
                    </t>    
                    
@@ -516,22 +331,8 @@
                   
                  <t t-if=' not approval.leave_id'>
                    <t t-if='not approval.rectification_id'>  
-                   <t t-if='not approval.timesheet_id'>
-                   <t t-if='not approval.exp_adv_id'> 
-                   <t t-if='not approval.expense_id'>    
                      <h3><p style='color:blue;'>Details</p></h3>
                      <br/>
-                     <t t-if='approval.allocation_id'>
-                   <div class="row mb-4">
-                        <div class="col-12 col-md-6 mb-1">
-                            <strong>Overtime Date:</strong> <span t-field="approval.allocation_id.overtime_id.date" />
-                        </div>
-                        <div class="col-12 col-md-6" t-if="approval.id">
-                            <strong>Overtime Hours:</strong> <span t-field="approval.allocation_id.overtime_id.actual_ovt_hours" />
-                        </div>
-                    </div>
-                   <br/>
-                   </t>   
                     <div class="row"> 
                         <div t-attf-class="col-12 col-lg-12  mb-md-0 ">
                             <hr class="mb-1"/>
@@ -544,10 +345,24 @@
                         </div> 
                     </div>
                    </t> 
-                  </t> 
-                  </t>      
-                  </t>      
-                </t>   
+                  </t>    
+                   <div class="row">
+                       <t t-foreach="approval.approver_ids" t-as="lines">
+                            <t t-if="lines.user_id.id == uid">
+                               <t t-if = "lines.status == 'pending'">
+                                   
+                              <div class="offset-md-10 col-md-1" style="margin-top:20px;">
+                                <a t-attf-href="/app/approval/approve/#{approval.id}?"><i  class="btn btn-primary">Approve</i></a>
+                            </div>                  
+                            <div class="col-md-1" style="margin-top:20px;">
+                                <a t-attf-href="/app/approval/refuse/#{approval.id}?"><i class="btn btn-warning">Refuse</i></a>                   
+                            </div>
+                                   
+
+                                </t>
+                           </t>
+                       </t>
+                    </div>
                 </t> 
             </t>
             <div class="mt32">

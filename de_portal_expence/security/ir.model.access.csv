@@ -14,5 +14,4 @@ access_mail_message,access.mail.message,model_mail_message,,1,1,1,1
 access_hr_employee_family,access.hr.employee.family,model_hr_employee_family,,1,1,1,1
 access_vehicle_meter_reading,access.vehicle.meter.reading,model_vehicle_meter_reading,,1,1,1,1
 access_hr_expense_sheet_line,access.hr.expense.sheet.line,model_hr_expense_sheet_line,,1,1,1,1
-access_medical_reading,access.medical.reading,model_medical_reading,,1,1,1,1
 access_expense_sub_category,access.expense.sub.category,model_expense_sub_category,,1,1,1,1
