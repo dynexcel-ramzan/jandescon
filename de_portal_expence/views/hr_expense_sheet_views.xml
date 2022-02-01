@@ -17,7 +17,6 @@
                    <field name="ora_category_id" />
                    <field name="document_received" invisible='1'/>
                    <field name="is_deposit" invisible='1'/>
-                   <field name="is_deposit_sign" invisible='1'/> 
                    <field name="is_deposit_adjusted" invisible='1'/> 
                    <field name="exception"/>
                    <field name="employee_number"/> 
