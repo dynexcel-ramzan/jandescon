@@ -277,7 +277,7 @@ class CreateApproval(http.Controller):
                     sum = sum + expense.total_amount
             sum = round(sum, 2)            
             sum_current = sum + float(kw.get('unit_amount')) 
-            if sum_current > limit and product.ora_unit!='km' and exception!=True:
+            if sum_current > limit and product.ora_unit!='km' and exception!=True and product.ora_category_id.is_amount_limit==True:
                 limit_amount = limit-sum
                 warning_message="Limit ("+str(product.name)+'): '+ str('{0:,}'.format(int(round(limit)))) + "\n"+ " Already Claimed: " + str('{0:,}'.format(int(round(sum)))) + "\n" + " Remaining Amount: "+str('{0:,}'.format(int(round(limit_amount if limit_amount > 0 else 0))))+ "\n" +' Current Amount: '+ str('{0:,}'.format(int(round(float(kw.get('unit_amount'))))))+ "\n" +" You are not allowed to enter amount greater than remaining amount. "+ "\n" +" You may use Exception Option. "
                 return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data, acounting_date=kw.get('acounting_date')))
@@ -546,7 +546,7 @@ class CreateApproval(http.Controller):
                     sum = sum + expense.total_amount
             sum = round(sum, 2)        
             sum_current = sum + float(kw.get('unit_amount')) 
-            if sum_current > limit and product.ora_unit!='km' and expense_sheet.exception!=True:
+            if sum_current > limit and product.ora_unit!='km' and expense_sheet.exception!=True and product.ora_category_id.is_amount_limit==True:
                 limit_amount = limit-sum
                 warning_message="Limit ("+str(product.name)+'): '+ str('{0:,}'.format(int(round(limit)))) + "\n"+ " Already Claimed: " + str('{0:,}'.format(int(round(sum)))) + "\n" + " Remaining Amount: "+str('{0:,}'.format(int(round(limit_amount if limit_amount > 0 else 0))))+ "\n" +' Current Amount: '+ str('{0:,}'.format(int(round(float(kw.get('unit_amount'))))))+ "\n" +" You are not allowed to enter amount greater than remaining amount. "+ "\n" +" You may use Exception Option. "
                 return request.render("de_portal_expence.portal_my_expense", expense_page_content(expense=expense_sheet.id, categ=ora_category.id, exception=expense_sheet.exception, warning=warning_message, forcasted=forcasted_data))
