@@ -85,7 +85,7 @@ class HrExpense(models.Model):
                         sum = sum + expense.total_amount
                 sum = round(sum, 2)
                 sum_current = sum + self.total_amount
-                if sum_current > limit and ora_unit!='km' and self.sheet_id.exception!=True:
+                if sum_current > limit and ora_unit!='km' and self.sheet_id.exception!=True and self.sub_category_id.ora_category_id.is_amount_limit==True:
                     raise UserError(
                         "You have Already claimed " + str(
                             sum) + " against " + str(self.sub_category_id.name) + ". Your Limit is " + str(
