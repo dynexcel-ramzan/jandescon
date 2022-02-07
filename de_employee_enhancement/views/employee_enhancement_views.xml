@@ -6,7 +6,7 @@
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_tree"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='parent_id']" position="after">
+                <xpath expr="//field[@name='name']" position="after">
                     <field name="emp_number" invisible="0"/>
                     <field name="grade_type" invisible="1"/>
                     <field name="emp_type" invisible="1"/>
@@ -95,6 +95,9 @@
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='mobile_phone']" position="before">
+                    <field name="employee_number"/>
+                </xpath>    
 <!--                Header -->
                 <xpath expr="//form/sheet/notebook" position="before">
                     <group col="4">
@@ -225,6 +228,7 @@
 
         </field>
     </record>
+      
 
     <record id="hr_contract_move_form_view_inherit" model="ir.ui.view">
         <field name="name">hr.contract.form.view</field>

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from dateutil.relativedelta import relativedelta
+from werkzeug.urls import url_encode
 
 from odoo.exceptions import UserError
 
@@ -19,7 +20,7 @@ class EmployeeEnhancement(models.Model):
         return self._search(args, limit=limit, access_rights_uid=name_get_uid)
 
 
-    emp_number = fields.Char('Employee Number')
+    emp_number = fields.Char('Employee Number', required=True)
     emp_status = fields.Char('Employee Status')
     emp_type = fields.Selection([
         ('permanent', 'Permanent'),
@@ -29,12 +30,12 @@ class EmployeeEnhancement(models.Model):
         ('part_time', 'Part Time'),
         ('project_based', 'Project Based Hiring'),
         ('outsource', 'Outsource'),
-        ], string='Employee Type', index=True, copy=False, default='permanent', track_visibility='onchange')
+        ], string='Employee Type', index=True, copy=False, default='permanent', track_visibility='onchange', required=True)
     section = fields.Char('Section')
-    father_name = fields.Char("Father's Name")
-    grade_type = fields.Many2one('grade.type')
-    grade_designation = fields.Many2one('grade.designation')
-    date = fields.Date('Date of Joining')
+    father_name = fields.Char("Father's Name", required=True)
+    grade_type = fields.Many2one('grade.type', required=True)
+    grade_designation = fields.Many2one('grade.designation', required=True)
+    date = fields.Date('Date of Joining', required=True)
     probation_period = fields.Selection([
         ('1', '1 Month'),
         ('2', '2 Months'),
@@ -55,14 +56,97 @@ class EmployeeEnhancement(models.Model):
             rec = self.env['hr.contract'].search([('employee_id', '=', record.id), ('state', '=', 'open')])
             record.contract_expiry = rec.date_end
 
-    @api.constrains('cnic')
-    def compute_cnic(self):
-    	if self.cnic:
-    		if len(self.cnic) < 13 :
-    			raise UserError(('CNIC No is invalid'))
-    		if not self.cnic.isdigit():
-    			raise UserError(('CNIC No is invalid'))
+    employee_number = fields.Char(string="Auto Employee Number", required=True, copy=False, readonly=True, index=True,
+                          default=lambda self: _('New'))
+    
+    def action_auto_employee_number_sequence(self):
+        exist_sequence=self.env['ir.sequence'].sudo().search([('code','=','hr.employee.sequence'),('company_id','=',self.company_id.id)], limit=1)
+        if not exist_sequence:
+            seq_vals = {
+                'name': 'Employee Number Sequence',
+                'code': 'hr.employee.sequence',
+                'implementation': 'standard',
+                'number_next_actual': 1,
+                'prefix': '',
+            }
+            exist_sequence= self.env['ir.sequence'].create(seq_vals) 
+        self.employee_number = self.env['ir.sequence'].next_by_code('hr.employee.sequence') or _('New')
+    
+    
+    @api.model
+    def create(self, vals):
+        if vals.get('user_id'):
+            user = self.env['res.users'].browse(vals['user_id'])
+            vals.update(self._sync_user(user, vals.get('image_1920') == self._default_image()))
+            vals['name'] = vals.get('name', user.name)
+        employee = super(EmployeeEnhancement, self).create(vals)
+        url = '/web#%s' % url_encode({
+            'action': 'hr.plan_wizard_action',
+            'active_id': employee.id,
+            'active_model': 'hr.employee',
+            'menu_id': self.env.ref('hr.menu_hr_root').id,
+        })
+        employee._message_log(body=_('<b>Congratulations!</b> May I recommend you to setup an <a href="%s">onboarding plan?</a>') % (url))
+        if employee.department_id:
+            self.env['mail.channel'].sudo().search([
+                ('subscription_department_ids', 'in', employee.department_id.id)
+            ])._subscribe_users()
+        employee.action_auto_employee_number_sequence()    
+        return employee
 
+    @api.constrains('emp_number')
+    def _check_emp_number(self):
+    	if self.emp_number:
+            number_exist = self.env['hr.employee'].search([('emp_number','=',self.emp_number),('cnic','!=',self.cnic)])
+            if number_exist:
+                raise UserError('Not Allow to Enter Duplicate Employee Number! Please change Employee Number.')    
+
+    @api.constrains('probation_period')
+    def _check_probation_period(self):
+        for line in self:
+            if line.probation_period:
+                emp_type = self.env['hr.employee'].search([('emp_type','=','permanent'),('cnic','!=',self.cnic)])  
+                if not emp_type:
+                    raise UserError(_('Probation Only Allow for Regular Employee!'))
+                    
+    @api.constrains('pf_member')
+    def _check_pf_member(self):
+        for line in self:
+            if line.pf_member=='yes_with':
+                emp_type = self.env['hr.employee'].search([('emp_type','!=','permanent')])  
+                if  emp_type:
+                    raise UserError(_('PFUND Only Allow for Regular Employee!'))  
+     
+    @api.constrains('emp_type')
+    def _check_employee_type(self):
+        for line in self:
+            if line.emp_type:
+                service_period = (fields.date.today() - line.birthday).days
+                if service_period > 21915 and line.emp_type=='permanent':
+                    raise UserError(_('Regular Employee Type Only allow for Age less than 60 year!')) 
+    
+    @api.constrains('eobi_member')
+    def _check_eobi_member(self):
+        for line in self:
+            if line.eobi_member=='yes':
+                service_period = (fields.date.today() - line.birthday).days
+                if service_period > 21915:
+                    raise UserError(_('EOBI Only Allow for Employee Age less than 60 year!'))  
+                 
+
+    
+    @api.constrains('cnic')
+    def _check_cnic(self):
+        if self.cnic:
+            cnic_exist = self.env['hr.employee'].search([('cnic','=',self.cnic),('emp_number','!=',self.emp_number)])
+            if cnic_exist:
+                raise UserError(_('Not Allow to Enter Duplicate CNIC! Please change CNIC Number.'))   
+            if len(self.cnic) < 13:
+                raise UserError(('CNIC No is invalid'))
+            if not self.cnic.isdigit():
+                raise UserError(('CNIC No is invalid'))
+
+                
     blood_group = fields.Selection([
         ('a+', 'A+'),
         ('a-', 'A-'),

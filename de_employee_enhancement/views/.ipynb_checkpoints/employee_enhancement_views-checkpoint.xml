@@ -6,8 +6,8 @@
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_tree"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='parent_id']" position="after">
-                    <field name="emp_number" invisible="1"/>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="emp_number" invisible="0"/>
                     <field name="grade_type" invisible="1"/>
                     <field name="emp_type" invisible="1"/>
                     <field name="grade_designation" invisible="1"/>
@@ -95,6 +95,9 @@
             <field name="model">hr.employee</field>
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='mobile_phone']" position="before">
+                    <field name="employee_number"/>
+                </xpath>    
 <!--                Header -->
                 <xpath expr="//form/sheet/notebook" position="before">
                     <group col="4">
@@ -225,12 +228,16 @@
 
         </field>
     </record>
+      
 
     <record id="hr_contract_move_form_view_inherit" model="ir.ui.view">
         <field name="name">hr.contract.form.view</field>
         <field name="model">hr.contract</field>
         <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='structure_type_id']" position="after">
+                <field name="expense_account" required="1"/>
+            </xpath>
             <xpath expr="//page[@name='information']" position="after">
                 <page name="cost_center_info" string="Cost Centre Information">
                     <field name="cost_center_information_line">
@@ -247,16 +254,6 @@
         </field>
     </record>
 
-    <record id="hr_salary_rule_form_view_inherit" model="ir.ui.view">
-        <field name="name">hr.salary.rule.form</field>
-        <field name="model">hr.salary.rule</field>
-        <field name="inherit_id" ref="hr_payroll.hr_salary_rule_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='appears_on_payslip']" position="after">
-                <field name="is_cost_center"/>
-            </xpath>
-                </field>
-    </record>
 
   </data>
 </odoo>
