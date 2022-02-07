@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="hr.view_employee_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='parent_id']" position="after">
-                    <field name="emp_number" invisible="1"/>
+                    <field name="emp_number" invisible="0"/>
                     <field name="grade_type" invisible="1"/>
                     <field name="emp_type" invisible="1"/>
                     <field name="grade_designation" invisible="1"/>

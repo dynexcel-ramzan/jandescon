@@ -218,7 +218,7 @@ class GradeDesignation(models.Model):
     _name = 'grade.designation'
 
     name = fields.Char('Grade Designation')
-
+    company_id = fields.Many2one('res.company', string='Company')
 
 
 
