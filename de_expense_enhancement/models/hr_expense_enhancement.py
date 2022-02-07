@@ -65,11 +65,17 @@ class HrExpense(models.Model):
             period = 0
             ora_unit = 'amount'
             for rec in self.employee_id.grade_designation.grade_line_ids:
-                if self.sub_category_id.id == rec.expense_type.id:
+                if self.sub_category_id.parent_id:
+                    if self.sub_category_id.parent_id.id == rec.expense_type.id:
+                        flag = True
+                        limit = rec.limit
+                        ora_unit = rec.ora_unit
+                        period = int(rec.period)
+                elif self.sub_category_id.id == rec.expense_type.id:
                     flag = True
                     limit = rec.limit
                     ora_unit = rec.ora_unit
-                    period = int(rec.period)
+                    period = int(rec.period)    
             expense_period_date = date.today() - relativedelta(years=period)
             if flag == False and self.sheet_id.exception!=True:
                 raise UserError("You are not allowed to make Claim against the selected expense type")
@@ -79,12 +85,22 @@ class HrExpense(models.Model):
                         , ('state', '!=', 'draft'), ('state', '!=', 'refused'),
                      ('claim_type', '=', self.claim_type)])
                 sum = 0
+                if self.sub_category_id.parent_id:
+                    employee_expenses_general = self.env['hr.expense'].search(
+                    [('sub_category_id', '=', self.sub_category_id.parent_id.id), ('employee_id', '=', self.employee_id.id)
+                        , ('state', '!=', 'draft'), ('state', '!=', 'refused'),
+                     ('claim_type', '=', self.claim_type)])
+                    for expense_general in employee_expenses_general:
+                        if (expense_general.create_date.date() > expense_period_date and expense_general.create_date.date() <= date.today()):
+                            sum = sum + expense_general.total_amount
+                            
                 for expense in employee_expenses:
                     if (
                             expense.create_date.date() > expense_period_date and expense.create_date.date() <= date.today()):
                         sum = sum + expense.total_amount
                 sum = round(sum, 2)
                 sum_current = sum + self.total_amount
+                
                 if sum_current > limit and ora_unit!='km' and self.sheet_id.exception!=True and self.sub_category_id.ora_category_id.is_amount_limit==True:
                     raise UserError(
                         "You have Already claimed " + str(
