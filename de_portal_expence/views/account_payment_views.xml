@@ -2,7 +2,7 @@
 
 <odoo>   
     
-     <record id="account_payment_form_view_cost_center" model="ir.ui.view">
+<!--      <record id="account_payment_form_view_cost_center" model="ir.ui.view">
         <field name="name">account.payment.form.view.cost.center</field>
         <field name="model">account.payment</field>
         <field name="inherit_id" ref="account.view_account_payment_form"/>
@@ -24,7 +24,7 @@
             </xpath>
         </field>
     </record>
-
+ -->
 </odoo>
 
 

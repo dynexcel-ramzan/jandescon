@@ -2,7 +2,7 @@
 
 <odoo>   
     
-     <record id="account_payment_register_form_view_expense_claim" model="ir.ui.view">
+<!--      <record id="account_payment_register_form_view_expense_claim" model="ir.ui.view">
         <field name="name">account.payment.register.form.view.expense.claim</field>
         <field name="model">account.payment.register</field>
         <field name="inherit_id" ref="account.view_account_payment_register_form"/>
@@ -11,7 +11,7 @@
                   <field name="ora_check_number" />
             </xpath>
         </field>
-    </record>
+    </record> -->
 
 </odoo>
 
