@@ -1,9 +1,9 @@
 <odoo>
   <data>
            <!--Display form view of wizard-->    
-        <record id="view_hr_recruitment_wizard_form_ora" model="ir.ui.view">
-            <field name="name">ora.recruitment.wizard.form</field>
-            <field name="model">ora.recruitment.wizard</field>
+        <record id="view_hr_retirement_wizard_form_ora" model="ir.ui.view">
+            <field name="name">ora.rectirement.wizard.form</field>
+            <field name="model">ora.rectirement.wizard</field>
             <field name="arch" type="xml">
                 <form string="Recruitment Report">
                     <group> 
@@ -25,21 +25,21 @@
         </record>
 
         <!--Open the wizard on click of menu-->
-        <record id="open_employee_hirring_wizard_action" model="ir.actions.act_window">
-            <field name="name">Employee Hirring Report</field>
-            <field name="res_model">ora.recruitment.wizard</field>
+        <record id="open_employee_retire_wizard_action" model="ir.actions.act_window">
+            <field name="name">Employee Retirement Report</field>
+            <field name="res_model">ora.rectirement.wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-            <field name="view_id" ref="view_hr_recruitment_wizard_form_ora"/>
+            <field name="view_id" ref="view_hr_retirement_wizard_form_ora"/>
         </record>
 
       
        <menuitem
-        id="employee_hirring_report_menu"
+        id="employee_retire_report_menu"
         name="Employee Hirring Report"
         parent="hr.hr_menu_hr_reports"
         sequence="4"
-        action="open_employee_hirring_wizard_action"
+        action="open_employee_retire_wizard_action"
       />
       
      

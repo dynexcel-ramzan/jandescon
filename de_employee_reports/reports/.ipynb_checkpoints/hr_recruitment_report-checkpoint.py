@@ -9,15 +9,15 @@ class EmployeeRecruitment(models.AbstractModel):
     
     
     def generate_xlsx_report(self, workbook, data, lines):
-        data = self.env['hr.recruitment.wizard'].browse(self.env.context.get('active_ids'))
+        data = self.env['ora.recruitment.wizard'].browse(self.env.context.get('active_ids'))
         format1 = workbook.add_format({'font_size': '12', 'align': 'center', 'bold': False})
         format2 = workbook.add_format({'font_size': '12', 'align': 'center', 'bold': False})
         sheet = workbook.add_worksheet('Employee Hirring Report')
         bold = workbook. add_format({'bold': True, 'align': 'center','border': True})
         sheet.set_column('A:B', 10,)
         sheet.set_column('C:D', 20,)
-        sheet.set_column('E:F', 10,)
-        sheet.set_column('G:H', 10,)
+        sheet.set_column('E:F', 20,)
+        sheet.set_column('G:H', 20,)
         sheet.set_column('I:J', 20,)
         sheet.set_column('K:L', 20,)
         sheet.set_column('M:N', 30,)
@@ -42,10 +42,10 @@ class EmployeeRecruitment(models.AbstractModel):
             sheet.write(row, 2, str(line.name), format1)
             sheet.write(row, 3, str(line.emp_type), format1)
             sheet.write(row, 4, str(line.grade_type.name), format1)
-            sheet.write(row, 5, str(emp.job_id.name if emp.job_id else '-'), format1)
-            sheet.write(row, 6, str(emp.grade_designation.name if emp.grade_designation else '-'), format1)
-            sheet.write(row, 7, str(emp.department_id.name if emp.department_id else '-'), format1)  
-            sheet.write(row, 8, str(emp.work_location_id.name if emp.work_location_id else '-'), format1) 
-            sheet.write(row, 9, str(emp.company_id.name), format1)
+            sheet.write(row, 5, str(line.job_id.name if line.job_id else '-'), format1)
+            sheet.write(row, 6, str(line.grade_designation.name if line.grade_designation else '-'), format1)
+            sheet.write(row, 7, str(line.department_id.name if line.department_id else '-'), format1)  
+            sheet.write(row, 8, str(line.work_location_id.name if line.work_location_id else '-'), format1) 
+            sheet.write(row, 9, str(line.company_id.name), format1)
             row += 1 
             record_count += 1

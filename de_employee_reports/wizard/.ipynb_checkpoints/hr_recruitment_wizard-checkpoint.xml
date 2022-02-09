@@ -2,8 +2,8 @@
   <data>
            <!--Display form view of wizard-->    
         <record id="view_hr_recruitment_wizard_form_ora" model="ir.ui.view">
-            <field name="name">hr.recruitment.wizard.form</field>
-            <field name="model">hr.recruitment.wizard</field>
+            <field name="name">ora.recruitment.wizard.form</field>
+            <field name="model">ora.recruitment.wizard</field>
             <field name="arch" type="xml">
                 <form string="Recruitment Report">
                     <group> 
@@ -27,7 +27,7 @@
         <!--Open the wizard on click of menu-->
         <record id="open_employee_hirring_wizard_action" model="ir.actions.act_window">
             <field name="name">Employee Hirring Report</field>
-            <field name="res_model">hr.recruitment.wizard</field>
+            <field name="res_model">ora.recruitment.wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
             <field name="view_id" ref="view_hr_recruitment_wizard_form_ora"/>

@@ -3,7 +3,7 @@
 from odoo import api, fields, models, _
 
 class HrRecruitment(models.TransientModel):
-    _name = "hr.recruitment.wizard"
+    _name = "ora.recruitment.wizard"
     _description = "HR Recruitment wizard"
 
     start_date = fields.Date(string='Date From', required=True)

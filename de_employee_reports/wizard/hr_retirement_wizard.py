@@ -3,7 +3,7 @@
 from odoo import api, fields, models, _
 
 class HrRecruitment(models.TransientModel):
-    _name = "ora.recruitment.wizard"
+    _name = "ora.rectirement.wizard"
     _description = "HR Recruitment wizard"
 
     start_date = fields.Date(string='Date From', required=True)
@@ -17,4 +17,4 @@ class HrRecruitment(models.TransientModel):
 
     def _print_report(self, data):
         data['form'].update(self.read(['start_date', 'end_date','company_id'])[0])
-        return self.env.ref('de_employee_reports.hr_recruitment_report_xlx').report_action(self, data=data, config=False)
+        return self.env.ref('de_employee_reports.hr_rectirement_report_xlx').report_action(self, data=data, config=False)
