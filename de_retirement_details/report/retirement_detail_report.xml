@@ -1,0 +1,9 @@
+<odoo>
+ <report
+            id="retirement_detail_report"
+            string="Retirement Detail Report"
+            model="hr.employee"
+            report_type="qweb-pdf"
+            file="de_retirement_details.report_employee_retirement_tem"
+            name="de_retirement_details.report_employee_retirement_tem"/>
+</odoo>

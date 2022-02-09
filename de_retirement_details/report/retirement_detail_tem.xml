@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_employee_retirement_tem">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="docs">
+                <t t-set="sr_no" t-value="0"/>
+                <t t-set="retire_date" t-value="0"/>
+
+
+                <div class="article o_report_layout_standard" t-att-data-oe-model="o and o._name"
+                     t-att-data-oe-id="o and o.id">
+                    <t t-call="de_retirement_details.employee_retirement_report_layout"/>
+                    <div class="page">
+                        <div class="row">
+                            <div class="col-4" style="font-size:12px">
+                                <table>
+                                    <tbody style="color:blue">
+                                        <tr style="font-weight: bold;">
+                                            <td>From :</td>
+                                            <td>
+                                                <span t-field=" docs.date_from"/>
+                                            </td>
+                                            <td></td>
+                                             <td>TO :</td>
+                                            <td>
+                                                <span t-field=" docs.date_to"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-4" style="font-size:12px">
+                                <table>
+                                    <tbody style="color:blue">
+                                        <tr style="font-weight: bold;">
+                                            <td>Location:</td>
+                                            <td>
+                                                <t t-foreach=" docs.location_ids" t-as="loc">
+                                                    <span t-field="loc.name"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                             <div class="col-4" style="font-size:12px">
+                                <table>
+                                    <tbody style="color:blue">
+                                        <tr style="font-weight: bold;">
+                                            <td>Department:</td>
+                                            <td>
+                                                <t t-foreach="docs.department_ids" t-as="dep">
+                                                    <span t-field="dep.name"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <br/>
+                        <div class="row">
+
+                            <div class="col-4" style="font-size:12px">
+                                <table>
+                                    <tbody style="color:blue">
+                                        <tr style="font-weight: bold;">
+                                            <td>Section:</td>
+                                            <td>
+                                                <t t-foreach="docs.section" t-as="sec">
+                                                    <span t-field="sec.name"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-4" style="font-size:12px">
+                                <table>
+                                    <tbody style="color:blue">
+                                        <tr style="font-weight: bold;">
+                                            <td>Staff type:</td>
+                                            <td>
+                                                <t t-foreach="docs.staff_type" t-as="stf">
+                                                    <span t-field="stf.name"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-4" style="font-size:12px">
+                                <table>
+                                    <tbody style="color:blue">
+                                        <tr style="font-weight: bold;">
+                                            <td>Employee Type:</td>
+                                            <td>
+                                                <t t-foreach="docs.employee_type" t-as="empt">
+                                                    <span t-field="empt.name"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <br/>
+                        <table style="font-size:15px" class="table">
+                            <thead class="thead-light">
+                                <tr style="color:blue;">
+                                    <th style="border: 2px solid blue;" scope="col" width="50">Sr #</th>
+                                    <th style="border: 2px solid blue;" scope="col" width="60">Emp Code</th>
+                                    <th style="border: 2px solid blue;" scope="col" width="150">Name</th>
+                                    <th style="border: 2px solid blue;" scope="col" width="150">Department</th>
+                                    <th style="border: 2px solid blue;" scope="col" width="90">Emp Type</th>
+                                    <th style="border: 2px solid blue;" scope="col" width="90">Staff type</th>
+                                    <th style="border: 2px solid blue;" scope="col" width="140">DOJ</th>
+                                    <th style="border: 2px solid blue;" scope="col" width="140">Retirement Age</th>
+                                    <th style="border: 2px solid blue;" scope="col" width="140">Retirement Date</th>
+                                </tr>
+                            </thead>
+
+                            <tbody style="color:black">
+                                <t t-foreach="employee_retirement" t-as="retire">
+                                    <t t-set="sr_no" t-value="sr_no + 1"/>
+
+                                    <t t-set="line_amount" t-value="0"/>
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="sr_no"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="retire.emp_number"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="retire.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="retire.department_id.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-if="retire.emp_type=='permanent'">
+                                                <span>P</span>
+                                            </t>
+                                            <t t-if="retire.emp_type=='contractor'">
+                                                <span>C</span>
+                                            </t>
+                                            <t t-if="retire.emp_type=='freelancer'">
+                                                <span>F</span>
+                                            </t>
+
+                                            <t t-if="retire.emp_type=='intern'">
+                                                <span>I</span>
+                                            </t>
+                                            <t t-if="retire.emp_type=='part_time'">
+                                                <span>PT</span>
+                                            </t>
+                                            <t t-if="retire.emp_type=='project_based_hiring'">
+                                                <span>PBH</span>
+                                            </t>
+                                            <t t-if="retire.emp_type=='outsource'">
+                                                <span>O</span>
+                                            </t>
+
+                                        </td>
+
+                                        <td style="border: 1px solid black;">
+                                            <t t-if="retire.gender=='male'">
+                                                <span>M</span>
+                                            </t>
+                                            <t t-if="retire.gender=='female'">
+                                                <span>F</span>
+                                            </t>
+                                            <t t-if="retire.gender=='other'">
+                                                <span>O</span>
+                                            </t>
+
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="retire.date"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="retire.company_id.retirement_age"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-if="retire.birthday">
+                                                <span t-esc="retire.birthday+(datetime.timedelta(retire.company_id.retirement_age*365))"/>
+                                            </t>
+                                        </td>
+
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </t>
+        </t>
+    </template>
+
+</odoo>
