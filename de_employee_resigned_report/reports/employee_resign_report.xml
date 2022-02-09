@@ -1,0 +1,9 @@
+<odoo>
+ <report
+            id="employee_resign_report"
+            string="Employee Resigned Report"
+            model="hr.employee"
+            report_type="qweb-pdf"
+            file="de_employee_resigned_report.report_employee_resigned_tem"
+            name="de_employee_resigned_report.report_employee_resigned_tem"/>
+</odoo>

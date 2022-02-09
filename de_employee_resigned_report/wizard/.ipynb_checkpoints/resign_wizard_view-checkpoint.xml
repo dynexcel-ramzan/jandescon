@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record id="employee_resigned_form" model="ir.ui.view">
+            <field name="name">resigned.wizard.form</field>
+            <field name="model">resigned.wizard</field>
+            <field name="arch" type="xml">
+                <form string="print report">
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                        </group>
+                        <group>
+                            <field name="date_to"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_check_report" type="object" string="Create" class="btn primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+
+            </field>
+        </record>
+
+
+    <record id="employee_resigned_pdf_report" model="ir.actions.act_window">
+        <field name="name">employee retirement report pdf</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">resigned.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="employee_resigned_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem action="employee_resigned_pdf_report"
+              id="retirement_details_report"
+              name="Employee Resign Report"
+              parent="hr.menu_human_resources_configuration"
+              sequence="12"/>
+
+</odoo>
