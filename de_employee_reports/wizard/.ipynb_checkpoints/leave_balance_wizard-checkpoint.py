@@ -7,7 +7,7 @@ class LeaveBalanceWizard(models.TransientModel):
     _description = "Leave Balance wizard"
 
     employee_ids = fields.Many2many('hr.employee', string='Employee')
-    fiscal_year_id = fields.Many2one('ora.fiscal.year', string='Fiscal Year')
+    fiscal_year_id = fields.Many2one('ora.fiscal.year', string='Fiscal Year', required=True)
     
 
     def check_report(self):

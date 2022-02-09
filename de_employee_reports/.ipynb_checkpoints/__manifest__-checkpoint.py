@@ -31,7 +31,9 @@
     'data': [
         'security/ir.model.access.csv',
         'wizard/leave_balance_wizard.xml',
+        'wizard/hr_recruitment_wizard.xml',
         'reports/leave_balance_report.xml',
+        'reports/hr_recruitment_report.xml',
         'views/views.xml',
         'views/templates.xml',
     ],

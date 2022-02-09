@@ -1,0 +1,9 @@
+<odoo>
+     <report id="hr_recruitment_report_xlx"
+            model="report.de_employee_reports.recruitment_xlx"
+            string="Employee Hirring Report"
+            report_type="xlsx"
+            name="de_employee_reports.recruitment_xlx"
+            file="de_employee_reports.recruitment_xlx"
+    />
+</odoo>
