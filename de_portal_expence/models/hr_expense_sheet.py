@@ -11,6 +11,9 @@ from odoo.tools import email_split, float_is_zero
 
 class HrExpenseSheet(models.Model):
     _inherit = 'hr.expense.sheet'
+
+    def action_submit_sheet(self):
+        self.write({'state': 'submit'})
     
     name = fields.Char(string="Name", required=True, copy=False, readonly=True, index=True,
                           default=lambda self: _('New'))
