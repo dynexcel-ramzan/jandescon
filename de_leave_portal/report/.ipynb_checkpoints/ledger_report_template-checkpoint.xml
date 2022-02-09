@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="leave_ledger">
+    <t t-call="web.html_container">
+    <t t-call="web.external_layout">
+        <div class="page" style='font-size:12px;'>
+            <div class="oe_structure"/>
+            <div  style="margin-left: 800px; max-width: 250px;height: 20px;">
+               <strong>Printed On:</strong>
+               <span  t-esc="datetime.datetime.strptime(str(datetime.datetime.now()+ relativedelta(hours =+ 5)), '%Y-%m-%d %H:%M:%S.%f').strftime('%d-%b-%y %H:%M %p')"/>
+            </div>
+            
+            <div  style="position: relative; max-width: 400px; color:blue;font-size:20px;">
+               <strong>Leave Ledger</strong> <br/>
+            </div>
+            
+            
+            <table class="table table-sm table-striped table-bordered">
+
+                <tr style="height:30%">
+                    <th  align="center">Employee</th>
+                    <td  align="center"><span t-esc="employee_ledger.name"/></td>
+                    <th  align="center">Employee No:</th>
+                    <td  align="center"> <span t-esc="employee_ledger.emp_number"/></td>
+                    <th  align="center">Period:</th>
+                    <td  align="center"> 
+                         <span t-esc="datetime.datetime.strptime(str(date_from), '%Y-%m-%d').strftime('%d %B %y')"/>,  
+                         <span t-esc="datetime.datetime.strptime(str(date_to), '%Y-%m-%d').strftime('%d %B %y')"/>   
+                    </td>
+                </tr>
+
+            </table>
+            <br/>
+            <table class="table table-sm table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>DATE</th>
+                        <th>Activity Name</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Approved By</th>
+                        <th>Approved Date</th>
+                        <th>Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Leaves</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                    <tbody class="ledger_tbody">
+                        <t t-foreach="request.env['hr.leave.type'].sudo().search([('fiscal_year','in',(req_date_from.year, req_date_to.year)),('company_id','=',employee_ledger.company_id.id)])" t-as="ledger_type">
+                            <tr style='color:blue;'>
+                                <td colspan='8'><span t-esc="ledger_type.name" /></td>
+                                <td colspan='3'>
+                                    Opening Balance 0
+                                </td> 
+                            </tr>
+                          
+                         <t t-set='leave_balance' t-value='0' />
+                          <t t-foreach="request.env['hr.leave.allocation'].sudo().search([('employee_id','=',employee_ledger.id),('holiday_status_id','=', ledger_type.id)])" t-as="ledger_alloc">
+                            <tr>
+                                <td><span t-esc='ledger_type.validity_start' t-options='{"widget": "date"}'/></td>
+                                <td >Leave Opening Balance</td>
+                                <td >Leave Opening Balance- <span t-esc='ledger_alloc.holiday_status_id.name' /></td>
+                                <td>Opening Balance</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><span t-esc='ledger_type.validity_start'  t-options='{"widget": "date"}'/></td>
+                                <td><span t-esc='ledger_type.validity_stop' t-options='{"widget": "date"}' /></td>
+                                <td><span t-esc='ledger_alloc.number_of_days' /></td>
+                                <td>
+                                    <t t-set='leave_balance' t-value='leave_balance + ledger_alloc.number_of_days' />
+                                    <span t-esc='round(leave_balance,2)' /></td>
+                            </tr>
+                          </t>
+                         <t t-foreach="request.env['hr.leave'].sudo().search([('employee_id','=',employee_ledger.id),('holiday_status_id','=', ledger_type.id),('state','=','validate')])" t-as="ledger_leave">
+                            <tr>
+                                <td><span t-esc='ledger_leave.request_date_from' t-options='{"widget": "date"}'/></td>
+                                <td >Leave Application</td>
+                                <td ><span t-esc='ledger_leave.name' /></td>
+                                <td>Approved</td>
+                                <td><span t-esc='ledger_leave.employee_id.parent_id.name' /></td>
+                                <td><span t-esc='ledger_leave.approval_request_id.write_date' t-options='{"widget": "date"}'/></td>
+                                <td>
+                                   <t t-if='ledger_leave.number_of_days&gt;=1'>
+                                       Full Day
+                                   </t>    
+                                   <t t-if='ledger_leave.request_date_from_period=="am"'> 
+                                      <t t-if='ledger_leave.number_of_days&lt;1 and ledger_leave.number_of_days==0.5'>  
+                                        Half Day–First Half
+                                      </t>    
+                                   </t>
+                                    <t t-if='ledger_leave.request_date_from_period=="pm"'>
+                                      <t t-if='ledger_leave.number_of_days&lt;1 and ledger_leave.number_of_days==0.5'>    
+                                        Half Day–Second Half
+                                      </t>    
+                                    </t>
+                                    <t t-if='ledger_leave.number_of_days&lt;1 and ledger_leave.number_of_days==0.25'>    
+                                        Short Leave (<span t-esc='(ledger_leave.date_from +relativedelta(hours=+5)).strftime("%H:%M:%S")'/> - <span t-esc='(ledger_leave.date_to +relativedelta(hours=+5)).strftime("%H:%M:%S")'/>) 
+                                    </t>
+                                    
+                                </td>
+                                <td><span t-esc='ledger_leave.request_date_from'  t-options='{"widget": "date"}'/></td>
+                                <td><span t-esc='ledger_leave.request_date_to' t-options='{"widget": "date"}' /></td>
+                                <td>-<span t-esc='ledger_leave.number_of_days' /></td>
+                                <td>
+                                    <t t-set='leave_balance' t-value='leave_balance-ledger_leave.number_of_days' />
+                                    <span t-esc='round((leave_balance),2)' />
+                                </td>
+                              </tr>
+                          </t>
+                            <tr style='color:blue;'>
+                                <td colspan='8'></td>
+                                <td colspan='3'>
+                                    Closing Balance <span t-esc='round(leave_balance,2)' />
+                                </td>
+                                
+                              </tr>
+                          
+                         </t> 
+                         
+                    </tbody>
+            </table>
+            <br/>
+          </div>
+    </t>
+    </t>
+</template>
+    
+     <template id="leave_ledger_report">
+       <t t-call="web.html_container">
+            <t t-foreach="employees_ledgers" t-as="employee_ledger"> 
+               <t t-call="de_leave_portal.leave_ledger"/>
+           </t>
+       </t>
+   </template>
+    
+    <template id="leave_ledger_portal">
+       <t t-call="web.html_container">
+            <t t-foreach="employees_ledgers" t-as="employee_ledger"> 
+               <t t-call="de_leave_portal.leave_ledger"/>
+           </t>
+       </t>
+   </template>
+    
+</odoo>

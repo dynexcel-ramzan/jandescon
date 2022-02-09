@@ -1,0 +1,16 @@
+<odoo>
+  <data>
+      
+      <record id="grade_designation_form_view_ora_unit" model="ir.ui.view">
+        <field name="name">grade.designation.form.view.ora.unit</field>
+        <field name="model">grade.designation</field>
+        <field name="inherit_id" ref="de_expense_enhancement.grade_designation_form_inherit"/>
+        <field name="arch" type="xml">
+             <xpath expr="//notebook//page[@name='Expense']//field[@name='grade_line_ids']//tree//field[@name='limit']" position="after">
+                  <field name="ora_unit"/>
+             </xpath>
+        </field>
+    </record>
+   
+  </data>
+</odoo>

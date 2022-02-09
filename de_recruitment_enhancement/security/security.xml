@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.module.category" id="employee_enhancement_groups_root">
+        <field name="name">Recruitment</field>
+   		<field name="description">Recruitment Security</field>
+    </record>
+
+    <record id="change_interviewer_user" model="res.groups">
+        <field name="name">Allow to Change Interviewer</field>
+        <field name="category_id" ref="employee_enhancement_groups_root"/>
+    </record>
+
+    <record id="head_approved_count_manager" model="res.groups">
+        <field name="name">Allow to Change Head Count Approved</field>
+        <field name="category_id" ref="employee_enhancement_groups_root"/>
+    </record>
+
+</odoo>

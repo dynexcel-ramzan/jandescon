@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="attendance_wizard_form_view" model="ir.ui.view">
+			<field name="name">attendance.wizard.form.view</field>
+			<field name="model">attendance.model</field>
+			<field name="arch" type="xml">
+				<form string="Company Report">
+                    <group>
+                        <group>
+                            
+                            <field name="date_form"/>
+                            <field name="company" widget="many2many_tags"/>
+                        </group>
+                        <group>                            
+							<field name="date_to"/>  
+                        </group>    
+                    </group>  
+                    <notebook>
+                         <page string="Employees">
+                             <field name="employee_ids">
+                                <tree editable="bottom">
+                                    <field name="id" invisible="1"/>
+                                    <field name="name" />
+                                    <field name="department_id" /> 
+                                    <field name="company_id" />                                    
+                                </tree>
+                            </field>
+                        </page>
+                            
+                    </notebook>  
+					<footer>
+						<button name="print_report" type="object" string="Print" class="oe_highlight" />
+                     </footer>
+				</form>
+
+            </field>
+        </record>
+    </data>
+
+
+		<record id="attendance_report_data_xlx" model="ir.actions.act_window">
+			<field name="name">Absent report</field>
+			<field name="res_model">attendance.model</field>
+			<field name="view_id" ref="attendance_wizard_form_view"/>
+			<field name="target">new</field>
+		</record>
+
+		<menuitem action="attendance_report_data_xlx" id="employee_report" name="Absent report" parent="hr_attendance.menu_hr_attendance_manage_attendances" sequence="1"/>
+
+</odoo>

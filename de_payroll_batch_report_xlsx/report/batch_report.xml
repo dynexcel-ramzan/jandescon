@@ -1,0 +1,12 @@
+<odoo>
+    <data>
+        <report
+                id="hr_payslip_run_salary_report"
+                model="hr.payslip.run"
+                string="Batch Salary Details(Excel)"
+                report_type="xlsx"
+                name="de_payroll_batch_report_xlsx.batch_payslip_xlsx"
+                file="Salary Details"
+        />
+    </data>
+</odoo>

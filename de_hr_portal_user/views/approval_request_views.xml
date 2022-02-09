@@ -1,0 +1,25 @@
+<odoo>
+  <data>
+       
+      <record id="approval_request_form_view_cross_company" model="ir.ui.view">
+			<field name="name">approval.request.form.view.portal</field>
+			<field name="model">approval.request</field>
+			<field name="inherit_id" ref="approvals.approval_request_view_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='approver_ids']//tree//field[@name='user_id']" position="replace">
+                    <field name="user_id" string="Name" />
+                    <field name="employee_number"  />
+				</xpath>
+               
+				
+				
+			</field>
+		</record>
+      
+      
+     
+      
+ 
+      
+  </data>
+</odoo>

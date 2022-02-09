@@ -1,0 +1,21 @@
+<odoo>
+    <record id="view_recruitment_warning_wizard_form" model="ir.ui.view">
+		<field name="name">Warning</field>
+		<field name="model">warning.wizard</field>
+		<field name="arch" type="xml">
+			<form>
+                <group>
+                    <div class="alert alert-danger" role="alert">
+                                CNIC Already Exists
+                      </div>
+                    <field name="warning" invisible="1"/>
+                </group>
+                <footer>
+                    <button string="Confirm" class="btn-primary" type="object" name="create_next_date"/>
+                    <button  string="Cancel" type="object" class="btn-secondary" special="cancel"/>
+                </footer>
+			</form>
+		</field>
+	</record>
+
+</odoo>

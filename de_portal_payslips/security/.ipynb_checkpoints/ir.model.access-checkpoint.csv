@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_payroll_structure,access.hr.payroll.structure,model_hr_payroll_structure,,1,1,1,1
+access_hr_payslip,access.hr.payslip,model_hr_payslip,,1,1,1,1
+access_hr_payslip_line,access.hr.payslip.line,model_hr_payslip_line,,1,1,1,1
+

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo> 
+        <!--Display form view of wizard-->    
+        <record id="view_hr_manager_wizard_form" model="ir.ui.view">
+            <field name="name">hr.manager.wizard.form</field>
+            <field name="model">hr.manager.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Manager">
+                    <group>
+                      <group>
+                          <field name="manager_id" required='1'/>
+                      </group>
+                      <group>
+                          <field name="employee_ids" widget="many2many_tags" invisible="1"/>
+                          
+                      </group>
+                        
+                    </group>
+                   
+                    <footer>
+                        <button string='Assign Manager' name="action_assign_manager" type="object" default_focus="1" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!--Open the wizard on click of menu-->
+        <record id="open_assign_manager_action" model="ir.actions.act_window">
+            <field name="name">Assign Manager</field>
+            <field name="res_model">hr.manager.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_hr_manager_wizard_form" />
+         </record>
+    
+    </odoo>
+    
+    
+    
+    

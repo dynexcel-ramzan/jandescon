@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_leave_type,access.hr.leave.type,model_hr_leave_type,,1,1,1,1
+access_hr_leave_allocation,access.hr.leave.allocation,model_hr_leave_allocation,,1,1,1,1 
+access_resource_calendar_attendance,access.resource.calendar.attendance,model_resource_calendar_attendance,,1,1,1,1 
+access_resource_resource,access.resource.resource,model_resource_resource,,1,1,1,1
+access_resource_calendar_leaves,access.resource.calendar.leaves,model_resource_calendar_leaves,,1,1,1,1
+access_resource_calendar,access.resource.calendar,model_resource_calendar,,1,1,1,1
+access_leave_ledger_wizard,access.leave.ledger.wizard,model_leave_ledger_wizard,,1,1,1,1

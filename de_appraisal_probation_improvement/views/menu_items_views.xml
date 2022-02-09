@@ -1,0 +1,9 @@
+<odoo>
+    <data>
+<menuitem id="probation_appraisal"
+          name="Probation"
+          action="de_appraisal_probation_improvement.action_appraisal_probation_action"
+          parent="hr_appraisal.hr_appraisal_4bis"
+          sequence="6"/>
+    </data>
+</odoo>

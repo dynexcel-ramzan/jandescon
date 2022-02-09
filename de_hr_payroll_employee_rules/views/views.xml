@@ -1,0 +1,48 @@
+<odoo>
+  <data>
+   <record id="structure_payroll_form_view" model="ir.ui.view">
+			<field name="name">hr.payroll.structure.type.form.view</field>
+			<field name="model">hr.payroll.structure.type</field>
+			<field name="inherit_id" ref="hr_payroll.hr_payroll_structure_type_view_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//group" position="after">
+					<notebook>
+                        <page string="Other Input lines">
+                            <field name='structure_lines'>
+                             <tree editable="bottom">
+                               <field name='input_type_id'/>
+                             </tree> 
+                            </field>    
+                        </page>    
+                    </notebook>    
+				</xpath>
+<!-- 				<xpath expr="//field[@name='line_ids']//tree//field[@name='price_unit']" position="before">
+					<field name="sh_retail_price"/>
+				</xpath> -->
+			</field>
+		</record>
+      
+      <record id="contract_payroll_form_view_inherit" model="ir.ui.view">
+			<field name="name">hr.contract.form.view</field>
+			<field name="model">hr.contract</field>
+			<field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+			<field name="arch" type="xml">
+				<xpath expr="//page[@name='information']" position="after">
+				
+                        <page string="Other Input lines">
+                            <field name='contract_lines'>
+                             <tree editable="bottom">
+                               <field name='input_type_id'/>
+                               <field name='amount'/>
+                             </tree> 
+                            </field>    
+                        </page>    
+                       
+				</xpath>
+<!-- 				<xpath expr="//field[@name='line_ids']//tree//field[@name='price_unit']" position="before">
+					<field name="sh_retail_price"/>
+				</xpath> -->
+			</field>
+		</record>
+  </data>
+</odoo>

@@ -1,0 +1,27 @@
+<odoo>
+   <data>
+   		
+   		<record id="hr_request_form_view_inh" model="ir.ui.view">
+			<field name="name">hr.request.form.view.inherit</field>
+			<field name="model">hr.request</field>
+			<field name="inherit_id" ref="de_employee_requests.view_hr_request_form" />
+			<field name="arch" type="xml">
+				<xpath expr="//sheet" position="after">
+					<div class="oe_button_box" name="button_box">
+                        <button name="%(action_approval_request_view_misc_req)d" type="action" class="oe_stat_button" icon="fa-check-square-o" string="Approvals" context="{'request_id':id,'category_id':category_id}" attrs="{'invisible': [('approval_request_id', '=', False)]}">
+                        </button>      
+                    </div> 
+				</xpath>
+				
+				<xpath expr="//sheet" position="inside">
+					<group>
+						<field name="category_id" />
+						<field name="approval_request_id" />
+					</group>
+				</xpath>
+			</field>
+		</record>
+
+
+    </data>
+</odoo>

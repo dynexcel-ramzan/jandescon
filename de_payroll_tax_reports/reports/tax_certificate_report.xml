@@ -1,0 +1,12 @@
+<odoo>
+  <data>
+       <report 
+            id="open_tax_certificate_action"
+            string="Tax certificate Report"
+            model="report.de_payroll_tax_reports.certificate_report"
+            report_type="qweb-pdf"
+            file="de_payroll_tax_reports.certificate_report"
+            name="de_payroll_tax_reports.certificate_report"
+        />
+  </data>
+</odoo>

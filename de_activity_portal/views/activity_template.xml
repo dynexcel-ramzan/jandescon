@@ -1,0 +1,376 @@
+<!--  <?xml version="1.0" encoding="utf-8"?>
+ -->
+<odoo>  
+	<!-- show path/name -->    
+    <template id="portal_layout_activity" name="Portal layout: activity menu entry" inherit_id="portal.portal_breadcrumbs" priority="21">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'activities' or activity" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not activity else ''}">
+                <a t-if="activity" t-attf-href="/my/activities?{{ keep_query() }}">Activities</a>
+                <t t-else="">Activities</t>
+            </li>
+            <li t-if="activity" class="breadcrumb-item active text-truncate col-8 col-lg-10">
+                <t t-esc="activity.res_name"/>
+            </li>
+        </xpath>
+    </template> 
+
+    
+    <template id="portal_my_home_activity" name="Show Activities" customize_show="True" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry"  groups="de_activity_portal.group_activity_portal">
+                <t t-set="title">Activities</t>
+                <t t-set="url" t-value="'/my/activities'"/>
+                <t t-set="placeholder_count" t-value="'activity_count'"/>
+            </t>
+        </xpath>
+    </template>
+    
+    
+    <template id="portal_my_activities" name="My Activities">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Activities</t>
+            </t>
+            <t t-if="not grouped_activities">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no Activities.
+                </div>
+            </t>
+            
+            <t t-if="grouped_activities">
+                <t t-call="portal.portal_table">
+                    <t t-foreach="grouped_activities" t-as="all_activities">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left">Document Name</th>
+                                <th class="text-left">Activity Type</th>
+                                <th class="text-left">Due Date</th>
+                                <th class="text-left">Summary</th>
+                            </tr>
+                        </thead>
+                         <tbody>
+                            <t t-foreach="all_activities" t-as="_activity_">
+                             
+                               <t t-if="_activity_.user_id.id == uid">  
+                                <tr>
+                                	<td>
+                                        <a t-attf-href="/my/activity/#{_activity_.id}?{{ keep_query() }}"><span t-field="_activity_.res_name"/></a>
+                                    </td>
+									<!-- <td class="text-left">
+                                        <span t-esc="_activity_.user_id.name" />
+                                    </td> -->
+                                    <td class="text-left">
+                                        <span t-esc="_activity_.activity_type_id.name" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_activity_.date_deadline" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_activity_.summary" />
+                                    </td>
+                                   	
+                                </tr>
+                               </t>     
+                            </t>
+                            <!-- <tr>
+                                <div>
+                                    <t class="col-lg-7 col-md-8" >
+                                        <a href="/activity/create/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
+                                    </t>
+                                </div>
+                            </tr>   -->
+                        </tbody> 
+                    </t>
+                </t>
+            </t>   
+            
+        </t>
+    </template>
+
+    <template id="portal_my_activity" name="My Activity">
+        <t t-call="portal.portal_layout">
+             <t t-set="o_portal_fullwidth_alert"  >
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#model=mail.activity&amp;id=%s&amp;view_type=form' % (activity.id)"/>
+                </t> 
+            </t>
+            <div id="optional_placeholder"></div>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                  <div id="optional_placeholder"></div>
+                    <div class="container">
+                      <div class="card">
+                        <div class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-12">
+                            <h5 class="d-flex mb-1 mb-md-0 row">
+                                 <span t-field="activity.activity_type_id" class="col-7 text-truncate"/>
+                                <small class="text-muted d-none d-md-inline"> (#<span t-field="activity.id"/>)</small>
+                                <!--
+                                <div class="col-md-3  text-right">
+                                    <small class="text-right">Stage:</small>
+                                    <span t-field="activity.activity_type_id.name" class=" badge badge-pill badge-info" title="Current stage of this Resignation"/>
+                                </div> -->
+                                
+                                 <div class="col-md-1  text-right">
+                                        <t t-if="pre_id">
+                                            <a role="button"  t-attf-href="/activity/pre/#{activity.id}?" ><i style="margin-right:10px; align:right" class="fa fa-chevron-left" role="img" aria-label="Previous" title="Previous"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="margin-right:10px; align:right; color:#B8B7B0" class="fa fa-chevron-left" aria-label="Previous" title="Previous"></i></a>
+
+                                        </t>
+                                        <t t-if="next_id">
+                                            <a role="button" t-attf-href="/activity/next/#{activity.id}?" ><i class="fa fa-chevron-right" role="img" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="color:#B8B7B0" class="fa fa-chevron-right" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                </div>
+                            </h5>
+                   		</div>
+            		</div>
+   				</div>
+			</div>
+    	</div>
+    </t>
+                
+               <t t-set="card_body">          
+                     
+                   	<div class="row">
+                    	<div class="col-md-6"> <strong>Document Name : </strong>
+                        	<t t-if="activity.activity_type_id">
+                            	<span t-esc="activity.res_name"/>
+                          	</t>
+                      	</div>
+                  
+                       	<div class="col-md-6"> <strong>Activity Type :</strong>
+                           <t t-if="activity.activity_type_id">
+                            	<span t-esc="activity.activity_type_id.name"/>
+                          	</t>
+                        </div>  
+                   </div>       
+                    
+                        <br/><br/>
+                   <div class="row"> 
+                   		<div class="col-md-6"> 
+                          	<strong>Due Date : </strong>
+                          	<t t-if="activity.activity_type_id">
+                            	<span t-esc="activity.date_deadline"/>
+                          	</t>
+                      	</div> 
+                      	
+                      	<div class="col-md-6"> 
+                          	<strong>Assign To : </strong>
+                          	<t t-if="activity.activity_type_id">
+                            	<span t-esc="activity.user_id.name"/>
+                          	</t>
+                      	</div> 
+                 	</div>
+                 	
+                 	<br/><br/>
+                   <div class="row"> 
+                   		<div class="col-md-6"> 
+                          	<strong>Summary : </strong>
+                          	<t t-if="activity.activity_type_id">
+                            	<span t-esc="activity.summary"/>
+                          	</t>
+                      	</div> 
+                   		
+                 	</div>
+                 	
+                   <br/><br/>
+                    <div class='section-activity-done col-md-2'>
+                     	<a class="mb-5" id="mark-as-done" t-attf-href="/activity/mark_done/#{activity.id}?" >
+                         	<button class="btn" style="background-color: #4CAF50; border: none;
+								color: white;padding: 10px 26px;text-align: center;
+								text-decoration: none;display: inline-block;font-size: 14px;">
+								Mark as Done</button>
+                       	</a>
+                    </div>
+                 
+                </t> 
+            </t>
+
+           <!--  <div class="mt32">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="activity"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+            </div> -->
+        </t>
+    </template>
+
+    
+    <template id="mark_as_done_successfully" name="Mark As Done">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+	               <div class="container mt-4 mb-5">
+	                   <div class="row">
+	                       <div class="col-lg-7 col-xl-6 mr-lg-auto">
+	                           <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[2]/div[1]/div[1]/div[1]">
+	                               <section class="s_text_block" data-snippet="s_text_block">
+	                                   <div class="container">
+	                                       <div class="row">
+		                                       <h1 class="text-center"><i class="fa fa-check-circle fa-2x text-success" role="img" aria-label="Success" title="Success"/></h1>
+		                                       <h3>Activity Successfully Marked As Done!</h3>	
+		                                       
+	                                           <div class='section-custom col-md-12'>
+					                              <a class="mb-5" id="activites-back" t-attf-href="/my/activities">
+					                                   <button t-attf-class="btn btn-primary #{'col-md-10' if multi_type else 'col-md-12'} mb-2">Go Back</button>
+					                               </a>
+					                           </div>
+	                                       </div>
+	                                   </div>
+	                               </section>
+	                           </div>
+    					</div>
+    				</div>
+    			</div>
+    		</div>
+         
+        </t>
+    </template>
+    
+    
+    
+    
+     <template id="activity_template" name="Activity Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+                            <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/de_resignation_portal/static/description/tb1.jpg'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Activity</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="container mt-4 mb-5">
+                                <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                        <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[2]/div[1]/div[1]/div[1]">
+                                            <section class="s_text_block" data-snippet="s_text_block">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <p>
+                                                                Create New Activity From Here.
+                                                            </p>
+                                                                   
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                        <span class="hidden" data-for="contactus_form" data-oe-id="2822" data-oe-xpath="/data/xpath/span" data-oe-model="ir.ui.view" data-oe-field="arch" data-values="{'leave_type_id': '', 'employee_id': '', 'date_start': '', 'date_end': '', 'description': ''}"></span>
+            <div id="activity_section" data-oe-id="3374" data-oe-xpath="/data/xpath[2]/div" data-oe-model="ir.ui.view" data-oe-field="arch">
+                    <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        <div class="container">
+                            <form id="ActivityForm" data-toggle="validator" action="/my/activity/save">
+                                
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+	                                <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+	                                       <div class="row s_col_no_resize s_col_no_bgcolor">
+	                                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity2">
+	                                               <span class="s_website_form_label_content">Assign To</span>
+	                                           </label>
+	                                           <div class="col-sm">
+	                                               <select class="form-control  o_website_form_input" name="user_id" readonly="1">
+	                                                   <t t-foreach="users" t-as="emp">
+	                                                       <option t-att-value="emp.id">
+	                                                           <t t-esc="emp.name" />
+	                                                       </option>
+	                                                   </t>
+	                                               </select>
+	                                           </div>
+	                                       </div>
+	                                   </div>
+	                               </div>
+
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                    <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity1">
+                                                <span class="s_website_form_label_content">Activity Type</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                            	<select class="form-control  o_website_form_input" name="activity_type_id">
+                                                   <t t-foreach="activity_types" t-as="at">
+                                                       <option t-att-value="at.id">
+                                                           <t t-esc="at.name" />
+                                                       </option>
+                                                   </t>
+                                               </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    <div id="due_date" class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity3">
+                                                <span class="s_website_form_label_content">Due Date</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                              <input type="date" class="form-control s_website_form_input" name="date_deadline" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                        
+              
+                                    <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="text" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity6">
+                                                <span class="s_website_form_label_content">Summary</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <textarea id="summary" class="form-control s_website_form_input" name="description" required=""></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    
+                                    <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button type="submit" class="btn btn-primary pull-left">Submit</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+			</div>
+                                    <div class="col-lg-4 mt-4 mt-lg-0">
+                                   <div class='section-custom col-md-12'>
+                                      <a class="mb-5" id="submit-activity" t-attf-href="/my/activities">
+                                           <button t-attf-class="btn btn-primary #{'col-md-10' if multi_type else 'col-md-12'} mb-2">View My Activities</button>
+                                       </a>
+                                   </div>       
+    
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="oe_structure mt-2" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[3]"></div>
+                        </div>
+            
+         
+        </t>
+    </template>
+    
+    
+    
+    
+</odoo>
+
+

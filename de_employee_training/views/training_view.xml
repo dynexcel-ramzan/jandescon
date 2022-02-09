@@ -1,0 +1,173 @@
+<odoo>
+    <record id="view_employee_training_form" model="ir.ui.view">
+        <field name="name">employee.training.form</field>
+        <field name="model">employee.training</field>
+        <field name="arch" type="xml">
+            <form string="Employee Training">
+                <header>
+                    <button name='action_done' string="Done" type="object" states='draft'
+                            class='oe_highlight'/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <h3>
+                                <field name="emp_training"/>
+                            </h3>
+                            <field name="name" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="company_id"/>
+                            <field name="employee_id" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_from" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="date_to" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="duration" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="institute" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="course_name" attrs="{'readonly': [('state','!=','draft')]}"/>
+                        </group>
+                        <group>
+                            <br></br>
+                            <br></br>
+                            <field name="course_type" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="trainer_name" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="venue" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="description" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="amount" attrs="{'readonly': [('state','!=','draft')]}"/>
+                            <field name="reason" attrs="{'readonly': [('state','!=','draft')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name='Training Evaluation' string="Training Evaluation">
+                            <group string="Venue Evaluation">
+                                <field name="physical_arrangement" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="refreshment_arrangement" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="accessibility_venue" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                            </group>
+                            <group string="Trainer Evaluation">
+                                <field name="knowledge" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="preparation" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="attitude_style_delivery" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="encouraged_participation" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="learning_atmosphere" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="ability_handle_queries" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                            </group>
+
+                            <group string="Trainer Evaluation">
+                                <field name="curriculum_content" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="relevance_job" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="application_training_job" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="length_of_the_program" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="use_of_audio_visual_aids" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                            </group>
+                            <group string="Aggregate">
+                                <field name="aggregate" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                            </group>
+
+                            <group string="Other Info">
+                                <field name="recommend_course" widget="radio" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                                <field name="delivery_date" attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                            </group>
+                            <br></br>
+                            <group>
+                                <field name="course_learning_applied" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                            </group>
+                            <br></br>
+                            <group>
+                                <field name="conduct_training_differently" options="{'horizontal': true}"
+                                       attrs="{'readonly': [('state','!=','draft')]}"/>
+                                <br></br>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_employee_training_tree" model="ir.ui.view">
+        <field name="name">employee.training.tree</field>
+        <field name="model">employee.training</field>
+        <field name="arch" type="xml">
+            <tree string="Employee Training Tree">
+                <field name="emp_training"/>
+                <field name="employee_id"/>
+                <field name="name"/>
+                <field name="institute"/>
+                <field name="course_name"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_employee_training_view" model="ir.actions.act_window">
+        <field name="name">Training</field>
+        <field name="res_model">employee.training</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_employee_training_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create Records Here.......
+            </p>
+        </field>
+    </record>
+
+    <record id="views_training_search" model="ir.ui.view">
+        <field name="name">employee.training.search</field>
+        <field name="model">employee.training</field>
+        <field name="arch" type="xml">
+            <search string="training tree search">
+                <field name="course_name"/>
+                <field name="employee_id"/>
+                <field name="trainer_name"/>
+                <field name="institute"/>
+            </search>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="view_hr_employee_inherit">
+        <field name="name">hr.employee.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" name="action_view_training_form" string="Trainings" icon="fa-pencil-square-o" type="object"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>
+

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <template id="portal_layout" name="Portal layout:Subordinate menu entry" inherit_id="portal.portal_breadcrumbs" priority="25">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'expense' or expense" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not expense else ''}">
+                <a t-if="expense" t-attf-href="/subordinate/expenses?{{ keep_query() }}">Subordinate Expenses</a>
+                <t t-else="">Subordinate Expenses</t>
+            </li>
+            <li t-if="expense" class="breadcrumb-item active text-truncate col-8 col-lg-10">
+                <t t-esc="expense.name"/>
+            </li>
+        </xpath>
+    </template>
+
+  
+    
+    <template id="portal_subordinate_expenses" name="Subordinate Expense Management">
+  <t t-call="website.layout">
+    <div id="wrap">
+      <div class="container" id="portal_my_expenses">
+          <form class="mt8 float-right" role="search" t-attf-action="/subordinate/expenses" method="get">
+              <t t-call="website.website_search_box"/>
+          </form>
+          <div t-if="searchbar_sortings" class="dropdown float-right mt8 mr8">
+              <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                  <span class="fa fa-sort fa-lg" role="img" aria-label="Sort" title="Sort"/>
+                  <span class="d-none d-xl-inline" t-esc="searchbar_sortings[sortby].get('label', 'Newest')"/>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="portal_searchbar_sortby" role="menu">
+                  <t t-foreach="searchbar_sortings" t-as="option">
+                      <a role="menuitem"
+                         t-att-href="request.httprequest.path + '?' + keep_query('*', sortby=option)"
+                         t-attf-class="dropdown-item#{sortby == option and ' active' or ''}">
+                          <span t-esc="searchbar_sortings[option].get('label')"/>
+                      </a>
+                  </t>
+              </div>
+          </div>
+          <h3 class="mt16">Manage Your subordinate Expense</h3>
+          <div>
+                <t class="col-lg-7 col-md-8" >
+                    <a href="/expense/request/subordinate/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
+                </t>
+          </div>
+          <t t-if="not pages">
+              <div t-if="search" class="alert alert-warning mt8" role="alert">
+                  Your search '<t t-esc="search" />' did not match any expense.
+              </div>
+              <div t-else="" class="alert alert-warning mt8" role="alert">
+                  There are currently no expense request.
+              </div>
+          </t>
+          <div t-if="pages" class="table-responsive">
+              <table class="table table-hover">
+                  <thead>
+                    <tr style='background-color:#875A7B; color:white;'>
+                      <th>Ref#</th> 
+                      <th>Type</th>
+                      <th>Employee</th>  
+                      <th>Date</th>  
+                      <th>Total Amount</th>  
+                      <th>Status</th>
+                      <th>Document Received</th>  
+                    </tr>
+                  </thead>
+                   
+                  <t t-set='prev_page' t-value='False' />
+                  <t t-foreach="expenses" t-as="expense">
+                      <tr>
+                          <td>
+                            <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.name"/></a>
+                          </td>
+                          <td>
+                             <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.ora_category_id.name"/></a> <t t-if='expense.exception==True'> <p style='color:red;'>(Exception)</p> </t>
+                          </td>
+                          <td>
+                              <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.employee_id.name"/></a> 
+                          </td>
+                           <td><t t-esc='expense.accounting_date' t-options='{"widget": "date"}'/></td>
+                           <td><t t-esc="'{0:,}'.format(int(round(expense.total_amount)))"/></td>
+                          <td>
+                               <t t-if="expense.state == 'draft'">
+                                    <i class="badge badge-pill badge-info" >Draft</i>
+                                </t>
+                                <t t-if="expense.state == 'post'">
+                                    <i class="badge badge-pill badge-success" >Posted</i>
+                                </t>
+                                <t t-if="expense.state == 'done'">
+                                   <t t-if="expense.is_deposit==True"> 
+                                     <i class="badge badge-pill badge-success" >Paid</i>
+                                   </t>
+                                   <t t-if="expense.is_deposit_adjusted==True"> 
+                                     <i class="badge badge-pill badge-success" >Adjusted</i>
+                                   </t> 
+                                   <t t-if="expense.is_deposit!=True"> 
+                                     <t t-if="expense.is_deposit_adjusted!=True">  
+                                     <i class="badge badge-pill badge-success" >Posted</i>
+                                   </t> 
+                                   </t>     
+                                </t>
+                                <t t-if="expense.state == 'submit'">
+                                    <t t-if='not expense.approval_request_id' >
+                                       <i class="badge badge-pill badge-warning" >To Validate</i>
+                                    </t>  
+                                    <t t-if='expense.approval_request_id' >
+                                       <i class="badge badge-pill badge-warning" >To Approve</i> 
+                                    </t>
+                                </t>
+                                <t t-if="expense.state == 'cancel'">
+                                    <i class="badge badge-pill badge-danger" >Refused</i>
+                                </t>
+                               
+                                <t t-if="expense.state == 'approve'">
+                                    <i class="badge badge-pill badge-success" >Approved</i>
+                                </t>    
+                          </td>
+                          <td>
+                              <t t-if='expense.document_received==True'>
+                                  <t t-if="expense.state != 'cancel'">
+                                     <i class="badge badge-pill badge-success" >Received</i>
+                                  </t>    
+                              </t>
+                              <t t-if='expense.document_received==False'>
+                                  <t t-if="expense.state != 'cancel'">
+                                   <i class="badge badge-pill badge-primary" >Pending</i>
+                                  </t>    
+                              </t>
+                              <t t-if="expense.state == 'cancel'">
+                                  <i class="badge badge-pill badge-danger" >Cancel</i>
+                              </t>
+                          </td>
+                      </tr>
+                  </t>
+
+                  
+              </table>
+          </div>
+                  
+      </div>
+    </div>
+  </t>
+</template>
+
+
+  
+
+</odoo>
+
+

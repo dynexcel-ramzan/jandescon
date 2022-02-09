@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<data>
+		<record model="ir.ui.view" id="hr_attendance_wizard_form_view">
+			<field name="name">Attendance Device Synchronization wizard</field>
+			<field name="model">hr.attendance.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Synchronize Data">
+					<div>
+						This wizard will synchronize all data from all of your devices
+						into Odoo.
+						<br />
+						Download users into Odoo; Map those with Odoo
+						Employees and create
+						additional Employees from device data; Download attendance data
+						from the devices and create Odoo attendance data from such data
+					</div>
+					<group>
+						<group>
+							<field name="device_ids" widget="many2many_tags" options="{'no_create_edit': True}" />
+						</group>
+						
+					</group>
+					<footer>
+						<button name="cron_download_oracle_attendance" type="object"
+							string="Download Attendance" class="oe_highlight" />
+						<button name="cron_process_oracle_attendance" type="object"
+							string="Process Attendance" class="oe_highlight" groups="base.group_no_one" />
+                        <button name="cron_download_oracle_missing_attendance_a" type="object"
+							string="Download Attendance A" class="oe_highlight" groups="base.group_no_one" />
+                        <button name="cron_download_oracle_missing_attendance_b" type="object"
+							string="Download Attendance B" class="oe_highlight" groups="base.group_no_one" />
+                        <button name="cron_download_oracle_missing_attendance_c" type="object"
+							string="Download Attendance C" class="oe_highlight" groups="base.group_no_one" />
+						
+						<button special="cancel" string="Cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<act_window id="action_sync_oracle_user_attendance" name="Synchronize Data"
+			res_model="hr.attendance.wizard" view_mode="form" target="new" />
+
+		<menuitem id="sync_oracle_user_attendance_menu" parent="menu_hr_user_attendance_my_attendances"
+			sequence="110" name="Synchronize" action="action_sync_oracle_user_attendance"  groups="de_oracle_attendance_connector.group_oracle_attendance"/>
+
+                        <!--Display form view of wizard-->    
+        <record id="view_manually_attendance_process_wizard_form" model="ir.ui.view">
+            <field name="name">attendance.process.wizard.form</field>
+            <field name="model">attendance.process.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Attendance Process">
+                    <group>
+                        
+                       <group>
+                         <field name="date_from" />
+                      </group>
+                        
+                      <group>
+                          <field name="date_to" />
+                      </group>                        
+                        
+                    </group>
+                    <notebook>
+                        <page string="Employees">
+                            <field name="employee_ids">
+                                <tree editable="bottom">
+                                    <field name="id" invisible="1"/>
+                                    <field name="name" />
+                                    <field name="department_id" /> 
+                                    <field name="company_id" />                                    
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button string='Process' name="action_manually_process_att" type="object" default_focus="1" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!--Open the wizard on click of menu-->
+        <record id="open_manually_attendance_process_wizard_action" model="ir.actions.act_window">
+            <field name="name">Attendance Process</field>
+            <field name="res_model">attendance.process.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_manually_attendance_process_wizard_form"/>
+        </record>
+      
+       <menuitem
+        id="manually_attendance_process_menu"
+        name="Attendance Process"
+        parent="hr_attendance.menu_hr_attendance_manage_attendances"
+        sequence="6"
+        action="open_manually_attendance_process_wizard_action"
+    />
+      
+     
+
+
+	</data>
+</odoo>

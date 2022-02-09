@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+	    <record id="group_time_off" model="res.groups">
+	        <field name="name">Allow Time Off</field>
+	    </record>
+
+	</data>
+</odoo>

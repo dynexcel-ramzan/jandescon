@@ -1,0 +1,417 @@
+<odoo>  
+    
+    <template id="portal_layout" name="Portal layout: training request menu entry" inherit_id="portal.portal_breadcrumbs" priority="25">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'TrainingRequests' or TrainingRequest" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not training_request else ''}">
+                <a t-if="training_request" t-attf-href="/my/training/requests?{{ keep_query() }}">Training Request</a>
+                <t t-else="">Training Request</t>
+            </li>
+            <li t-if="training_request" class="breadcrumb-item active text-truncate col-8 col-lg-10">
+                <t t-esc="training_request.name"/>
+            </li>
+        </xpath>
+    </template>
+
+
+    
+    <template id="portal_my_home" name="Show Training Request / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry" >
+                <t t-set="title">Training Request</t>
+                <t t-set="url" t-value="'/my/training/requests'"/>
+                <t t-set="placeholder_count" t-value="'training_request_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    
+    
+    
+    
+    <template id="portal_my_training_requests" name="My Training Requests">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Training Requests</t>
+            </t>
+            <t t-if="not grouped_training_requests">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no training request.
+                </div>
+            </t>
+            
+            <t t-if="grouped_training_requests">
+                <t t-call="portal.portal_table">
+                    <t t-foreach="grouped_training_requests" t-as="all_training_requests">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left">Ref#</th>
+                                <th class="text-left">Name</th>
+                                <th class="text-left">Reason</th>
+                               	<th class="text-left">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="all_training_requests" t-as="_request_">
+                             
+                               <t t-if="_request_.create_uid.id == uid">  
+                                <tr>
+                                    <td class="text-left">
+                                        <a t-attf-href="/my/training/request/#{_request_.id}?{{ keep_query() }}"><span t-field="_request_.emp_req"/></a>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_request_.name"/>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_request_.reason"/>
+                                    </td>
+                                    <td class="text-left">
+                                        <t t-if="_request_.state == 'draft'">
+                                            <i class="badge badge-pill badge-info" >Draft</i>
+                                        </t>
+                                        <t t-if="_request_.state == 'approved'">
+                                            <i class="badge badge-pill badge-info" >Approved</i>
+                                        </t>
+                                        <t t-if="_request_.state == 'in session'">
+                                            <i class="badge badge-pill badge-info" >In Session</i>
+                                        </t>
+                                        <t t-if="_request_.state == 'refused'">
+                                            <i class="badge badge-pill badge-info" >Refused</i>
+                                        </t>
+                                        <t t-if="_request_.state == 'submitted'">
+                                            <i class="badge badge-pill badge-info" >Submitted</i>
+                                        </t>
+                                    </td> 
+                                </tr>
+                               </t>     
+                            </t>
+                            <tr>
+                                <div>
+                                    <t class="col-lg-7 col-md-8" >
+                                        <a href="/training/request/create/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
+                                    </t>
+                                </div>
+                            </tr>   
+                        </tbody>
+                    </t>
+                </t>
+            </t>   
+            
+        </t>
+    </template>
+
+    <template id="portal_my_training_request" name="My Training Request">
+        <t t-call="portal.portal_layout">
+            <t t-set="o_portal_fullwidth_alert"  >
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#model=employee.request&amp;id=%s&amp;view_type=form' % (training_request.id)"/>
+                </t>
+            </t>
+            <div id="optional_placeholder"></div>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                  <div id="optional_placeholder"></div>
+                    <div class="container">
+                      <div class="card">
+                        <div class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-12">
+                            <h5 class="d-flex mb-1 mb-md-0 row">
+                                <span t-field="training_request.name" class="col-7 text-truncate"/>
+                                <small class="text-muted d-none d-md-inline"> (#<span t-field="training_request.id"/>)</small>
+                                <div class="col-md-3  text-right">
+                                    <small class="text-right">Stage:</small>
+                                    <span t-field="training_request.state" class=" badge badge-pill badge-info" title="Current stage of this request"/>
+                                </div>
+                                
+                                 <div class="col-md-1  text-right">
+                                        <t t-if="pre_id">
+                                            <a role="button"  t-attf-href="/training/request/pre/#{training_request.id}?" ><i style="margin-right:10px; align:right" class="fa fa-chevron-left" role="img" aria-label="Previous" title="Previous"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="margin-right:10px; align:right; color:#B8B7B0" class="fa fa-chevron-left" aria-label="Previous" title="Previous"></i></a>
+
+                                        </t>
+                                        <t t-if="next_id">
+                                            <a role="button" t-attf-href="/training/request/next/#{training_request.id}?" ><i class="fa fa-chevron-right" role="img" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="color:#B8B7B0" class="fa fa-chevron-right" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                </div>
+                                
+                                    </h5>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </t>
+               <t t-set="card_body">          
+                  
+                     
+                        <div class="row">
+	                        <div class="col-md-6"> <strong>Name : </strong>
+	                            <t t-if="training_request.name">
+	                                <span t-esc="training_request.name"/>
+	                            </t>
+	                        </div>
+	                    
+	                         <div class="col-md-6"> 
+	                            <strong>Reason : </strong>
+	                            <t t-if="training_request.reason">
+	                                <span t-esc="training_request.reason"/>
+	                            </t>
+	                        </div>  
+                        </div> 
+                        <br/>      
+                        
+                        
+                        <h3>Training Info</h3><br/><br/>
+                        <div class="row">
+	                        <div class="col-md-6"> <strong>Course : </strong>
+	                            <t t-if="training_request.course">
+	                                <span t-esc="training_request.course"/>
+	                            </t>
+	                        </div>
+	                    
+	                         <div class="col-md-6"> 
+	                            <strong>Institute : </strong>
+	                            <t t-if="training_request.institute">
+	                                <span t-esc="training_request.institute"/>
+	                            </t>
+	                        </div>  
+                        </div>
+                        <br/> 
+                        <div class="row">
+	                        <div class="col-md-6"> <strong>Training Date : </strong>
+	                            <t t-if="training_request.training_date">
+	                                <span t-esc="training_request.training_date"/>
+	                            </t>
+	                        </div>
+	                    
+	                         <div class="col-md-6"> 
+	                            <strong>Training Cost : </strong>
+	                            <t t-if="training_request.training_cost">
+	                                <span t-esc="training_request.training_cost"/>
+	                            </t>
+	                        </div>  
+                        </div> 
+                        <br/>      
+                        <div class="row">
+	                        <div class="col-md-6"> <strong>Areas of Improvement : </strong>
+	                            <t t-if="training_request.areas_of_improve">
+	                                <span t-esc="training_request.areas_of_improve"/>
+	                            </t>
+	                        </div>
+	                    
+                        </div> 
+                        
+                        <br/>
+                   		<h3>Participants</h3><br/>
+                        <div class="row">
+	                        <table class="table table-condensed">
+								<thead>
+									<tr>
+										<th style="width: 7%;">SNO</th>
+										<th>Name</th>
+									</tr>
+								</thead>
+								<tbody>
+									<t t-set="i" t-value="1" />
+									<tr t-foreach="training_request.participants_ids" t-as='emp'>
+										<td align="center" style="width: 7%;">
+											<span t-esc="i" />
+										</td>
+										<td>
+											<span t-esc="emp.name"/>
+										</td>
+										<t t-set="i" t-value="i+1" />
+									</tr>
+								</tbody>
+							</table> 
+                        </div>       
+                   		
+                 
+                </t> 
+            </t>
+
+            <!-- <div class="mt37">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="training_request"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+            </div>  -->
+        </t>
+    </template>
+    
+
+    
+    
+     <template id="training_request_template" name="Training Request">
+        <t t-call="portal.portal_layout">
+            <div id="training_request_section" data-oe-id="3374" data-oe-xpath="/data/xpath[2]/div" data-oe-model="ir.ui.view" data-oe-field="arch">
+                    <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        <div class="container">
+                        
+	                        <t t-call="portal.portal_table"   id="optionTable">
+		                        <tbody>
+		                            <tr>
+				                        <form id="portal_training_form_employee_line" data-toggle="validator" action="/my/training/request/employee/save">
+				                                <tr>
+				                                   <td>Training Participant*</td>
+				                                     <td > 
+					                                      <select class="form-control  o_website_form_input" name="employee_id" >
+					                                           <t t-foreach="employees" t-as="emp">
+					                                               <option t-att-value="emp.id">
+					                                                   <t t-esc="emp.name"    />
+					                                               </option>
+					                                           </t>
+					                                       </select>
+				                                    </td>
+				                                    
+				                                    <td id="submit_add_emp" class="new">
+				                                         <div class="form-group col-12 s_website_form_submit" data-name="Submit Button Add Emp">
+				                                            <div style="width: 200px;" class="s_website_form_label"></div>
+				                                            <button type="submit" class="btn btn-primary pull-left" id="submit_line">Add</button>
+				                                            <span id="s_website_form_result"></span>
+				                                         </div>
+				                                    </td>
+				                                      
+				                                </tr>
+				                         	</form> 
+			                            <tr>                                
+        				            </tr>
+			    	            </tr>
+			            	</tbody>
+		                </t>
+                        
+                        
+                      <form id="TrainingRequestForm" data-toggle="validator" action="/my/training/request/save">
+                                <div class="form-group col-2 s_website_form_submit" data-name="Submit Button">
+                                    <div style="width: 200px; float: left;" class="s_website_form_label"></div>
+                                    <button type="submit" class="btn btn-primary pull-left">Submit</button>
+                                    <span id="s_website_form_result"></span>
+                                </div>
+                                
+                                <t t-call="portal.portal_table">
+		                            <tr>
+		                                <th>Name*</th>
+		                                <td>
+		                                	<input id="name" type="text" class="form-control s_website_form_input" name="name" required="0"></input>
+		                                </td>
+		                                <th>Reason*</th>
+		                                <td>
+		                                	<input id="reason" type="text" class="form-control s_website_form_input" name="reason" required="0"></input>
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th>Course</th>
+		                                <td>
+		                                	<input id="course" type="text" class="form-control s_website_form_input" name="course"></input>
+		                                </td>
+		                                <th>Institute</th>
+		                                <td>
+		                                	<input id="institute" type="text" class="form-control s_website_form_input" name="institute"></input>
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th>Training Date</th>
+		                                <td>
+		                                	<input id="training_date" type="date" class="form-control s_website_form_input" name="training_date" required="0"></input>
+		                                </td>
+		                                <th>Training Cost</th>
+		                                <td>
+		                                	<input id="training_cost" type="number" class="form-control s_website_form_input" name="training_cost"></input>
+		                                </td>
+		                            </tr>
+		                            <tr>
+		                                <th>Areas of Improvement</th>
+		                                <td>
+		                                	<input id="areas_of_improve" type="text" class="form-control s_website_form_input" name="areas_of_improve"></input>
+		                                </td>
+		                                <th></th>
+		                                <td>
+		                                	<!-- <input id="company" class="form-control s_website_form_input" name="company" required="0"></input> -->
+		                                </td>
+		                            </tr>
+			                   </t>
+                               
+                            </form>
+                            
+                    <br/>
+                                        
+                    <t t-call="portal.portal_table"   id="showEmpTable1">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left"><b>Participants</b></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="employee_training_lst" t-as="emp_training"> 
+                                <tr>
+                                    <td>
+                                      <span t-esc="emp_training['name']" />
+                                    </td>
+                                 </tr>
+                            </t>
+                        </tbody>
+	                </t>
+                            
+                        </div>
+                    </section>
+                </div>
+                 <!-- <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class='section-custom col-md-12'>
+                   <a class="mb-5" id="submit-training-request" t-attf-href="/my/training/requests">
+                        <button t-attf-class="btn btn-primary #{'col-md-10' if multi_type else 'col-md-12'} mb-2">View My Training Requests</button>
+                    </a>
+                </div>     -->  
+                                        
+                            
+        </t>
+    </template>
+    
+   
+    
+   <template id="training_request_created_successfully" name="Training Request Created">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+	               <div class="container mt-4 mb-5">
+	                   <div class="row">
+	                       <div class="col-lg-7 col-xl-6 mr-lg-auto">
+	                           <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[2]/div[1]/div[1]/div[1]">
+	                               <section class="s_text_block" data-snippet="s_text_block">
+	                                   <div class="container">
+	                                       <div class="row">
+		                                       <h1 class="text-center"><i class="fa fa-check-circle fa-2x text-success" role="img" aria-label="Success" title="Success"/></h1>
+		                                       <h3>Training Request Created Successfully!</h3>	
+		                                       
+	                                           <div class='section-custom col-md-12'>
+					                              <a class="mb-5" id="activites-back" t-attf-href="/my/training/requests">
+					                                   <button t-attf-class="btn btn-primary #{'col-md-10' if multi_type else 'col-md-12'} mb-2">Go Back</button>
+					                               </a>
+					                           </div>
+	                                       </div>
+	                                   </div>
+	                               </section>
+	                           </div>
+    					</div>
+    				</div>
+    			</div>
+    		</div>
+         
+        </t>
+    </template> 
+    
+    
+    
+    
+
+    
+
+</odoo>
+
+

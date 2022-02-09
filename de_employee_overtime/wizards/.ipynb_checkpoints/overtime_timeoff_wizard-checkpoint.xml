@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<data>
+		<record model="ir.ui.view" id="overtime_timeoff_wizards_view">
+			<field name="name">Timeoff Wizards</field>
+			<field name="model">overtime.timeoff.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Synchronize Data">
+					<div>
+						This wizard will Create Timeoff for given Timoff Type on Overtime Type.
+						<br />
+						
+					</div>
+					<group>
+						<group>
+						</group>
+                        <group>
+							<field name="timeoff_id"   widge="many2many_tag" invisible="0"/>
+						</group>
+                                                
+
+						
+					</group>
+					<footer>
+						<button name="action_create_timeoff" type="object"
+							string="Create Timeoff" class="oe_highlight" />
+					
+						<button special="cancel" string="Cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+        
+        <record id="custom_overtime_timeoff_wizard" model="ir.actions.act_window">
+            <field name="name">Overtime Timeoff</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">overtime.timeoff.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="overtime_timeoff_wizards_view"/>
+            <field name="target">new</field>
+        </record>
+        
+      <record model="ir.ui.view" id="overtime_type_wizards_view">
+			<field name="name">Type Wizards</field>
+			<field name="model">overtime.submit.wizard</field>
+			<field name="arch" type="xml">
+				<form string="Synchronize Data">
+					<div>
+						This wizard will Update Overtime Type on Selected Overtime Request.
+						<br />
+						
+					</div>
+					<group>
+						
+                        <group>
+							<field name="overtime_type_id"  />
+						</group>
+                                                
+
+						
+					</group>
+					<footer>
+						<button name="action_overtime_submit" type="object"
+							string="Submit" class="oe_highlight" />
+					
+						<button special="cancel" string="Cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+        
+        <record id="custom_overtime_type_allocation_wizard" model="ir.actions.act_window">
+            <field name="name">Overtime Type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">overtime.submit.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="overtime_type_wizards_view"/>
+            <field name="target">new</field>
+        </record>
+        
+
+		
+		
+		
+		
+	</data>
+</odoo>

@@ -1,0 +1,21 @@
+<odoo>
+  <data>
+  <report 
+            id="open_leave_ledger_wizard_action"
+            string="Leave Ledger"
+            model="report.de_leave_portal.leave_ledger_report"
+            report_type="qweb-pdf"
+            file="de_leave_portal.leave_ledger_report"
+            name="de_leave_portal.leave_ledger_report"
+        />
+      
+      <report 
+            id="open_leave_ledger_wizard_action_portal"
+            string="Leave Ledger"
+            model="report.de_leave_portal.leave_ledger_portal"
+            report_type="qweb-pdf"
+            file="de_leave_portal.leave_ledger_portal"
+            name="de_leave_portal.leave_ledger_portal"
+        />
+  </data>
+</odoo>

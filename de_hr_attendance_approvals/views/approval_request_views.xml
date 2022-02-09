@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+      
+    <record model="ir.actions.act_window" id="action_approval_request_view_rectification_attendance">
+        <field name="name">Approval Request</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">approval.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="approvals.approval_request_view_tree"/>
+        <field name="domain">[('rectification_id','=',active_id)]</field>
+        <field name="context">{
+            "default_rectification_id":active_id,
+            }
+        </field>
+    </record>
+
+  </data>
+</odoo>

@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_timesheet_report,access.hr.timesheet.report,model_hr_timesheet_report,,1,1,1,1
+access_hr_timesheet_report_line,access.hr.timesheet.report.line,model_hr_timesheet_report_line,,1,1,1,
+access_timesheet_incharge_wizard,access.timesheet.incharge.wizard,model_timesheet_incharge_wizard,,1,1,1,
+access_res_ora_client,access.res.ora.client,model_res_ora_client,,1,1,1,1
+access_project_project,access.project.project,model_project_project,,1,1,1,1
+access_res_ora_category,access.res.ora.category,model_res_ora_category,,1,1,1,1
+access_hr_shift_schedule_line,access.hr.shift.schedule.line,model_hr_shift_schedule_line,,1,1,1,1
+

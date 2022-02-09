@@ -1,0 +1,16 @@
+<odoo>
+  <data noupdate="1">
+
+        <!-- Sequences for sale.order -->
+        <record id="seq_hr_expense_sheet" model="ir.sequence">
+            <field name="name">Expense Sequence</field>
+            <field name="code">hr.expense.sheet</field>
+            <field name="prefix">EXP/</field>
+            <field name="padding">4</field>
+            <field eval="1" name="number_next"/>
+            <field eval="1" name="number_increment"/>
+        </record>
+
+
+    </data>
+</odoo>

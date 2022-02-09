@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+1,hr.recruitment.interviews,model_hr_recruitment_interviews,base.group_user,1,1,1,1
+2,hr.recruitment.assessment,model_hr_recruitment_assessment,base.group_user,1,1,1,1
+3,warning.wizard,model_warning_wizard,base.group_user,1,1,1,1

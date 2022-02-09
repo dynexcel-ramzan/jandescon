@@ -1,0 +1,44 @@
+<odoo>
+       <template id="employee_retirement_report_layout">
+           <t t-set="company" t-value="user.company_id"/>
+           <div class="header">
+            <div style="font-size:15px" class="row" >
+                    <div class="col-6" style="color:blue">
+                    <i style="font-weight: bold;" t-field="company.partner_id"
+                         t-options='{"widget": "contact", "fields":["address","name"],"no_marker": true }'
+                    />
+
+                <td style="border-bottom: 1px solid black; , color:black;">Employee's Retirement Details Report</td>
+
+                </div>
+                <div class="col-2">
+                <i>
+
+                     </i>
+                </div>
+                <div style="font-size:10px" class="col-4">
+              <i class='pull-right'>
+                      <t t-set='printed_by'  t-value='0'/>
+                      Printed By:
+                      <t t-foreach="request.env['hr.employee'].search([('user_id','=',uid)])" t-as="user">
+                         <t t-set='printed_by'  t-value='user.name'/>
+                       </t>
+                         <t t-esc="printed_by"/>
+                       <br/>
+                       <i>
+                        Print on: <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d-%B-%Y %H:%M')"/>
+                      </i>
+
+                 </i>
+                </div>
+               </div>
+
+        <div t-if="company.logo or company.report_header" class="row zero_min_height">
+            <div class="col-12">
+
+               </div>
+           </div>
+       </div>
+
+    </template>
+</odoo>

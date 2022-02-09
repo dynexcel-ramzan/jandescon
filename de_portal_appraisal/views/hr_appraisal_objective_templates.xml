@@ -1,0 +1,1356 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    
+    
+    <template id="portal_layout" name="Portal layout: appraisal menu entry" inherit_id="portal.portal_breadcrumbs" priority="25">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'appraisal' or appraisal" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not appraisal else ''}">
+                <a t-if="appraisal" t-attf-href="/appraisal/objectives?{{ keep_query() }}">Objective Setting</a>
+                <t t-else="">Objective Setting</t>
+            </li>
+        </xpath>
+    </template>   
+    
+    
+    <template id="portal_my_home" name="Objective Setting / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="25">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry"  groups="de_portal_appraisal.group_appraisal">
+                <t t-set="title">Appraisal</t>
+                <t t-set="url" t-value="'/appraisal/create/'"/>
+                <t t-set="placeholder_count" t-value="'appraisal_count'"/>
+            </t>
+        </xpath>  
+    </template>
+    
+    
+       <template id="portal_appraisal" name="Appraisals">
+         <t t-call="portal.portal_layout">
+             <section class="s_banner parallax s_parallax_is_fixed pt96 pb96 o_colored_level" data-scroll-background-ratio="1" data-snippet="s_banner" data-name="Banner">
+        <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"/>
+        <div class="container">
+          <div class="row s_nb_column_fixed">
+            <div class="col-lg-3 jumbotron rounded o_cc o_cc1 pt32 pb32  o_colored_level"  style='margin:10px;' data-name="Box">
+              <h3>
+                <font style="font-size: 25px;" class="o_default_snippet_text"><a t-attf-href="/appraisal/objectives">Objective</a></font>
+              </h3>
+              <p class="lead o_default_snippet_text">By clicking below view button, you can see and set your objective.If you have subordinate's than you can also review and approve their Objective from here!</p>
+              <a t-attf-href="/appraisal/objectives" class="btn btn-primary mb-2 o_default_snippet_text">View</a>
+            </div>
+            <div class="col-lg-3 jumbotron rounded o_cc o_cc1 pt32 pb32 o_colored_level" style='margin:10px;' data-name="Box">
+              <h3>
+                <font style="font-size: 25px;" class="o_default_snippet_text"><a t-attf-href="/appraisals/feedback">Appraisal</a></font>
+              </h3>
+              <p class="lead o_default_snippet_text">By clicking below view button, you can see and review your appraisal and submit your feedback.If you have subordinate's than you can also review and rate their Appraisal from here!</p>
+              <a t-attf-href="/appraisals/feedback" class="btn btn-primary mb-2 o_default_snippet_text">View</a>
+            </div>
+           
+            <div class="col-lg-3 jumbotron rounded o_cc o_cc1 pt32 pb32 o_colored_level" style='margin:10px;' data-name="Box">
+              <h3>
+                <font style="font-size: 25px;" class="o_default_snippet_text"><a t-attf-href="/appraisal/probations">Probation</a></font>
+              </h3>
+              <p class="lead o_default_snippet_text">By clicking below view button, If you are on probation than you can review your probation and submit your remarks.If you have subordinate's than you can also review and rate their Probation from here!</p>
+              <a t-attf-href="/appraisal/probations" class="btn btn-primary mb-2 o_default_snippet_text">View</a>
+            </div>
+             <div class="col-lg-3 jumbotron rounded o_cc o_cc1 pt32 pb32 o_colored_level" style='margin:10px;' data-name="Box">
+              <h3>
+                <font style="font-size: 25px;" class="o_default_snippet_text"><a t-attf-href="/appraisal/improvements">Improvement</a></font>
+              </h3>
+              <p class="lead o_default_snippet_text">By clicking below view button, you can review your improvement suggested from your Manager.If you have subordinate's than you can also create your subordinate's improvements  from here!</p>
+              <a t-attf-href="/appraisal/improvements" class="btn btn-primary mb-2 o_default_snippet_text">View</a>
+            </div>
+            
+          </div>
+        </div>
+      </section>
+        </t>
+    </template>
+
+
+    <template id="portal_appraisal_objectives" name="Appraisals Objective">
+         <t t-set="foo" t-value="2 + 1"/>
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Objective Setting</t>
+            </t>
+            <t t-if="not grouped_appraisals">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no Objective Setting.
+                </div>
+            </t>
+            <t t-if="grouped_appraisals">
+                <t t-call="portal.portal_table">
+                    <t t-foreach="grouped_appraisals" t-as="appraisals">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left">No#</th>
+                                 <th class="text-left">Employee</th>
+                                <th class="text-left">Description</th>
+                                <th class="text-left">Year</th>
+                                <th class="text-left">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="appraisals" t-as="appraisal">   
+                            <t t-if="appraisal.employee_id.parent_id.user_id.id == uid">   
+                              
+                                   <tr>
+                                      <td class="text-left">
+                                        #<span t-esc="appraisal.id" />
+                                    </td>
+                                     <td>
+                                        <a t-attf-href="/appraisal/objective/#{appraisal.id}?{{ keep_query() }}"><span t-field="appraisal.employee_id.name"/></a>
+                                    </td>
+                                     <td class="text-left">
+                                        <span t-esc="appraisal.description" />
+                                    </td>
+                                    
+                                     
+                                    <td class="text-left">
+                                          <t t-if="appraisal.objective_year == '2020'">
+                                            <i class="badge badge-pill badge-info" >FY 2020-21</i>
+                                        </t>
+                                         <t t-if="appraisal.objective_year == '2021'">
+                                            <i class="badge badge-pill badge-info" >FY 2021-22</i>
+                                        </t>
+                                         <t t-if="appraisal.objective_year == '2022'">
+                                            <i class="badge badge-pill badge-info" >FY 2022-23</i>
+                                        </t>
+                                         <t t-if="appraisal.objective_year == '2023'">
+                                            <i class="badge badge-pill badge-info" >FY 2023-24</i>
+                                        </t>
+                                         <t t-if="appraisal.objective_year == '2024'">
+                                            <i class="badge badge-pill badge-info" >FY 2024-25</i>
+                                        </t>
+                                         <t t-if="appraisal.objective_year == '2025'">
+                                            <i class="badge badge-pill badge-info" >FY 2025-26</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2026'">
+                                            <i class="badge badge-pill badge-info" >FY 2026-27</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2027'">
+                                            <i class="badge badge-pill badge-info" >FY 2027-28</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2028'">
+                                            <i class="badge badge-pill badge-info" >FY 2028-29</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2029'">
+                                            <i class="badge badge-pill badge-info" >FY 2029-30</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2030'">
+                                            <i class="badge badge-pill badge-info" >FY 2030-31</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2031'">
+                                            <i class="badge badge-pill badge-info" >FY 2031-32</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2032'">
+                                            <i class="badge badge-pill badge-info" >FY 2032-33</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2033'">
+                                            <i class="badge badge-pill badge-info" >FY 2033-34</i>
+                                        </t>
+                                     <t t-if="appraisal.objective_year == '2034'">
+                                            <i class="badge badge-pill badge-info" >FY 2034-35</i>
+                                        </t>
+                                     <t t-if="appraisal.objective_year == '2035'">
+                                            <i class="badge badge-pill badge-info" >FY 2035-36</i>
+                                        </t>
+                                     <t t-if="appraisal.objective_year == '2036'">
+                                            <i class="badge badge-pill badge-info" >FY 2036-37</i>
+                                        </t>
+                                     <t t-if="appraisal.objective_year == '2037'">
+                                            <i class="badge badge-pill badge-info" >FY 2037-38</i>
+                                        </t>
+                                    <t t-if="appraisal.objective_year == '2038'">
+                                            <i class="badge badge-pill badge-info" >FY 2038-39</i>
+                                        </t>
+                                    <t t-if="appraisal.objective_year == '2039'">
+                                            <i class="badge badge-pill badge-info" >FY 2039-39</i>
+                                        </t>
+                                    <t t-if="appraisal.objective_year == '2040'">
+                                            <i class="badge badge-pill badge-info" >FY 2040-41</i>
+                                        </t>
+                                    </td>
+                                   
+                                    <td class="text-left">
+                                        <t t-if="appraisal.state == 'draft'">
+                                            <i class="badge badge-pill badge-info" >Draft</i>
+                                        </t>
+                                        <t t-if="appraisal.state == 'waiting'">
+                                            <i class="badge badge-pill badge-warning" >Submitted</i>
+                                        </t>
+                                        <t t-if="appraisal.state == 'confirm'">
+                                            <i class="badge badge-pill badge-success" >Approved</i>
+                                        </t>
+                                       
+                                    </td>                                   
+                            
+                                </tr>
+                            </t>
+                                <t t-if="appraisal.employee_id.user_id.id == uid">   
+                                
+                                <tr>
+                                      <td class="text-left">
+                                        #<span t-esc="appraisal.id" />
+                                    </td>
+                                     <td>
+                                        <a t-attf-href="/appraisal/objective/#{appraisal.id}?{{ keep_query() }}"><span t-field="appraisal.employee_id.name"/></a>
+                                    </td>
+                                     <td class="text-left">
+                                        <span t-esc="appraisal.description" />
+                                    </td>
+                                     
+                                    <td class="text-left">
+                                        <t t-if="appraisal.objective_year == '2020'">
+                                            <i class="badge badge-pill badge-info" >FY 2020-21</i>
+                                        </t>
+                                         <t t-if="appraisal.objective_year == '2021'">
+                                            <i class="badge badge-pill badge-info" >FY 2021-22</i>
+                                        </t>
+                                         <t t-if="appraisal.objective_year == '2022'">
+                                            <i class="badge badge-pill badge-info" >FY 2022-23</i>
+                                        </t>
+                                         <t t-if="appraisal.objective_year == '2023'">
+                                            <i class="badge badge-pill badge-info" >FY 2023-24</i>
+                                        </t>
+                                         <t t-if="appraisal.objective_year == '2024'">
+                                            <i class="badge badge-pill badge-info" >FY 2024-25</i>
+                                        </t>
+                                         <t t-if="appraisal.objective_year == '2025'">
+                                            <i class="badge badge-pill badge-info" >FY 2025-26</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2026'">
+                                            <i class="badge badge-pill badge-info" >FY 2026-27</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2027'">
+                                            <i class="badge badge-pill badge-info" >FY 2027-28</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2028'">
+                                            <i class="badge badge-pill badge-info" >FY 2028-29</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2029'">
+                                            <i class="badge badge-pill badge-info" >FY 2029-30</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2030'">
+                                            <i class="badge badge-pill badge-info" >FY 2030-31</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2031'">
+                                            <i class="badge badge-pill badge-info" >FY 2031-32</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2032'">
+                                            <i class="badge badge-pill badge-info" >FY 2032-33</i>
+                                        </t>
+                                        <t t-if="appraisal.objective_year == '2033'">
+                                            <i class="badge badge-pill badge-info" >FY 2033-34</i>
+                                        </t>
+                                     <t t-if="appraisal.objective_year == '2034'">
+                                            <i class="badge badge-pill badge-info" >FY 2034-35</i>
+                                        </t>
+                                     <t t-if="appraisal.objective_year == '2035'">
+                                            <i class="badge badge-pill badge-info" >FY 2035-36</i>
+                                        </t>
+                                     <t t-if="appraisal.objective_year == '2036'">
+                                            <i class="badge badge-pill badge-info" >FY 2036-37</i>
+                                        </t>
+                                     <t t-if="appraisal.objective_year == '2037'">
+                                            <i class="badge badge-pill badge-info" >FY 2037-38</i>
+                                        </t>
+                                    <t t-if="appraisal.objective_year == '2038'">
+                                            <i class="badge badge-pill badge-info" >FY 2038-39</i>
+                                        </t>
+                                    <t t-if="appraisal.objective_year == '2039'">
+                                            <i class="badge badge-pill badge-info" >FY 2039-39</i>
+                                        </t>
+                                    <t t-if="appraisal.objective_year == '2040'">
+                                            <i class="badge badge-pill badge-info" >FY 2040-41</i>
+                                        </t>
+                                    </td>
+                                   
+                                    <td class="text-left">
+                                        <t t-if="appraisal.state == 'draft'">
+                                            <i class="badge badge-pill badge-info" >Draft</i>
+                                        </t>
+                                        <t t-if="appraisal.state == 'waiting'">
+                                            <i class="badge badge-pill badge-warning" >Submitted</i>
+                                        </t>
+                                        <t t-if="appraisal.state == 'confirm'">
+                                            <i class="badge badge-pill badge-success" >Approved</i>
+                                        </t>
+                                       
+                                    </td>                                   
+                            
+                                </tr>
+                            </t>
+                                
+                            </t>    
+
+                            <tr>
+                                <div>
+                                    <t class="col-lg-7 col-md-8" >
+                                        <a href="/appraisal/objective/create/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
+                                    </t>
+                                </div>
+                            </tr> 
+                        </tbody>
+                    </t>
+                </t>
+            </t>   
+        </t>
+    </template>
+    
+    
+     
+    <template id="portal_appraisal_objective" name="Appraisal">
+        <t t-call="portal.portal_layout">
+            <div id="wrap">
+                                         
+            <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                            <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                        <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                    <div class="container">
+                        <h1 style="margin-left:10px">Objective Setting</h1>
+                    </div>
+                </section>
+            </div>
+               <t t-if='appraisal.state!="confirm"'> 
+                   <div>
+                      <t t-if='appraisal.state not in ("confirm", "draft")'>
+                       <t t-if='appraisal.employee_id.parent_id.user_id.id==uid'>
+                        <a class="mb-5" id="submit-object" t-attf-href="/edit/add/objective/line/#{appraisal.id}?">
+                            <button class="btn btn-primary pull-right">Add Objective</button>
+                        </a>
+                       </t>
+                       </t>
+                       <t t-if='appraisal.state=="draft"'>
+                       <t t-if='appraisal.employee_id.user_id.id==uid'>
+                        <a class="mb-5" id="submit-object" t-attf-href="/edit/add/objective/line/#{appraisal.id}?">
+                            <button class="btn btn-primary pull-right">Add Objective</button>
+                        </a>
+                       </t>
+                       </t>
+                    </div> 
+                </t>
+              <t t-if='appraisal.state!="confirm"'> 
+               <t t-if='appraisal.state!="draft"'> 
+                      <div>
+                       <t t-if='appraisal.employee_id.parent_id.user_id.id==uid'> 
+                        <a class="mb-5" id="confirm-object" t-attf-href="/action/confirm/objective/#{appraisal.id}?">
+                             <button class="btn btn-primary pull-right" style='margin-right:8px;'>Confirm</button>
+                         </a>
+                       </t>    
+                    </div> 
+                </t> 
+                </t>  
+                
+            <form id="saleForm"  action="/appraisal/objective/save"  method="post"  enctype="multipart/form-data">
+             
+                <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                        <div style="width: 200px;" class="s_website_form_label"></div>
+                        
+                     <t t-if='appraisal.state=="draft"'>
+                       <t t-if="appraisal.employee_id.user_id.id==uid">  
+                         <button id='objectivesubmit' type="submit" class="btn btn-primary pull-left">Submit</button>
+                     </t>
+                     </t>   
+                     
+                         <p class='text-center'><b>Total Weightage: </b>
+                            <t t-if='appraisal.total_weightage==100'>  
+                                <i class="badge badge-pill badge-success" >
+                                <span t-esc='appraisal.total_weightage'/> %</i>
+                            </t>    
+                            <t t-if='appraisal.total_weightage!=100'>  
+                                <i class="badge badge-pill badge-danger" >
+                                <span t-esc='appraisal.total_weightage'/> %</i>
+                            </t>  
+                         </p>                        
+                </div>
+                    <br/>                               
+                    <div class="container">
+                    </div>    
+               <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Employee</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.name"    />
+                                <input type="hidden" class="form-control s_website_form_input" name="employee_id"   t-att-value='employee_name.id' />   
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content">Manager</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="managers"    />
+                        </div>
+                  </div>
+                </div>
+               </div>
+                
+                <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Employee Code</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.emp_number"    />
+                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content">Department</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="employee_name.department_id.name"    />
+                        </div>
+                  </div>
+                </div>
+               </div>  
+                
+                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Grade</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.grade_designation.name"/>
+                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                            <span class="s_website_form_label_content">Job Position</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="employee_name.job_id.name"    />
+                        </div>
+                  </div>
+                </div>
+               </div>  
+               <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Employee Type</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.emp_type"/>
+                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content">Date Of Joining</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="employee_name.date"    t-options='{"widget": "date"}'/>
+                        </div>
+                  </div>
+                </div>
+               </div>  
+                
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+
+                <input id='recordid' type="hidden" class="form-control s_website_form_input" name="record_id"   t-att-value="appraisal.id"/>
+                
+                </form> 
+                 <div >
+                 
+                  <t t-set='sr_count' t-value='0'/>   
+                  <t t-foreach="appraisal.objective_lines" t-as="line"> 
+                    <t t-set='sr_count' t-value='sr_count + 1'/>     
+                    <section class="s_text_image pt32 pb32 o_colored_level"  style='box-shadow:3px;' data-snippet="s_image_text" data-name="Image - Text">
+                     
+                    <div class="container" style='box-shadow:3px;'>                      
+                      <div class="row align-items-center">
+                        <div class="col-lg-12 pt16 pb16 o_colored_level col-lg-12 border rounded shadow">
+                            <div data-snippet="s_share"  data-name="Share">
+                                <i class="pull-left">Objective# <t t-esc='sr_count'/> </i>
+                                <i class="badge badge-pill badge-info pull-right" ><t t-esc='line.status_id.name'/></i>            
+                            </div>  
+                            <br/>
+                             <h2><t t-esc='line.objective'/></h2>
+                              <p class="o_default_snippet_text"><i class="badge badge-pill badge-info" ><t t-esc='line.category_id.name'/></i></p> 
+                              <p class="o_default_snippet_text"><t t-esc='line.measuring_indicator'/></p>                  
+                            <p class="o_default_snippet_text" style='text-color:#666666;'>Period: <t t-esc='line.date_from.strftime("%d-%b-%Y")'/> to <t t-esc='line.date_to.strftime("%d-%b-%Y")'/></p>
+                              <div>                                  
+                                 <div data-snippet="s_share"  data-name="Share">
+                                     <i class="badge badge-pill badge-success pull-left" ><t t-esc='line.weightage'/> %</i>           
+                                     
+                                  <t t-if='appraisal.state!="confirm"'>
+                                     <t t-if='appraisal.state=="draft"'>
+                                     <t t-if="appraisal.employee_id.user_id.id==uid">  
+                                     <a t-attf-href="/delete/objective/line/#{line.id}?" class="fa fa-trash pull-right" style="font-size:20px;color:red"></a>                    
+                                     <a t-attf-href="/edit/objective/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                         </t>
+                                      </t>
+                                     <t t-if='appraisal.state=="waiting"'>
+                                     <t t-if="appraisal.employee_id.parent_id.user_id.id==uid">  
+                                     <a t-attf-href="/delete/objective/line/#{line.id}?" class="fa fa-trash pull-right" style="font-size:20px;color:red"></a>                    
+                                     <a t-attf-href="/edit/objective/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                         </t>
+                                      </t>
+                                  </t>    
+                                </div>
+                                </div>      
+                        </div>
+                      </div>
+                    </div>
+                  </section> 
+                 </t>     
+                </div>
+                 <br/>
+                
+                <form id="objectiveextraForm"  action="/appraisal/extra/objective/save"  method="post"  enctype="multipart/form-data">
+
+                <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Training Need</span>
+                            </label>
+                        <div class="col-sm">
+                          <t t-if='appraisal.state!="confirm"'>
+                            <input id='traing_need' type="text" class="form-control s_website_form_input" name="traing_need"    t-att-value="appraisal.traing_need"/>
+                           </t> 
+                            <t t-if='appraisal.state=="confirm"'>
+                            <t t-esc="appraisal.traing_need" />
+                           </t> 
+                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                      
+                  </div>
+                </div>
+               </div>
+                
+                <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Description</span>
+                            </label>
+                        <div class="col-sm">
+                          <t t-if='appraisal.state!="confirm"'>
+                            <input id='description' type="text" class="form-control s_website_form_input" name="traing_need"    t-att-value="appraisal.description"/>
+                           </t> 
+                            <t t-if='appraisal.state=="confirm"'>
+                            <t t-esc="appraisal.description" />
+                           </t> 
+                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                      
+                  </div>
+                </div>
+               </div>
+                    <br/>
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+
+                        <input id='recordsid' type="hidden" class="form-control s_website_form_input" name="records_id"   t-att-value="appraisal.id"/>
+
+                <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                        <div style="width: 200px;" class="s_website_form_label"></div>
+                        
+                     <t t-if='appraisal.state!="confirm"'>
+                         <button id='objectiveextrasubmit' type="submit" class="btn btn-primary pull-left">Save</button>
+                     </t>                    
+                </div> 
+                    <br/>
+                    <br/>
+            </form>   
+            <div class="mt32">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="appraisal"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+            </div>
+                </div>    
+        </t>    
+    </template>    
+    
+    
+    <!--  Edit Objective Line  -->   
+    
+        <template id="edit_object_appraisal_objective" name="edit objective line Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">                                         
+                    <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Objective</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <form id="saleForm"  action="/add/obj/line/save"  method="post"  enctype="multipart/form-data">                            
+                                <div class="container mt-4 mb-5">
+                                 <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                    </div>  
+                                    </div>  
+                                 </div>  
+                                        
+                        <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        </section>
+                                
+                        <div class="container">
+                        </div>
+                               <script>
+                                  function validateForm() {
+                                      let x = document.getElementById("weightage").value;
+                                      if (isNaN(x)) {
+                                        alert("Please Enter Numeric Value Only Without Special Charater like(%) etc.");
+                                      }
+                                    }
+                               </script>     
+                            
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                            <span class="s_website_form_label_content">Category</span>
+                                            <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                               <select  id="categ" class="form-control  s_website_form_input" name="category_id" required='1'> 
+                                                   <option  value="blank">
+                                                        
+                                                    </option>   
+                                                 <t t-foreach="categories" t-as="categ">
+                                                 
+                                                    <option  t-att-value="categ.id">
+                                                        <t t-esc="categ.name"/>
+                                                    </option>                                                    
+                                                  </t> 
+                                               </select> 
+                                            <i class="badge badge-pill badge-info" ><t t-esc='exist_line_obj.category_id.name'/></i>   
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_code">
+                                                <span class="s_website_form_label_content">Date From</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='datefrom' type="date" class="form-control s_website_form_input" name="date_from"  required='1' t-att-value="exist_line_obj.date_from"/>
+                                              
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                 
+                                </div>
+                                <br/>  
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_type">
+                                               <span class="s_website_form_label_content">Date To</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='dateto' type="date" class="form-control s_website_form_input" name="date_to"   required='1' t-att-value="exist_line_obj.date_to"/>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <br/>
+                                     <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="weightage">
+                                               <span class="s_website_form_label_content">Weightage(%)</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='weightage' type="float" class="form-control s_website_form_input" name="weightage"   required='1' t-att-value="exist_line_obj.weightage"  onchange="return validateForm()"/>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="status">
+                                               <span class="s_website_form_label_content">Status</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                               <select  id="status" class="form-control  s_website_form_input" name="status_id" > 
+                                                   <option value="blank">
+                                                        
+                                                    </option> 
+                                                   <t t-foreach="status" t-as="stat">
+                                                 
+                                                    <option t-att-value="stat.id">
+                                                        <t t-esc="stat.name"/>
+                                                    </option>                                                    
+                                                  </t> 
+                                               </select> 
+                                             <i class="badge badge-pill badge-info" ><t t-esc='exist_line_obj.status_id.name'/></i>   
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <br/>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Priority</span>
+                                            </label>
+                                            <div class="col-sm">
+                                            <select  id="priorityline" class="form-control  s_website_form_input" name="priority" t-att-value="exist_line_obj.priority">
+                                                <option value="blank"> </option>
+                                                <option value="low">Low</option>
+                                                <option value="medium">Medium</option>
+                                                <option value="high">High</option>
+                                                <option value="very_high">Very High</option>
+                                            </select>
+                                             <i class="badge badge-pill badge-info" ><t t-esc='exist_line_obj.priority'/></i>   
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>
+                              
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="objective">
+                                               <span class="s_website_form_label_content">Objective</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='objective' type="text" class="form-control s_website_form_input" name="objective"   required='1'  t-att-value="exist_line_obj.objective"/>
+                                               
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="measuring_indicator">
+                                               <span class="s_website_form_label_content">Measuring Indicators </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='measuring_indicator' type="text" class="form-control s_website_form_input" name="measuring_indicator"     t-att-value="exist_line_obj.measuring_indicator"/>                                           
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>                              
+                                <br/>
+                                <input id='id' type="hidden" class="form-control s_website_form_input" name="line_id"  t-att-value="exist_line_obj.id"/>
+                                                                                                 
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+                                    
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='objectivesubmit' type="submit" class="btn btn-primary pull-left">Update</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                    <br/>            
+                                </form>                                                            
+                           </div>    
+                   </t>
+    </template>
+      
+    
+        <!--  Add New Objective Below-->
+    
+        <template id="add_object_appraisal_objective" name="objective line Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+                                         
+                        <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Objective</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <form id="newaddlineForm"  action="/add/objective/line/save"  method="post"  enctype="multipart/form-data">
+                                  
+                            <div class="container mt-4 mb-5">
+                                <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                    </div>  
+                                     </div>  
+                                 </div>  
+                                        
+                    <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        </section>
+                                
+                        <div class="container">
+                        </div>   
+                             <script>
+                                  function validatecForm() {
+                                      let x = document.getElementById("weightage").value;
+                                      if (isNaN(x)) {
+                                        alert("Please Enter Numeric Value Only Without Sepcial Charater like(%) etc.");
+                                      }
+                                    }
+                              </script>  
+                            
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                            <span class="s_website_form_label_content">Category</span>
+                                            <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                               <select  id="categ" class="form-control  s_website_form_input" name="category_id" required='1'> 
+                                                 <t t-foreach="categories" t-as="categ">
+                                                 
+                                                    <option t-att-value="categ.id">
+                                                        <t t-esc="categ.name"/>
+                                                    </option>                                                    
+                                                  </t> 
+                                               </select>      
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_code">
+                                                <span class="s_website_form_label_content">Date From</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='datefrom' type="date" class="form-control s_website_form_input" name="date_from"  required='1'/>
+                                              
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                 
+                                </div>
+                                <br/>  
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_type">
+                                               <span class="s_website_form_label_content">Date To</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='dateto' type="date" class="form-control s_website_form_input" name="date_to"   required='1'/>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <br/>
+                                     <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="weightage">
+                                               <span class="s_website_form_label_content">Weightage(%)</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='weightage' type="float" class="form-control s_website_form_input" name="weightage"   required='1'  onchange="return validatecForm()" />
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                  <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="status">
+                                               <span class="s_website_form_label_content">Status</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                               <select  id="status" class="form-control  s_website_form_input" name="status_id" > 
+                                                 <t t-foreach="status" t-as="stat">
+                                                 
+                                                    <option t-att-value="stat.id">
+                                                        <t t-esc="stat.name"/>
+                                                    </option>                                                    
+                                                  </t> 
+                                               </select> 
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <br/>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Priority</span>
+                                            </label>
+                                            <div class="col-sm">
+                                            <select  id="priorityline" class="form-control  s_website_form_input" name="priority" >
+                                                <option value="blank"> </option>
+                                                <option value="low">Low</option>
+                                                <option value="medium">Medium</option>
+                                                <option value="high">High</option>
+                                                <option value="very_high">Very High</option>
+                                            </select> 
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_type">
+                                               <span class="s_website_form_label_content">Objective</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <textarea  class="form-control s_website_form_input" name="objective"  required='1' ></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="measuring_indicator">
+                                               <span class="s_website_form_label_content">Measuring Indicators </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <textarea  class="form-control s_website_form_input" name="measuring_indicator"   ></textarea>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+
+                                <input id='id' type="hidden" class="form-control s_website_form_input" name="rec_id"  t-att-value="appraisal.id"/>                                                                                                
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+                                    
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='objectivesubmit' type="submit" class="btn btn-primary pull-left">Add</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                <br/>                                                            
+                                </form>                                                            
+                            </div>
+         
+        </t>
+    </template>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      <template id="submit_appraisal_objective" name="objective Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+                                         
+                        <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Objective Setting</h1>
+                                    </div>
+                                </section>
+                            </div>
+                             <div>
+
+                     </div> 
+                             
+                            <form id="saleForm"  action="/new/objective/save"  method="post"  enctype="multipart/form-data">
+                                 
+                                <br/>
+                            <div class="container mt-4 mb-5">
+                                <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                    </div>  
+                                     </div>  
+                                 </div>  
+                                        
+                    <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        </section>
+                                
+                        <div class="container">
+                        </div>    
+                            
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                                <span class="s_website_form_label_content">Employee</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <t t-esc="employee_name.name"    />
+                                               <input type="hidden" class="form-control s_website_form_input" name="employee_id"   t-att-value='employee_name.id' />   
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                                <span class="s_website_form_label_content">Manager</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <t t-esc="managers"    />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_code">
+                                                <span class="s_website_form_label_content">Employee Code</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <t t-esc="employee_name.emp_number"    />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_grade">
+                                                <span class="s_website_form_label_content">Grade</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <t t-esc="employee_name.grade_type.name"    />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_type">
+                                               <span class="s_website_form_label_content">Employee Type</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                 <t t-if="employee_name.emp_type == 'permanent'">
+                                                   <i class="badge badge-pill badge-info" >Permanent</i>
+                                                 </t>
+                                                <t t-if="employee_name.emp_type == 'contractor'">
+                                                   <i class="badge badge-pill badge-info" >Contractor</i>
+                                                 </t>
+                                                <t t-if="employee_name.emp_type == 'freelancer'">
+                                                   <i class="badge badge-pill badge-info" >Freelancer</i>
+                                                 </t>
+                                                <t t-if="employee_name.emp_type == 'inter'">
+                                                   <i class="badge badge-pill badge-info" >Intern</i>
+                                                 </t>
+                                                <t t-if="employee_name.emp_type == 'part_time'">
+                                                   <i class="badge badge-pill badge-info" >Part Time</i>
+                                                 </t>
+                                                <t t-if="employee_name.emp_type == 'project_based'">
+                                                   <i class="badge badge-pill badge-info" >Project Based Hiring</i>
+                                                 </t>
+                                                <t t-if="employee_name.emp_type == 'outsource'">
+                                                   <i class="badge badge-pill badge-info" >OutSource</i>
+                                                 </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_position">
+                                                <span class="s_website_form_label_content">Job Position</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <t t-esc="employee_name.job_id.name" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Date Of Joining</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                  <t t-esc="employee_name.date"    t-options='{"widget": "date"}'/>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                    
+                                    
+                                     
+                                    <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="department">
+                                                <span class="s_website_form_label_content">Department</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                  <t t-esc="employee_name.department_id.name"    />
+                                                
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="objective_year">
+                                                <span class="s_website_form_label_content">Objective Year</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <select  id="objective_year" class="form-control  s_website_form_input" name="objective_year" >
+                                                <option value="2020">FY 2020-21</option>
+                                                <option value="2021">FY 2021-22</option>
+                                                <option value="2022">FY 2022-23</option>
+                                                <option value="2023">FY 2023-24</option>
+                                                <option value="2024">FY 2024-25</option>
+                                                <option value="2025">FY 2025-26</option>
+                                                <option value="2026">FY 2026-27</option>
+                                                <option value="2027">FY 2027-28</option>
+                                                <option value="2028">FY 2028-29</option>
+                                                <option value="2029">FY 2029-30</option>
+                                                <option value="2030">FY 2030-31</option>
+                                                <option value="2031">FY 2031-32</option>
+                                                <option value="2032">FY 2032-33</option>
+                                                <option value="2033">FY 2033-34</option>
+                                                <option value="2034">FY 2034-35</option>
+                                                <option value="2035">FY 2035-36</option> 
+                                                <option value="2036">FY 2036-37</option>
+                                                <option value="2037">FY 2037-38</option>
+                                                <option value="2038">FY 2038-39</option>
+                                                <option value="2039">FY 2039-40</option>
+                                                <option value="2040">FY 2040-41</option>     
+                                         </select>
+                                            </div>
+                                        </div>
+                                    </div>                                                                          
+                                </div>
+                                <br/>
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                    
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="training_need">
+                                                <span class="s_website_form_label_content">Training Need</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                  <textarea  class="form-control s_website_form_input" name="training_need"  ></textarea>
+                                                
+                                            </div>
+                                        </div>
+                                    </div> 
+                                                                                                         
+                                </div>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                    
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="description">
+                                                <span class="s_website_form_label_content">Description</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <textarea  class="form-control s_website_form_input" name="description"  ></textarea>
+                                                
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                                <br/>
+                                                                                                  
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+                                    
+                                  <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='objectivesubmit' type="submit" class="btn btn-primary pull-left">Add Objective</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>  
+                                  
+                                </form> 
+                                   
+                                                             
+                                   </div>
+         
+        </t>
+    </template>
+    
+    
+    
+    
+    
+      <template id="de_portal_appraisal.appraisal_updated" name="Appraisal  update">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container">
+                    <div class="row">
+                        <t t-if="request.session.get('form_builder_model_model', '') == 'hr.appraisal.objective'">
+                            <t t-set="appraisal" t-value="request.portal._website_form_last_record().sudo()"/>
+                        </t>
+                        <h1 class="text-center"><i class="fa fa-check-circle fa-2x text-success" role="img" aria-label="Success" title="Success"/></h1>
+                        <t t-if="appraisal">
+                            <h1 class="text-center">Your appraisal Request Number is <a t-if="request.session.uid" t-attf-href="/my/timeoff/page/#{leave.id}">#<span t-field="appraisal.id"/></a><t t-if="not request.session.get('uid')">#<span t-field="appraisal.id"/></t>.</h1>
+                        </t>
+                        <h1 class="text-center">Thank you for Updating  Appraisal request!</h1>
+                    </div>
+                </div>
+            </div>
+         </t>
+    </template>
+    
+    
+    
+      <template id="de_portal_appraisal.appraisal_submited" name="Appraisal  Received">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container">
+                    <div class="row">
+                        <t t-if="request.session.get('form_builder_model_model', '') == 'hr.appraisal.objective'">
+                            <t t-set="appraisal" t-value="request.portal._website_form_last_record().sudo()"/>
+                        </t>
+                        <h1 class="text-center"><i class="fa fa-check-circle fa-2x text-success" role="img" aria-label="Success" title="Success"/></h1>
+                        <t t-if="appraisal">
+                            <h1 class="text-center">Your appraisal Request Number is <a t-if="request.session.uid" t-attf-href="/my/timeoff/page/#{leave.id}">#<span t-field="appraisal.id"/></a><t t-if="not request.session.get('uid')">#<span t-field="appraisal.id"/></t>.</h1>
+                        </t>
+                        <h1 class="text-center">Thank you for submitting your Appraisal request!</h1>
+                    </div>
+                </div>
+            </div>
+         </t>
+    </template>
+    
+      <template id="de_portal_appraisal.re_appraisal_submited" name="Expense Received">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container">
+                    <div class="row">
+                       
+                        <h1 class="text-center"><i class="fa fa-check-circle fa-2x text-success" role="img" aria-label="Success" title="Success"/></h1>
+                       
+                        <h1 class="text-center">Thank you for Re-Submitting your Appraisal Objective request!</h1>
+                    </div>
+                </div>
+            </div>
+         </t>
+    </template>
+
+    
+     <template id="de_portal_appraisal.re_appraisal_submited_expire" name="Received Objective Expire">
+        <t t-call="portal.portal_layout">
+            
+                  <div id="wrap">
+                    <div class="oe_structure" id="oe_structure_website_form_contact_us_thanks_1"/>
+                    <div class="container mt-4">
+                        <div class="row">
+                            <div class="col-lg-7 col-xl-6 mr-lg-auto oe_structure">
+                                <section class="pt40 s_text_block pb40 o_colored_level o_cc o_cc1" data-snippet="s_text_block" data-name="Text">
+                                    <div class="container">
+                                        <span class="d-block fa fa-4x fa-thumbs-up mx-auto rounded-circle bg-primary"/><br/>
+                                        <h1 class="text-center">Deadline Expired!</h1>
+                                        <div class="pb16 pt16 s_hr" data-snippet="s_hr" data-name="Separator">
+                                            <hr class="mx-auto border-top w-50 border-dark text-center"/>
+                                        </div>
+                                        <h5 class="text-center">
+                                            <span class="fa fa-check-circle"/>
+                                            <span>Your Objective Setting Entry Deadline Expired! You are not allow to enter Objective.For more Information consult with your concern <b>HR Deparment</b></span>
+                                        </h5>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="col-lg-4">
+                                <t t-call="website.company_description"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="oe_structure" id="oe_structure_website_form_contact_us_thanks_2"/>
+                  </div>
+           
+         </t>
+    </template>
+    
+    
+
+</odoo>
+
+

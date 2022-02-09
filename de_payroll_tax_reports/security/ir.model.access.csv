@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tax_computation_wizard,access.tax.computation.wizard,model_tax_computation_wizard,,1,1,1,1
+access_tax_certificate_wizard,access.tax.certificate.wizard,model_tax_certificate_wizard,,1,1,1,1
+access_tax_certificate_wizard_line,access.tax.certificate.wizard.line,model_tax_certificate_wizard_line,,1,1,1,1

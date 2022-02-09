@@ -1,0 +1,74 @@
+<odoo>
+  <data>
+      
+      <record id="hr_expense_sheet_form_view_ora_category" model="ir.ui.view">
+        <field name="name">hr.expense.sheet.form.view.ora.category</field>
+        <field name="model">hr.expense.sheet</field>
+        <field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_form"/>
+        <field name="arch" type="xml">
+            
+            <xpath expr="//header" position="inside">
+                <button name="action_document_verify"  string="Document Received" type="object" class="oe_highlight" attrs="{'invisible': ['|',('state', 'not in', ['submit', 'approve']),('document_received', '=',True)]}"/>
+                <button name="action_deposit"  string="Deposit" type="object" class="oe_highlight" attrs="{'invisible': ['|','|', ('state', '!=', 'done'),('is_deposit', '=',True),('is_deposit_adjusted', '=',True)]}"/>
+
+            </xpath>    
+            <xpath expr="//group[@name='employee_details']" position="after">
+                <group name='extra_details'>
+                   <field name="ora_category_id" />
+                   <field name="document_received" invisible='1'/>
+                   <field name="is_deposit" invisible='1'/>
+                   <field name="is_deposit_adjusted" invisible='1'/> 
+                   <field name="exception"/>
+                   <field name="employee_number"/> 
+                   <field name="department_id"/> 
+                </group>    
+            </xpath>
+            <xpath expr="//notebook//page[@name='expenses']" position="before">
+                <page string='Expense Lines'>
+                <field name="expense_sheet_line_ids" nolabel="1" widget="many2many" >
+                            <tree decoration-danger="is_refused" editable="bottom">
+                                <field name="date" optional="show"/>
+                                <field name="name"/>
+                                <field name="state" invisible="1"/>
+                                <field name="medical_paid" invisible="1"/>
+                                <field name="previous_reading" invisible="1"/>
+                                <field name="reference" optional="hide"/>
+                                <field name="analytic_account_id" optional="show" domain="['|', ('company_id', '=', parent.company_id), ('company_id', '=', False)]" groups="analytic.group_analytic_accounting"/>
+                                <field name="analytic_tag_ids" optional="hide" widget="many2many_tags" groups="analytic.group_analytic_tags"/>
+                                <field name="account_id" optional="hide"/>
+                                <field name="attachment_number" string=" "/>
+                                <button name="action_get_attachment_view" string="View Attachments" type="object" icon="fa-paperclip"/>
+                                <field name="unit_amount" optional="hide" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                <field name="currency_id" optional="hide"/>
+                                <field name="quantity" optional="hide"/>
+                                <field name="sub_category_id" optional="hide"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="total_amount" optional="show"/>
+                                <field name='meter_reading'   optional='hide'/>
+                                <field name='fleet_id'    optional='hide'/>
+                                <field name="company_currency_id" invisible="1"/>
+                                <field name="total_amount_company" optional="show" groups="base.group_multi_currency"/>
+                                <field name="is_refused" invisible="True"/>
+                           </tree>
+                        </field>
+                        <group class="oe_subtotal_footer oe_right" colspan="2" name="expense_total">
+                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                    <label for="total_amount"/>
+                                </div>
+                                <field name="total_amount" nolabel="1" class="oe_subtotal_footer_separator"/>
+                                <field name="amount_residual" class="oe_subtotal_footer_separator" attrs="{'invisible': [('state', 'not in', ('post', 'done'))]}"/>
+                            </group>
+                 </page>
+            </xpath>    
+            <xpath expr="//field[@name='company_id']" position="after">
+                   <field name="grade"/>
+            </xpath>
+            <xpath expr="//field[@name='payment_mode']" position="attributes">
+                <attribute name='invisible'>1</attribute>
+            </xpath>
+
+        </field>
+    </record>
+   
+  </data>
+</odoo>

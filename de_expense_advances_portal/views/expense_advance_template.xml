@@ -1,0 +1,489 @@
+<!--  <?xml version="1.0" encoding="utf-8"?>
+ -->
+<odoo>  
+	<!-- show path/name -->    
+    <template id="portal_layout_expense_advances" name="Portal layout: expense adv menu entry" inherit_id="portal.portal_breadcrumbs" priority="21">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'Expense Advances' or ExpenseAdvance" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not expense_adv else ''}">
+                <a t-if="expense_adv" t-attf-href="/my/expense/advances?{{ keep_query() }}">Expense Advances</a>
+                <t t-else="">Expense Advances</t>
+            </li>
+            <li t-if="expense_adv" class="breadcrumb-item active text-truncate col-8 col-lg-10">
+                <t t-esc="expense_adv.name"/>
+            </li>
+        </xpath>
+    </template> 
+
+
+    
+    <template id="portal_my_home_expense_advs" name="Show Expense Advances" customize_show="True" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry"  groups="de_expense_advances_portal.group_expense_advances_portal">
+                <t t-set="title">Advance Against Expense</t>
+                <t t-set="url" t-value="'/my/expense/advances'"/>
+                <t t-set="placeholder_count" t-value="'expense_adv_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    
+    
+    
+    
+    <template id="portal_my_expense_advs" name="My Expense Advances">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Advance Expense</t>
+            </t>
+             <div>
+                <t class="col-lg-7 col-md-8" >
+                    <a href="/expense/advance/create/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a> 
+                </t>
+            </div>
+            <t t-if="not grouped_expense_adv">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no advances against expense.
+                </div>
+            </t>
+            
+            
+                <t t-call="portal.portal_table">
+                    <t t-if="grouped_expense_adv">
+                           
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left">Ref#</th>
+                                <th class="text-left">Vendor</th>
+                                <th class="text-left">Amount</th>
+                                <th class="text-left">Date</th>
+                                <th class="text-left">Description</th>
+                               	<th class="text-left">Status</th>
+                            </tr>
+                        </thead>
+                         
+                            <t t-foreach="grouped_expense_adv" t-as="_exp_adv_">
+                             
+                               <!--<t t-if="_exp_adv_.create_uid.id == uid">-->  
+                                <tr>
+
+                                    <td class="text-left">
+                                        <span t-esc="_exp_adv_.name" />
+                                    </td>
+                                    
+                                    <td class="text-left">
+                                        <a t-attf-href="/my/expense/advance/#{_exp_adv_.id}?{{ keep_query() }}"><span t-field="_exp_adv_.partner_id.name"/></a>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_exp_adv_.amount" />
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_exp_adv_.date"  t-options='{"widget": "date"}'/>
+                                    </td>
+                                    <td class="text-left">
+                                        <span t-esc="_exp_adv_.description" />
+                                    </td>
+                                    
+                                    <td class="text-left">
+                                        <t t-if="_exp_adv_.state == 'draft'">
+                                            <i class="badge badge-pill badge-info" >Draft</i>
+                                        </t>
+                                        <t t-if="_exp_adv_.state == 'waiting'">
+                                            <i class="badge badge-pill badge-warning" >To Approve</i>
+                                        </t>
+                                        <t t-if="_exp_adv_.state == 'approved'">
+                                            <t t-if="_exp_adv_.payment_entry_ref.is_deposited==True">
+                                             <i class="badge badge-pill badge-success" >Paid</i>
+                                            </t>
+                                            <t t-if="_exp_adv_.payment_entry_ref.is_deposited!=True">
+                                             <i class="badge badge-pill badge-success" >Approved</i>
+                                            </t>
+                                        </t>
+                                        <t t-if="_exp_adv_.state == 'reject'">
+                                            <i class="badge badge-pill badge-danger" >Rejected</i>
+                                        </t>
+                                        
+                                    </td>
+                                    
+                                </tr>
+                               </t>  
+                              </t>
+                           <!-- </t>-->
+                            
+                        
+                    </t>
+                
+            
+        </t>
+    </template>
+
+    <template id="portal_my_expense_adv" name="My Advance Req">
+        <t t-call="portal.portal_layout">
+             <t t-set="o_portal_fullwidth_alert"  >
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#model=account.payment&amp;id=%s&amp;view_type=form' % (expense_adv.id)"/>
+                </t> 
+            </t>
+            <div id="optional_placeholder"></div>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                  <div id="optional_placeholder"></div>
+                    <div class="container">
+                      <div class="card">
+                        <div class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-12">
+                            <h5 class="d-flex mb-1 mb-md-0 row">
+                                <span t-field="expense_adv.name" class="col-7 text-truncate"/>
+                                <small class="text-muted d-none d-md-inline"> (#<span t-field="expense_adv.id"/>)</small>
+                                
+                                <div class="col-md-3  text-right">
+                                    <small class="text-right">Stage:</small>
+                                    <span t-field="expense_adv.state" class=" badge badge-pill badge-info" title="Current stage of this Resignation"/>
+                                </div>
+                                
+                                 <div class="col-md-1  text-right">
+                                        <t t-if="pre_id">
+                                            <a role="button"  t-attf-href="/expense/advance/pre/#{expense_adv.id}?" ><i style="margin-right:10px; align:right" class="fa fa-chevron-left" role="img" aria-label="Previous" title="Previous"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="margin-right:10px; align:right; color:#B8B7B0" class="fa fa-chevron-left" aria-label="Previous" title="Previous"></i></a>
+
+                                        </t>
+                                        <t t-if="next_id">
+                                            <a role="button" t-attf-href="/expense/advance/next/#{expense_adv.id}?" ><i class="fa fa-chevron-right" role="img" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                        <t t-else="">
+                                            <a role="button"  t-att-class="disabled"  ><i style="color:#B8B7B0" class="fa fa-chevron-right" aria-label="Next" title="Next"></i></a>
+                                        </t>
+                                </div>
+                                    </h5>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </t>
+                
+               <t t-set="card_body">          
+                     
+                   	<div class="row">
+                    	<div class="col-md-6"> <strong>Partner : </strong>
+                        	<t t-if="expense_adv.partner_id">
+                            	<span t-esc="expense_adv.partner_id.name"/>
+                          	</t>
+                      	</div>
+                  
+                       	<div class="col-md-6"> <strong>Date : </strong>
+                           <t t-if="expense_adv.date">
+                                <span t-esc="expense_adv.date" t-options='{"widget": "date"}'/>
+                            </t>
+                        </div>  
+                   </div>       
+                    
+                        <br/><br/>
+                   <div class="row"> 
+                   		<div class="col-md-6"> 
+                          	<strong>Amount : </strong>
+                          	<t t-if="expense_adv.amount">
+                              	<span t-esc="expense_adv.amount"/>
+                          	</t>
+                      	</div> 
+                      	
+                      	<div class="col-md-6"> 
+                          	<strong>Description : </strong>
+                          	<t t-if="expense_adv.description">
+                              	<span t-esc="expense_adv.description"/>
+                          	</t>
+                      	</div> 
+                 	</div>
+                   <br/><br/>
+                   <div class="row">
+                        <table id="expenseapporoverTable" class='table tabel-responsive'>
+                         <thead> 
+                            <tr style='background-color:#875A7B; color:white;'>
+                              <th>Approver</th>  
+                              <th>Employee Number</th>
+                              <th>Job Position</th>  
+                              <th>Department</th>  
+                              <th>Status</th>
+                            </tr>
+                         </thead>    
+                        <tbody> 
+                             <t t-foreach="expense_adv.approval_request_id.approver_ids" t-as="approve_line"> 
+                               <tr>    
+                                  <td><t t-esc='approve_line.user_id.name' /></td>
+                                  <td><t t-esc='approve_line.employee_number'/></td>
+                                  <td><t t-esc='approve_line.job_title'/></td>
+                                  <td><t t-esc='approve_line.department_id.name'/></td> 
+                                  <td>
+                                      <t t-if="approve_line.status=='new'"> 
+                                        <i class="badge badge-pill badge-info" >Next</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='pending'"> 
+                                        <i class="badge badge-pill badge-warning" >Pending</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='approved'"> 
+                                        <i class="badge badge-pill badge-success" >Approved</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='refused'"> 
+                                        <i class="badge badge-pill badge-danger" >Refused</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='cancel'"> 
+                                        <i class="badge badge-pill badge-danger" >Cancel</i>  
+                                      </t>
+                                   
+                                   </td>
+                               </tr>    
+                             </t>    
+                        </tbody>
+                      </table>
+                   </div>  
+                </t> 
+            </t>
+
+            <div class="mt32">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="expense_adv"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    
+    
+     <template id="expense_adv_template" name="Advance Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+                         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+                         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                   
+                            <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/de_expense_advances_portal/static/description/tb1.jpg'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Advance Against Expense</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="container mt-4 mb-5">
+                                <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                        <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[2]/div[1]/div[1]/div[1]">
+                                            <section class="s_text_block" data-snippet="s_text_block">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                             
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                        <span class="hidden" data-for="contactus_form" data-oe-id="2822" data-oe-xpath="/data/xpath/span" data-oe-model="ir.ui.view" data-oe-field="arch" data-values="{'leave_type_id': '', 'employee_id': '', 'date_start': '', 'date_end': '', 'description': ''}"></span>
+            <div id="adv_expense_section" data-oe-id="3374" data-oe-xpath="/data/xpath[2]/div" data-oe-model="ir.ui.view" data-oe-field="arch">
+                    <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        <div class="container">
+                            <form id="AdvanceExpenseForm" data-toggle="validator" action="/my/expense/advance/save">
+                                <input id='exceeding_limit' type="hidden" class="form-control s_website_form_input" name="exceeding_limit"  t-att-value='round(exceeding_limit)' />
+                                <script>
+                                function validateadvanceForm() {
+                                    enter_amount=document.getElementById("enter_amount").value;
+                                    exceeding_amount=document.getElementById("exceeding_limit").value;
+                                    if (enter_amount>exceeding_amount) {
+                                    alert('You Are not allow to Enter Amount Greater than '+exceeding_amount)
+                                    }
+                               }
+                             
+                                </script>    
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+	                                <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+	                                       <div class="row s_col_no_resize s_col_no_bgcolor">
+	                                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity2">
+	                                               <span class="s_website_form_label_content">Employee</span>
+	                                           </label>
+	                                           <div class="col-sm">
+	                                               <select class="form-control  o_website_form_input" name="employee_id" readonly="1">
+	                                                   <t t-foreach="employees" t-as="emp">
+	                                                       <option t-att-value="emp.id">
+	                                                           <t t-esc="emp.name"    />
+	                                                       </option>
+	                                                   </t>
+	                                               </select>
+	                                           </div>
+	                                       </div>
+	                                   </div>
+	                               </div>
+                                
+                               
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                    
+                                    <div id="date" class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="pymentdate">
+                                                <span class="s_website_form_label_content">Date</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                              <span t-esc='date'/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    <div id="pymentamt" class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="pymentamt">
+                                                <span class="s_website_form_label_content">Amount</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                              <input id='enter_amount' type="number" class="form-control s_website_form_input" name="amount" required="Please Enter Amount"  onchange="validateadvanceForm()" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                        
+              
+                                    <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="text" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="pymentdesc">
+                                                <span class="s_website_form_label_content">Description</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <textarea id="description" class="form-control s_website_form_input" name="description" required=""></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    
+                                    <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button type="submit" class="btn btn-primary pull-left">Submit</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+			</div>
+                                    <div class="col-lg-4 mt-4 mt-lg-0">
+                                   <div class='section-custom col-md-12'>
+                                      <a class="mb-5" id="submit-resignation" t-attf-href="/my/expense/advances">
+                                           <button t-attf-class="btn btn-primary #{'col-md-10' if multi_type else 'col-md-12'} mb-2">View My Advance Requests</button>
+                                       </a>
+                                   </div>       
+                                        
+                                        
+                                        
+    <address itemscope="itemscope" itemtype="http://schema.org/Organization">
+        <div data-oe-model="res.company" data-oe-id="1" data-oe-field="partner_id" data-oe-type="contact" data-oe-expression="res_company.partner_id" data-oe-many2one-id="1" data-oe-many2one-model="res.partner" data-oe-contact-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;name&quot;, &quot;address&quot;, &quot;phone&quot;, &quot;mobile&quot;, &quot;email&quot;], &quot;tagName&quot;: &quot;div&quot;, &quot;expression&quot;: &quot;res_company.partner_id&quot;, &quot;type&quot;: &quot;contact&quot;, &quot;inherit_branding&quot;: true, &quot;translate&quot;: false}" data-oe-field-xpath="/t[1]/address[1]/div[1]">
+    <address class="mb-0" itemscope="itemscope" itemtype="http://schema.org/Organization">
+        
+        
+            
+    <div>
+        
+    </div>
+
+        
+        <div itemprop="address" itemscope="itemscope" itemtype="http://schema.org/PostalAddress">
+        </div>
+    
+        
+        
+    </address>
+</div>
+        
+           
+    </address>
+        
+    
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="oe_structure mt-2" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[3]"></div>
+                        </div>
+            
+         
+        </t>
+    </template>
+    
+    
+    
+    
+    
+    
+      <template id="de_expense_advances_portal.request_submitted" name="Request Received">
+	        <t t-call="portal.portal_layout">
+	            <div id="wrap" class="oe_structure oe_empty">
+	                <div class="container">
+	                    <div class="row">
+	                        <t t-if="request.session.get('form_builder_model_model', '') == 'account.payment'">
+	                            <t t-set="expense_adv" t-value="request.portal._website_form_last_record().sudo()"/>
+	                        </t>
+	                        <h1 class="text-center"><i class="fa fa-check-circle fa-2x text-success" role="img" aria-label="Success" title="Success"/></h1>
+	                        <t t-if="expense_adv">
+	                            <h1 class="text-center">Your Advance Against Expense Request Number is <a t-if="request.session.uid" t-attf-href="/my/timeoff/page/#{expense_adv.id}">#<span t-field="expense_adv.id"/></a><t t-if="not request.session.get('uid')">#<span t-field="expense_adv.id"/></t>.</h1>
+	                        </t>
+	                        <h1 class="text-center">Thank you for submitting your Advance Against Expense request!</h1>
+	                    </div>
+	                </div>
+	            </div>
+	         </t>
+	    </template>
+    
+    
+    
+       <template id="de_expense_advances_portal.expense_advance_submited_validation" name="Expense Document Validation">
+        <t t-call="portal.portal_layout">
+            
+                  <div id="wrap">
+                    <div class="oe_structure" id="oe_structure_website_form_contact_us_thanks_1"/>
+                    <div class="container mt-4">
+                        <div class="row">
+                            <div class="col-lg-7 col-xl-6 mr-lg-auto oe_structure">
+                                <section class="pt40 s_text_block pb40 o_colored_level o_cc o_cc1" data-snippet="s_text_block" data-name="Text">
+                                    <div class="container">
+                                        <span class="d-block fa fa-4x fa-thumbs-down mx-auto rounded-circle bg-primary"/><br/>
+                                        <h1 class="text-center;"><p style='color:red;margin-left:200px'>Warning!</p></h1>
+                                        <div class="pb16 pt16 s_hr" data-snippet="s_hr" data-name="Separator">
+                                            <hr class="mx-auto border-top w-50 border-dark text-center"/>
+                                        </div>
+                                        <h5 class="text-center">
+                                            <span class="fa fa-check-circle"/>
+                                            <span t-esc='warning_message'></span>
+                                        </h5>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="col-lg-4">
+                                <t t-call="website.company_description"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="oe_structure" id="oe_structure_website_form_contact_us_thanks_2"/>
+                  </div>
+           
+         </t>
+    </template>
+    
+    
+    
+    
+    
+    
+
+    
+
+</odoo>
+
+

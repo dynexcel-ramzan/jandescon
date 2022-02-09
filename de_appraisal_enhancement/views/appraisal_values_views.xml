@@ -1,0 +1,68 @@
+<odoo> 
+    
+    <record id="view_hr_appraisal_values_form" model="ir.ui.view">
+		<field name="name">hr.appraisal.values.form</field>
+		<field name="model">hr.appraisal.values</field>
+		<field name="arch" type="xml">
+			<form>
+                <header>
+                    <button name='action_submit' string="Submit" type="object" states='draft'
+						class='oe_highlight'/>
+                    <field name="state" widget="statusbar"/>
+                  </header>
+				<sheet>
+					<group col="4">
+
+						<field name="description" required = "True" attrs="{'readonly': [('readonly_status','=','make_readonly') ]}"/>
+                        <field name="company_id" readonly="1" required = "True" attrs="{'readonly': [('readonly_status','=','make_readonly') ]}"/>
+                         <field name= "readonly_status" invisible = "1"/>
+					</group>
+                    <field name='values_lines' attrs="{'readonly': [('readonly_status','=','make_readonly') ]}">
+                        <tree editable="bottom">
+                            <field name="core_value" required = "True"/>
+                            <field name="description" required = "True"/>
+                            <field name="weightage" required = "True"  sum = "Total Weightage"/>
+                            <field name="priority" required = "True" />
+                        </tree>
+                    </field>
+           
+                        <field name="total_weightage" invisible = "1"/>
+
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+      <record id="view_hr_appraisal_values_tree" model="ir.ui.view">
+		<field name="name">hr.appraisal.values.tree</field>
+		<field name="model">hr.appraisal.values</field>
+		<field name="arch" type="xml">
+			<tree>
+                <field name="company_id"/>
+                <field name="description"/>
+                <field name="state"/>
+			</tree>
+		</field>
+	</record>
+  <record id="action_hr_appraisal_values" model="ir.actions.act_window">
+            <field name="name">Appraisal Values</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.appraisal.values</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="de_appraisal_enhancement.view_hr_appraisal_values_tree"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Not Found. Let's Create One!
+              </p>
+            </field>
+    </record>
+    
+    
+    
+    <menuitem name="Appraisal Values"
+        id="menu_hr_appraisal_values_root"
+        parent="hr_appraisal.menu_hr_appraisal_root"
+        action="action_hr_appraisal_values"
+        sequence="3"/>
+
+</odoo>

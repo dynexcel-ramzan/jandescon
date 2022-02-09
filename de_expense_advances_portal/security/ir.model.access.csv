@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+1,account.payment,model_account_payment,,1,1,1,1
+2,advance.against.expense,model_advance_against_expense,,1,1,1,1
+3,hr.employee,model_hr_employee,,1,1,1,1
+4,res.users,model_res_users,,1,1,1,1
+5,res.partner,model_res_partner,,1,1,1,1
+access_advance_amount_approver,access.advance.amount.approver,model_advance_amount_approver,,1,1,1,1
+access_advance_amount_approver_line,access.advance.amount.approver.line,model_advance_amount_approver_line,,1,1,1,1
+

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- advance salary rule -->
+        <record id="hr_payslip_rule_advance" model="hr.salary.rule">
+            <field name="code">SAR</field>
+            <field name="name">Advance Salary</field>
+            <field name="category_id" ref="hr_payroll.DED"/>
+            <field name="amount_select">code</field>
+            <field name="struct_id" ref="de_employee_loan.hr_structure_worker_001"/>
+            <field name="amount_python_compute">result = inputs.SAR and - (inputs.SAR.amount)</field>
+            <field name="appears_on_payslip" eval="True"/>
+            <field name="sequence" eval="190"/>
+        </record>
+
+        <record id="hr_rule_input_advance" model="hr.payslip.input.type">
+            <field name="code">SAR</field>
+            <field name="name">Salary Advance</field>
+<!--             <field ref="hr_payslip_rule_advance"/> -->
+        </record>
+        <!-- salary structure -->
+        <record model="ir.ui.view" id="model_salary_structure">
+            <field name="name">salary.structure.type.form</field>
+            <field name="model">hr.payroll.structure.type</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payroll_structure_type_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='country_id']" position="after">
+                    <field name="max_percent"/>
+                    <field name="advance_date"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="oracle_setting_connector_form_view">
+            <field name="name">oracle_setting_connector_form</field>
+            <field name="model">oracle.setting.connector</field>
+            <field name="arch" type="xml">
+                <form string="Credentials">
+                    <header>
+                        <button name="try_connection" states="draft" class="oe_highlight" string="Connect" type="object"/>
+                        <button name="action_get_attendance_data" states="active" class="oe_highlight" string="Download Attendance" type="object"/>
+                        <button name="action_attendance_process" states="active" class="oe_highlight" string="Process Attendance" type="object"/>
+                        <button name="action_process_attendance_count" states="active" class="oe_highlight" string="Count Attendance" type="object"/> 
+                        <field name="state" widget="statusbar" statusbar_visible="draft,active,close" clickable="1" />
+                    </header>
+                    <sheet>
+                        <div class="oe_title pr-0">
+                        <h1 class="d-flex flex-row justify-content-between">
+                            <field name="name" class="o_task_name text-truncate"  placeholder="Instance..."/>
+                        </h1>
+                    </div>
+                        <group>
+                            <group>
+                               
+                                <field name="host" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                <field name="port" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                <field name="db_name" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                    
+                            </group>
+                            <group>
+
+                               <field name="user" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                <field name="password" attrs="{'readonly': [('state','!=', 'draft')]}"/>
+                                <field name="ora_create_date" invisible="0"/>
+
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string='Device Line'>
+                                <field name='device_line_ids'>
+                                    <tree editable='bottom'>
+                                        <field name='device_id'/>
+                                        <field name='mode'/>
+                                        <field name='company_id'/>
+                                        <field name='instance_id' invisible='1'/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string='Attendance Count'>
+                                <group>
+                                    <group>
+                                       <field name='count_date_from'/>
+                                    </group> 
+                                    <group>
+                                    </group> 
+                                </group>    
+                                <field name='attendance_count_lines'>
+                                    <tree editable='bottom'>
+                                        <field name='date'/>
+                                        <field name='ora_att_count'/>
+                                        <field name='instance_id' invisible='1'/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="oracle_setting_connector_tree_view">
+            <field name="name">oracle_setting_connector_tree</field>
+            <field name="model">oracle.setting.connector</field>
+            <field name="arch" type="xml">
+                <tree string="Oracle">
+                    <field name="name"/>
+                    <field name="host" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+       
+        <record model="ir.actions.act_window" id="oracle_setting_connector_action">
+            <field name="name">Instance</field>
+            <field name="res_model">oracle.setting.connector</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+        </record>
+
+       
+      <menuitem id="submenu_oracle_instance_setting_view" name="Instance" parent="menu_hr_user_attendance_my_attendances" action="oracle_setting_connector_action" sequence="1"/>
+
+ </data>
+</odoo>

@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_payroll_structure_line,access.hr.payroll.structure.line,model_hr_payroll_structure_line,,1,1,1,1
+access_hr_contract_line,access.hr.contract.line,model_hr_contract_line,,1,1,1,1

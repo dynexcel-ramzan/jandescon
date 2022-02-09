@@ -1,0 +1,91 @@
+<odoo>
+    <data>
+        
+        <record id="shift_week_days_view_form" model="ir.ui.view">
+            <field name="name">hr.rest.day.config.form</field>
+            <field name="model">hr.rest.day.config</field>
+            <field name="arch" type="xml">
+                <form string="Shift Rest Day Schedule" >
+                   
+                    <sheet>
+                      <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Name..."/>
+                            </h1>
+                        </div>   
+                    <group>
+                        <group>
+                            <field name="leave_type_id"/>
+                           
+
+                        </group>
+                        
+                        <group>
+                           <field name="company_id"/>
+                        </group>
+                        
+                        </group>
+                   
+                    </sheet>
+                    
+                </form>
+            </field>
+        </record>
+
+    
+    	<record id="view_shift_rest_day_tree" model="ir.ui.view">
+		<field name="name">hr.rest.day.config.tree</field>
+		<field name="model">hr.rest.day.config</field>
+		<field name="arch" type="xml">
+
+			<tree string="Shift Rest Day"  >
+				<field name="name"/>
+				<field name="leave_type_id"/>
+				<field name="company_id"/>
+			</tree>
+
+		    </field>
+	       </record>
+
+
+
+    <record id="action_hr_shift_rest_day_view" model="ir.actions.act_window">
+		<field name="name">Rest Days Type</field>
+		<field name="res_model">hr.rest.day.config</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_mode">tree,form</field>
+		<field name="domain">[]</field>
+		<field name="context">{}</field>
+		<field name="help" type="html">
+
+			<p class="o_view_nocontent_smiling_face">
+				Add Rest Days Type .............
+			</p>
+
+		</field>
+	</record>
+    
+    
+   
+    
+    
+    
+     <menuitem
+		  id="hr_shift_rest_day_root_menu"
+		  name="Rest Day"
+		  parent="de_employee_shift.shift_configuration"
+		  sequence="33"
+	/>
+        
+    
+    
+    <menuitem
+		  id="hr_shift_rest_day_menu"
+		  name="Rest Day Type"
+		  parent="hr_shift_rest_day_root_menu"
+		  action="action_hr_shift_rest_day_view"
+		  sequence="1"
+	/>
+        
+    </data>
+</odoo>  

@@ -1,0 +1,44 @@
+<odoo>
+    <data>
+
+        <record id="view_recruitment_interview_tree" model="ir.ui.view">
+			<field name="name">hr.recruitment.interviews.tree</field>
+			<field name="model">hr.recruitment.interviews</field>
+			<field name="arch" type="xml">
+                <tree string="Recruitment Interviews" editable="bottom">
+                    <field name="assessment_date" readonly="1"/>
+                    <field name="interviewer_id" attrs="{'readonly' : [('is_change_interviewer', '=', False)]}"/>
+                    <field name="performed_by_id" readonly="1"/>
+                    <field name="applicant_id" invisible="1"/>
+                    <field name="survey_id" invisible="1"/>
+                    <field name="response_id" invisible="1"/>
+                    <field name="is_interviewer" invisible="1"/>
+                    <field name="is_change_interviewer" invisible="1"/>
+                    <button string="Start Interview" type="object" class="oe_highlight" name="action_start_survey"/>
+                    <button string="View Assessment" type="object" name="action_print_answers"/>
+                    <field name="score_total" />
+                    <field name="score_percentage" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_recruitment_assessment_tree" model="ir.ui.view">
+			<field name="name">hr.recruitment.assessment.tree</field>
+			<field name="model">hr.recruitment.assessment</field>
+			<field name="arch" type="xml">
+                <tree string="Recruitment Assessment">
+                    <field name="performed_by_id" invisible="1"/>
+                    <field name="performed_by"/>
+                    <field name="applicant_id" invisible="1"/>
+                    <field name="survey_id" invisible="1"/>
+                    <button string="Send Invite" class="oe_highlight" name="action_invite_participant" type="object"/>
+                    <button string="View Assessment" name="action_print_answers" type="object"/>
+                    <field name="score_total" />
+                    <field name="score_percentage"/>
+                </tree>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

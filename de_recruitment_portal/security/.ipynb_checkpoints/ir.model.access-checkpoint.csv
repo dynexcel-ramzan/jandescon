@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+1,hr.recruitment.interviews,model_hr_recruitment_interviews,,1,1,1,1
+2,survey.survey,model_survey_survey,,1,1,1,1
+

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+	    <record id="group_activity_portal" model="res.groups">
+	        <field name="name">Allow Portal Activities</field>
+	    </record>
+
+	</data>
+</odoo>

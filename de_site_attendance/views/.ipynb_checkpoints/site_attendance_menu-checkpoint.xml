@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <menuitem id="site_attendance_management_menuitem"
+                  name="Site Attendance"
+                  parent="hr_attendance.menu_hr_attendance_root"
+                  sequence="1"/>
+
+        <menuitem id="site_attendance_menuitem"
+                  name="Site Attendance"
+                  parent="site_attendance_management_menuitem"
+                  action="de_site_attendance.action_site_attendance"
+                  sequence="2"/>
+        
+        <menuitem id="site_attendance_line_menuitem"
+                  name="Site Attendance Lines"
+                  parent="site_attendance_management_menuitem"
+                  action="de_site_attendance.action_site_attendance_lines"
+                  sequence="3"/>
+        
+        
+    </data>
+</odoo>

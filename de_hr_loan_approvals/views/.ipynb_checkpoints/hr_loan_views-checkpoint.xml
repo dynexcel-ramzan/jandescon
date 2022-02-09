@@ -1,0 +1,34 @@
+<odoo>
+  <data>
+      
+       <record id="hr_loan_form_view_inherit" model="ir.ui.view">
+		<field name="name">hr_loan.form.view.inherit</field>
+		<field name="model">hr.loan</field>
+		<field name="inherit_id" ref="de_employee_loan.hr_loan_form_view" />
+		<field name="arch" type="xml">
+          
+			<xpath expr="//button[@name='action_approve']" position="replace">
+                <button name="action_approve" type="object" string="Approve"  class="oe_highlight" groups="hr.group_hr_manager,hr.group_hr_user" attrs = "{'invisible': ['|',('category_id', '!=', False),('state', 'not in', ['waiting_approval_1'])]}"/>
+                    
+			</xpath>
+            
+            <xpath expr="//button[@name='action_refuse']" position="replace">
+                <button name="action_refuse" type="object" string="Refuse"  class="oe_highlight" groups="hr.group_hr_manager,hr.group_hr_user" attrs = "{'invisible': ['|',('category_id', '!=', False),('state', 'not in', ['draft','waiting_approval_1'])]}"/>
+			</xpath>
+            
+            <xpath expr="//field[@name='loan_type_id']" position="after">
+                <field name="category_id" invisible="0"/> 
+                <field name="request_status" string="Approval Status"/> 
+                <field name="approval_request_id" invisible="1"/> 
+			</xpath>
+           
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="%(action_approval_request_view)d" type="action" class="oe_stat_button" icon="fa-check-square-o" string="Approvals" context="{'loan_id':id,'category_id':category_id}" attrs="{'invisible': [('approval_request_id', '=', False)]}">
+                </button>     
+            </xpath>
+            
+		</field>
+	</record>
+      
+  </data>
+</odoo>

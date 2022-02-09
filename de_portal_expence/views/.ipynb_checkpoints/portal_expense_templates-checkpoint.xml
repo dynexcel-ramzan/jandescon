@@ -1,0 +1,1783 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    
+    <template id="portal_layout" name="Portal layout: expense menu entry" inherit_id="portal.portal_breadcrumbs" priority="25">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'expense' or expense" class="col-lg-2" t-attf-class="breadcrumb-item #{'active ' if not expense else ''}">
+                <a t-if="expense" t-attf-href="/my/expenses?{{ keep_query() }}">Expenses</a>
+                <t t-else="">Expenses</t>
+            </li>
+            <li t-if="expense" class="breadcrumb-item active text-truncate col-8 col-lg-10">
+                <t t-esc="expense.name"/>
+            </li>
+        </xpath>
+    </template>
+    
+
+    <template id="portal_my_home" name="Show expenses / fifty" customize_show="True" inherit_id="portal.portal_my_home" priority="25">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry"  groups="de_portal_expence.group_expense">
+                <t t-set="title">Expenses</t>
+                <t t-set="url" t-value="'/my/expenses'"/>
+                <t t-set="placeholder_count" t-value="'expense_count'"/>
+            </t>
+        </xpath>  
+    </template>
+    
+  <template id="portal_my_expenses" name="Expense Management">
+    <t t-call="website.layout">
+     <div id="wrap">
+      <div class="container" id="portal_my_expenses">
+          <form class="mt8 float-right" role="search" t-attf-action="/my/expenses" method="get">
+              <t t-call="website.website_search_box"/>
+          </form>
+          <div t-if="searchbar_sortings" class="dropdown float-right mt8 mr8">
+              <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                  <span class="fa fa-sort fa-lg" role="img" aria-label="Sort" title="Sort"/>
+                  <span class="d-none d-xl-inline" t-esc="searchbar_sortings[sortby].get('label', 'Newest')"/>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="portal_searchbar_sortby" role="menu">
+                  <t t-foreach="searchbar_sortings" t-as="option">
+                      <a role="menuitem"
+                         t-att-href="request.httprequest.path + '?' + keep_query('*', sortby=option)"
+                         t-attf-class="dropdown-item#{sortby == option and ' active' or ''}">
+                          <span t-esc="searchbar_sortings[option].get('label')"/>
+                      </a>
+                  </t>
+              </div>
+          </div>
+          <h3 class="mt16">Manage Your Expense</h3>
+          <div>
+                <t class="col-lg-7 col-md-8" >
+                    <a href="/expense/request/category/" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; ">Create</div> </a>
+                    <t t-if='subordinates'>
+                      <a href="/subordinate/expenses" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;">Subordinate's Expense</div> </a>
+                    </t>
+                </t>
+          </div>
+          
+          <t t-if="not pages">
+              <div t-if="search" class="alert alert-warning mt8" role="alert">
+                  Your search '<t t-esc="search" />' did not match any expense.
+              </div>
+              <div t-else="" class="alert alert-warning mt8" role="alert">
+                  There are currently no expense request.
+              </div>
+          </t>
+          <div t-if="pages" class="table-responsive">
+              <table class="table table-hover">
+                  <thead>
+                    <tr style='background-color:#875A7B; color:white;'>
+                      <th>Ref#</th>
+                      <th>Type</th>  
+                      <th>Date</th>  
+                      <th>Total Amount</th>  
+                      <th>Status</th>
+                      <th>Document Received</th>  
+                    </tr>
+                  </thead>
+                   
+                  <t t-set='prev_page' t-value='False' />
+                  <t t-foreach="expenses" t-as="expense">
+                      <tr>
+                          <td>
+                            <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.name"/></a>
+                          </td>
+                          
+                          <td>
+                             <a t-attf-href="/my/expense/#{expense.id}?{{ keep_query() }}"><span t-field="expense.ora_category_id.name"/></a>
+                              <t t-if='expense.exception==True'>
+                                 (Exception)
+                              </t>
+                          </td>
+                           <td><t t-esc='expense.accounting_date' t-options='{"widget": "date"}'/></td>
+                           <td><t t-esc="'{0:,}'.format(int(round(expense.total_amount)))"/></td>
+                          <td>
+                               <t t-if="expense.state == 'draft'">
+                                    <i class="badge badge-pill badge-info" >Draft</i>
+                                </t>
+                                <t t-if="expense.state == 'post'">
+                                    <i class="badge badge-pill badge-success" >Posted</i>
+                                </t>
+                                <t t-if="expense.state == 'done'">
+                                   <t t-if="expense.is_deposit==True"> 
+                                     <i class="badge badge-pill badge-success" >Paid</i>
+                                   </t>
+                                   <t t-if="expense.is_deposit_adjusted==True"> 
+                                     <i class="badge badge-pill badge-success" >Adjusted</i>
+                                   </t> 
+                                   <t t-if="expense.is_deposit!=True"> 
+                                     <t t-if="expense.is_deposit_adjusted!=True">  
+                                     <i class="badge badge-pill badge-success" >Posted</i>
+                                   </t> 
+                                   </t>     
+                                </t>
+                                <t t-if="expense.state == 'submit'">
+                                    <t t-if='not expense.approval_request_id' >
+                                       <i class="badge badge-pill badge-warning" >To Validate</i>
+                                    </t>  
+                                    <t t-if='expense.approval_request_id' >
+                                       <i class="badge badge-pill badge-warning" >To Approve</i> 
+                                    </t>
+                                </t>
+                                <t t-if="expense.state == 'cancel'">
+                                    <i class="badge badge-pill badge-danger" >Refused</i>
+                                </t>
+                               
+                                <t t-if="expense.state == 'approve'">
+                                    <i class="badge badge-pill badge-success" >Approved</i>
+                                </t>    
+                          </td>
+                          <td>
+                              <t t-if='expense.document_received==True'>
+                                  <t t-if="expense.state != 'cancel'">
+                                     <i class="badge badge-pill badge-success" >Received</i>
+                                  </t>    
+                              </t>
+                              <t t-if='expense.document_received==False'>
+                                  <t t-if="expense.state != 'cancel'">
+                                   <i class="badge badge-pill badge-primary" >Pending</i>
+                                  </t>    
+                              </t>
+                              <t t-if="expense.state == 'cancel'">
+                                  <i class="badge badge-pill badge-danger" >Cancel</i>
+                              </t>
+                          </td>
+                      </tr>
+                  </t> 
+              </table>
+          </div>
+                  
+      </div>
+    </div>
+  </t>
+</template>
+
+
+    <template id="portal_my_expense" name="Expense Claim">
+    <t t-name="website.testexpense1-testexepnse1">
+    <t t-call="website.layout">
+    <div id="wrap" class="oe_structure oe_empty">
+    <section class="s_quotes_carousel_wrapper o_colored_level" data-vxml="001" data-vcss="001" data-snippet="s_quotes_carousel" data-name="Quotes" style="">
+    <div class="s_card card bg-white w-100" data-snippet="s_card" data-name="Card">   
+        <div class="card-header" style="height:50px;">
+                        <script  src="/de_portal_expence/static/src/js/jquery_1_2.js"></script>
+                        <script  src="/de_portal_expence/static/src/js/jquery_min.js"></script>
+                        <script  src="/de_portal_expence/static/src/js/jquery_ui.js"></script>
+                        <script>
+                            $(function () {
+                                error_flag=document.getElementById("error_flag").value;
+                                errora_message=document.getElementById("errora_message").value;
+                                if (error_flag=='1') {
+                                  alert(errora_message)
+                                }
+                            });
+                         </script>
+            
+                         <input id='error_flag' type="hidden" class="form-control s_website_form_input" name="error_flag"  t-att-value='error_flag'/>
+                          <input id='errora_message' type="hidden" class="form-control s_website_form_input" name="errora_message"  t-att-value='errora_message'/>
+            
+                       <t t-if='expense.state=="draft"'>
+                         <t t-if='expense.employee_id.user_id.id==uid or expense.employee_id.expense_incharge_id.user_id.id==uid'>
+                              <a t-attf-href="/action/submit/expense/#{expense.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%; margin-left:5px;color:white;">Submit</div> </a> 
+                             
+                          
+                         </t>
+                       </t>
+                    
+                      <t t-if='expense.state=="cancel"'>
+                        <t t-if='expense.employee_id.user_id.id==uid'>
+                             <a t-attf-href="/action/reset/expense/#{expense.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Reset To Draft</div> </a> 
+                        </t>
+                       </t>
+                    
+                      <t t-if='expense.state=="submit"'>
+                      <t t-if='expense.employee_id.company_id.hr_id.user_id.id==uid'>
+                          <a t-attf-href="/app/approval/accept/#{expense.approval_request_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Approve</div> </a> 
+                          
+                          <a t-attf-href="/request/refuse/#{expense.approval_request_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Refuse</div> </a> 
+                          
+                          <t t-if='is_approval_done==False'>
+                           <a t-attf-href="/action/vc/approval/#{expense.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Vice-Chairman Approval</div> </a> 
+                          </t>  
+                        </t>
+                        <t t-if='expense.employee_id.company_id.finance_partner_id.user_id.id==uid'>
+                            
+                          <a t-attf-href="/app/approval/accept/#{expense.approval_request_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Approve</div> </a> 
+                          
+                          <a t-attf-href="/request/refuse/#{expense.approval_request_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Refuse</div> </a> 
+                            
+                        </t>
+                        
+                        <t t-if='not expense.employee_id.parent_id.user_id.id==expense.employee_id.company_id.chanceller_id.user_id.id'>
+                        <t t-if='not expense.employee_id.company_id.manager_id.user_id.id==expense.employee_id.company_id.chanceller_id.user_id.id'>    
+                        <t t-if='expense.employee_id.company_id.chanceller_id.user_id.id==uid'>
+                           <a t-attf-href="/app/approval/accept/#{expense.approval_request_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Approve</div> </a> 
+                          
+                          <a t-attf-href="/request/refuse/#{expense.approval_request_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Refuse</div> </a> 
+                        </t>    
+                        </t>
+                       </t>     
+                       <t t-if='not expense.employee_id.parent_id.user_id.id==expense.employee_id.company_id.manager_id.user_id.id'>
+                            <t t-if='expense.employee_id.company_id.manager_id.user_id.id==uid'>
+                              <a t-attf-href="/app/approval/accept/#{expense.approval_request_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Approve</div> </a> 
+                          
+                          <a t-attf-href="/request/refuse/#{expense.approval_request_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Refuse</div> </a> 
+                            </t>
+                      </t>       
+                        <t t-if='expense.employee_id.parent_id.user_id.id==uid'>
+                           <a t-attf-href="/app/approval/accept/#{expense.approval_request_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Approve</div> </a> 
+                          
+                          <a t-attf-href="/request/refuse/#{expense.approval_request_id.id}?" > <div class="btn btn-primary pull-left" style="height:30px; line-height:100%;margin-left:5px;color:white;">Refuse</div> </a> 
+                            
+                        </t>
+                    </t>      
+                
+                <span class='pull-right'>status: 
+                       <i class="badge badge-pill badge-info" > 
+                            <t t-if='is_deposit!=True'>
+                              <t t-if='expense.state!="done"'>  
+                                    <t t-if='expense.state!="submit" '>   
+                                       <span t-esc='expense.state'/>
+                                     </t>    
+                                    <t t-if='expense.state=="submit" '>
+                                        <t t-if='not expense.approval_request_id' >
+                                          <i class="badge badge-pill badge-warning">To Validate</i>
+                                        </t>  
+                                        <t t-if='expense.approval_request_id' >
+                                           <i class="badge badge-pill badge-warning">To Approve</i> 
+                                        </t> 
+                                    </t>     
+                              </t> 
+                            </t>     
+                            <t t-if='is_deposit==True'>  
+                              <span t-esc='expense.state'/>
+                            </t>
+                            <t t-if='is_deposit_adjusted==True'>  
+                              Adjusted
+                            </t>  
+                       </i>
+                </span>
+             
+        </div>
+       <div class="card-body container border rounded shadow" style='box-shadow:3px;'>
+           <p class='pull-left'><span t-esc='expense.name'/></p>
+        <p class="card-text">
+            
+        <br/>
+               <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Employee</span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="expense.employee_id.name"    /> (<t t-esc="expense.employee_id.emp_number"/>)(Grade: <span style='color:blue;' t-esc="expense.employee_id.grade_designation.name"/>)
+                        </div>
+                    </div>
+                </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);' >Manager</span>
+                        </label>
+                        <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="expense.employee_id.parent_id.name"    />
+                        </div>
+                  </div>
+                </div>
+               </div> 
+              
+                <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Expense Category</span>
+                               </label>
+                                <div class="col-sm" style='color:#666666;'>
+                                   <t t-esc="expense.ora_category_id.name"    />
+                                </div>
+                         </div>
+                </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                    <div class="row s_col_no_resize s_col_no_bgcolor">
+                       
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                    <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Exception</span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;'>
+                                <t t-if="expense.exception==True">
+                                    Yes
+                                </t>
+                                <t t-if="expense.exception==False">
+                                    No
+                                </t>
+                            </div>
+                      </div>
+                    </div>
+               </div>
+            
+            
+            <t t-if='expense.state!="draft"'>
+             <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="cost_center">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Cost Center</span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="default_analytic_name" /> 
+                        </div>
+                    </div>
+                </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="control_account">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);' >Control-Account</span>
+                        </label>
+                        <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="default_controlled_account" />
+                        </div>
+                  </div>
+                </div>
+               </div> 
+            </t>
+             
+              <div class="o_notebook" data-name="_default_">
+                          <div class="o_notebook_headers">
+                              <ul class="nav nav-tabs">
+                                  <li class="nav-item">
+                                    <a data-toggle="tab" disable_anchor="true" href="#notebook_page_33378" class="nav-link active" role="tab">Expense Lines</a>
+                                  </li>
+                                  <!--<li class="nav-item">
+                                      <a data-toggle="tab" disable_anchor="true" href="#notebook_page_3340" class="nav-link" role="tab">Other Info</a>
+                                  </li> -->
+                              </ul>
+                          </div>   
+                        </div>
+                            
+                        &#160;&#160;&#160;&#160;&#160;
+            
+                    <t t-if='expense.state=="draft"'>
+                      <t t-if='is_editable==True'>  
+                        <form  id="edit_portal_expense_form_line" data-toggle="validator" action="/expense/edit/line/save/" method="post"  enctype="multipart/form-data">
+                          
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="expense_id" t-att-value="expense.id"/>
+                        <input type="hidden" name="ora_category" t-att-value="expense.ora_category_id.id"/>
+    
+                        <div class="s_website_form_rows row s_col_no_bgcolor">
+                         <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="expense_type">
+                                    <span style='color:#495057;'>Expense Type *</span>
+                                </label>
+                               <div class="col-sm" id='data_list'>
+                                       <select id="expense_type" class="form-control  o_website_form_input" name="product_id" readonly="1" required="1">                  
+                                             <t t-if='error_flag=="1"'>    
+                                              <option t-att-value="forcasted['expense_type']">
+                                                 <t t-esc="request.env['expense.sub.category'].search([('id','=',forcasted['expense_type'])]).name"  />
+                                               </option>
+                                           </t> 
+                                            <t t-foreach="products" t-as="product">
+                                                <option t-att-value="product.id">
+                                                    <t t-esc="product.name"  />
+                                                </option>
+                                            </t>
+                                       </select>            
+                                </div>
+                            </div>
+                          </div>
+                          
+                          <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="reference">
+                                             <span class="s_website_form_label_content" style='color:#495057;'>Bill Reference No *</span>
+                                </label>
+                                    <div class="col-sm"> 
+                                        <t t-if='error_flag=="0"'>
+                                          <input id='reference' type="char" class="form-control s_website_form_input" name="reference" required="True"/> 
+                                        </t>    
+                                         <t t-if='error_flag=="1"'> 
+                                            <input id='reference' type="char" class="form-control s_website_form_input" name="reference" required="True"  t-att-value="forcasted['reference']"/>
+                                        </t> 
+                                    </div>
+                                </div>
+                            </div>  
+                        </div>
+                     
+                     
+                        <div  class="s_website_form_rows row s_col_no_bgcolor">
+                         
+                        <t t-if='expense.ora_category_id.has_vehicle in ("optional","required")'>    
+                         <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="vehicle">
+                                    <span style='color:#495057;'>Vehicle *</span>
+                                </label>
+                               <div class="col-sm" id='data_list'>
+                                       <select id="employee_fleet" class="form-control  o_website_form_input" name="fleet_id" readonly="1" required="1">
+                                             
+                                            <t t-foreach="fleets" t-as="fleet">
+                                                <option t-att-value="fleet.id">
+                                                    <t t-esc="fleet.name"  />
+                                                </option>
+                                            </t>
+                                       </select>            
+                                </div>
+                            </div>
+                          </div>
+                          </t>
+                               
+                          <t t-if='expense.ora_category_id.has_reading in ("optional","required")'>   
+                            <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                             <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="reading">
+                                             <span class="s_website_form_label_content" style='color:#495057;'>Vehicle Reading *</span>
+                                </label>
+                                    <div class="col-sm">
+                                      <t t-if='error_flag=="0"'>   
+                                        <input id='fleet_reading' type="float" class="form-control s_website_form_input" name="meter_reading"  />
+                                        </t>    
+                                        <t t-if='error_flag=="1"'> 
+                                        <input id='fleet_reading' type="float" class="form-control s_website_form_input" name="meter_reading"  t-att-value="forcasted['meter_reading']"/>
+                                        </t>
+                                    </div>
+                                </div>
+                             </div>
+                          </t>    
+                        </div>
+                              
+                        <div class="s_website_form_rows row s_col_no_bgcolor">
+                          <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="unit_expense">
+                                            <span class="s_website_form_label_content" style='color:#495057;'>Amount *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <t t-if='error_flag=="0"'> 
+                                           <input id='unit_amount' type="number" class="form-control s_website_form_input" name="unit_amount" required="True"/>
+                                        </t>    
+                                        <t t-if='error_flag=="1"'> 
+                                           <input id='unit_amount' type="number" class="form-control s_website_form_input" name="unit_amount" required="True"  t-att-value="forcasted['unit_amount']"/>
+                                        </t> 
+                                    </div>
+                              </div>
+                            </div>   
+                         
+                           <t t-if='expense.ora_category_id.has_dependent=="no"'>   
+                               <input id='member' type="hidden" class="form-control s_website_form_input" name="member_id"  t-att-value="0"/>
+                         </t>
+                          <t t-if='expense.ora_category_id.has_vehicle=="no"'>   
+                                <input id='fleet' type="hidden" class="form-control s_website_form_input" name="fleet_id"  t-att-value="blank"/>
+
+                           </t> 
+                          <t t-if='expense.ora_category_id.has_reading=="no"'>   
+                               <input id='readding' type="hidden" class="form-control s_website_form_input" name="meter_reading"  t-att-value="0"/>
+                         </t>
+                          <t t-if='expense.ora_category_id.is_attachment=="no"'>   
+                               <input id='attahment' type="hidden" class="form-control s_website_form_input" name="attachment"  t-att-value="blank"/>
+                         </t>
+                         
+                            
+                        <t t-if='expense.ora_category_id.has_dependent in ("optional","required")'>    
+                        <div id='allow_dependent' class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="dependent">
+                                            <span class="s_website_form_label_content" style='color:#495057;'>Dependent</span>
+                                    </label>
+                                    <div class="col-sm">
+                                            <select id="dependent" class="form-control  o_website_form_input" name="member_id" readonly="1" >
+                                                <t t-if="error_flag=='0' or forcasted['member_id']=='0'">
+                                                    <option value="0">
+                                                        Self
+                                                    </option>
+                                                </t>
+                                        
+                                                <t t-if="error_flag=='1' and forcasted['member_id']!='0'">
+                                                   <option t-att-value="forcasted['member_id']">
+                                                       <t t-esc="request.env['hr.employee.family'].search([('id','=',forcasted['member_id'])]).name"  />
+                                                   </option>
+                                                </t>
+                                            <t t-foreach="emp_members" t-as="emp_member">
+                                                <option t-att-value="emp_member.id">
+                                                    <t t-esc="emp_member.name"  />
+                                                </option>
+                                            </t>
+                                       </select> 
+                                    </div>
+                              </div>
+                            </div>
+                            </t>  
+                       </div>
+                     
+                       <div class="s_website_form_rows row">
+                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize">
+                                    <label class="col-form-label col-sm-auto" style="width: 200px" for="attachment">
+                                        <span style='color:#495057;'>Control-Account</span>
+                                    </label>
+                                   <div class="col-sm" id='data_list'>
+                                           <select id="controlaccount" class="form-control  o_website_form_input" name="controll_id" readonly="1" >
+                                            <t t-if='error_flag=="1"'>
+                                                   <option t-att-value="forcasted['product_id']">
+                                                       <t t-esc="request.env['controlled.account'].sudo().search([('id','=',forcasted['product_id'])]).name"  />
+                                                   </option>
+                                            </t>   
+                                            <t t-foreach="controllers" t-as="controller">
+                                                <option t-att-value="controller.id">
+                                                    <t t-esc="controller.name"  />
+                                                </option>
+                                            </t>
+                                       </select> 
+                                    </div>
+                                </div>
+                              </div>
+                                 <t t-if='expense.ora_category_id.is_attachment in ("optional","required")'>    
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                    <div class="row s_col_no_resize">
+                                        <label class="col-form-label col-sm-auto" style="width: 200px" for="attachment">
+                                            <span style='color:#495057;'>Attachments</span>
+                                        </label>
+                                       <div class="col-sm" id='data_list'>
+                                           <t t-if='error_flag=="0"'>
+                                              <input id='files' type="file" class="form-control s_website_form_input" name="attachment" multiple='1'/>       
+                                           </t>
+                                           
+                                           <t t-if='error_flag=="1"'>
+                                              <input id='files' type="file" class="form-control s_website_form_input" name="attachment" multiple='1' t-att-value="forcasted['attachment']" /> 
+                                           </t>
+                                        </div>
+                                    </div>
+                                  </div>
+                                 </t>    
+                          </div>    
+                                              
+                            
+                        <t t-if='expense.ora_category_id.has_description=="optional"'>    
+                            <div class="s_website_form_rows row">
+                             <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize">
+                                    <label class="col-form-label col-sm-auto" style="width: 200px" for="description">
+                                        <span style='color:#495057;'>Remarks</span>
+                                    </label>
+                                   <div class="col-sm" id='data_list'>
+                                       <t t-if='error_flag=="0"'>
+                                          <textarea id="description" class="form-control s_website_form_input" name="description" ></textarea> 
+                                       </t>
+                                       <t t-if='error_flag=="1"'>
+                                          <input id="description" type='text' class="form-control s_website_form_input" name="description" t-att-value="forcasted['name']" /> 
+                                       </t>
+                                    </div>
+                                </div>
+                              </div>
+                          </div>    
+                       </t>    
+                            
+                         <t t-if='expense.ora_category_id.has_description=="required"'>    
+                            <div class="s_website_form_rows row">
+                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize">
+                                    <label class="col-form-label col-sm-auto" style="width: 200px" for="description">
+                                        <span style='color:#495057;'>Remarks *</span>
+                                    </label>
+                                   <div class="col-sm" id='data_list'>
+                                       
+                                       <t t-if='error_flag=="0"'>
+                                          <textarea id="description" class="form-control s_website_form_input" name="description" required="1"></textarea> 
+                                       </t> 
+                                       <t t-if='error_flag=="1"'>
+                                          <input id="description" type='text' class="form-control s_website_form_input" name="description" t-att-value="forcasted['name']" required="1" /> 
+                                       </t>
+                                    </div>
+                                </div>
+                              </div>
+                          </div>    
+                       </t>       
+                            
+                        <t t-if='is_multi_cost_center==True'>    
+                            <div class="s_website_form_rows row">
+                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize">
+                                    <label class="col-form-label col-sm-auto" style="width: 200px" for="attachment">
+                                        <span style='color:#495057;'>Split Expense Charge Account</span>
+                                    </label>
+                                   <div class="col-sm" id='data_list'>
+                                          <select id="costcenterdistribution" class="form-control  o_website_form_input" name="cost_center_distrubute" readonly="1" >
+                                                <option value="0">
+                                                    No
+                                                </option>
+                                                <option value="1">
+                                                    Yes
+                                                </option>
+                                       </select>        
+                                    </div>
+                                </div>
+                              </div>
+                          </div> 
+                           
+                           
+                            
+                    <div id='cost_center_detail' class="s_website_form_rows row s_col_no_bgcolor">
+                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">                                       <table id="expenselineTable" class='table tabel-responsive'>
+                            <tbody> 
+                             <t t-foreach="cost_centers" t-as="cost_center">
+                                 <tr>
+                                    <td class='cost_center'><span t-esc='cost_center.cost_center.name'/></td>
+                                    <td class='percentage'> 
+                                        <input id='percent' type="integer" class="form-control s_website_form_input" name="percentage" multiple='1'  t-att-value='round(cost_center.percentage_charged)'/>   
+                                    </td>
+                                    <td class='control_account'> 
+                                       <span t-esc='cost_center.controlled_id.name'/> 
+                                       (<span t-esc='cost_center.controlled_id.code'/> ) 
+                                    </td> 
+                                 </tr>    
+                             </t>    
+                            </tbody>            
+                        </table>
+                      </div> 
+                    </div>           
+                </t> 
+                         
+                         <input type="hidden" id="expense_line_vals" class="form-control s_website_form_input" name="expense_line_vals"  multiple="true" />  
+                            
+                        <input type="hidden" id="default_cost_center" class="form-control s_website_form_input" name="default_cost_center"  t-att-value='default_analytic.id' />  
+      
+                            
+                      <script src="/de_portal_expence/static/src/js/jquery_min.js"></script> 
+                      <script type="text/javascript">
+                        $(function () { 
+                                var costcenter = $( "#costcenterdistribution" ).val();
+                                if ( costcenter === "0" ) {
+                                    $("#cost_center_detail").hide();
+                                  }
+                                if ( costcenter === "1" ) {
+                                    $("#cost_center_detail").show();
+                                  }
+                                var costcentersplit = $( "#costcentersplit" ).val();
+                                if ( costcentersplit === "0" ) {
+                                    $("#splitted_table").hide();
+                                  }
+                                if ( costcentersplit === "1" ) {
+                                    $("#splitted_table").show();
+                                  }
+                            }); 
+                            $(document).ready(function(){
+                            $("#costcentersplit").change(function(){
+                                var costcentersplit = $( "#costcentersplit" ).val();
+                                if ( costcentersplit === "0" ) {
+                                    $("#splitted_table").hide();
+                                  }
+                                if ( costcentersplit === "1" ) {
+                                    $("#splitted_table").show();
+                                  }
+                            });
+                          $("#costcenterdistribution").change(function(){
+                                var costcenter = $( "#costcenterdistribution" ).val();
+                                if ( costcenter === "0" ) {
+                                    $("#cost_center_detail").hide();
+                                  }
+                                if ( costcenter === "1" ) {
+                                    $("#cost_center_detail").show();
+                                  }
+                            });
+                        });   
+                          
+                        $(document).ready(function(){
+                        $("#expense_line").on('click',function(){
+                           var expense_linedata=[];
+                           // loop over each table row (tr)
+                           $("#expenselineTable tr").each(function(){
+                                var currentRow=$(this);
+                                var col1_value=currentRow.find("td:eq(0)").text();
+                                var col2_value=currentRow.find(".percentage input").val();
+                                var obj={};
+                                obj.col1=col1_value;
+                                obj.col2=col2_value;
+                                expense_linedata.push(obj);
+                           });
+                         expense_linedictionary = JSON.stringify(expense_linedata); 
+                         var lista = document.getElementById("expense_line_vals")
+                         lista.value = expense_linedictionary 
+                        });
+                        });
+                      </script> 
+                            
+                        <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button  id='expense_line' type="submit" class="btn btn-primary pull-left">Add Line</button>
+                                        <span id="s_website_form_result"></span>
+                                </div>
+                        </div>    
+                     
+                </form> 
+            </t>
+           </t>
+            
+                 <table id="expenselineTable" class='table tabel-responsive'>
+                    <thead> 
+                    <tr style='background-color:#875A7B; color:white;'>
+                      <th>Expense Type</th>
+                      <th>Bill Reference</th>
+                      <th>Remarks</th>  
+                      <t t-if='expense.ora_category_id.has_dependent in ("optional","required")'>    
+                        <th>Dependent</th>
+                      </t>    
+                      <t t-if='expense.ora_category_id.has_vehicle in ("optional","required")'>  
+                        <th>Vehicle</th>
+                      </t>
+                      <t t-if='expense.ora_category_id.has_reading in ("optional","required")'>  
+                        <th>Meter Reading</th>  
+                      </t> 
+                      <t t-if='expense.ora_category_id.is_attachment in ("optional","required")'>   
+                        <th>Attachment</th>  
+                      </t>   
+                      <th>Amount</th>   
+                      <th></th>
+                    </tr>
+                    </thead>    
+                    <tbody> 
+                        <t t-foreach="expense.expense_sheet_line_ids" t-as="sheet_line"> 
+                           <tr>    
+                              <td><t t-esc='sheet_line.sub_category_id.name'/></td>
+                              <td><t t-esc='sheet_line.reference'/></td>
+                              <td><t t-esc='sheet_line.name'/></td> 
+                              <t t-if='expense.ora_category_id.has_dependent in ("optional","required")'>  
+                                <td>
+                                  <t t-if='sheet_line.member_id'>  
+                                    <t t-esc='sheet_line.member_id.name'/>
+                                  </t>
+                                    <t t-if='not sheet_line.member_id'>  
+                                      Self
+                                  </t>
+                                    
+                                  </td>
+                              </t>    
+                              <t t-if='expense.ora_category_id.has_vehicle in ("optional","required")'>   
+                                <td><t t-esc='sheet_line.fleet_id.name'/></td>
+                              </t>   
+                              <t t-if='expense.ora_category_id.has_reading in ("optional","required")'>    
+                                <td><t t-esc="'{0:,}'.format(int(round(sheet_line.meter_reading)))"/></td>
+                              </t> 
+                              <t t-if='expense.ora_category_id.is_attachment in ("optional","required")'>
+                                  <td><a t-attf-href="/web/content/#{sheet_line.attachment_id.id}?download=true" title="Download"><i class="fa fa-download"></i></a></td>
+                               </t>  
+                              <td><t t-esc="'{0:,}'.format(int(round(sheet_line.total_amount)))"/></td> 
+                               <td class="action_delete">
+                                 <t t-if='expense.state=="draft"'>
+                                   <t t-if='is_editable==True'>  
+                                     <a t-attf-href="/expense/sheet/line/delete/#{sheet_line.id}?"><i class="fa fa-trash"></i></a>
+                                   </t>
+                                 </t>     
+                               </td>
+                           </tr>    
+                        </t> 
+                        <tr >
+                          <th></th>  
+                          <th></th>
+                          <th></th>
+                          <t t-if='expense.ora_category_id.has_dependent in ("optional","required")'>    
+                            <th></th>
+                          </t>    
+                          <t t-if='expense.ora_category_id.has_vehicle in ("optional","required")'>  
+                            <th></th>
+                          </t>
+                          <t t-if='expense.ora_category_id.has_reading in ("optional","required")'>  
+                            <th></th>  
+                          </t> 
+                          <t t-if='expense.ora_category_id.is_attachment in ("optional","required")'>   
+                            <th></th>  
+                          </t>   
+                          <th><t t-esc="'{0:,}'.format(int(round(expense.total_amount)))"/></th>   
+                          <th></th>
+                        </tr>
+                    </tbody>
+                </table>
+            
+                <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_cost_center">
+                               </label>
+                                <div class="col-sm" style='color:#666666;'>
+                                  
+                                </div>
+                         </div>
+                </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                    <div class="row s_col_no_resize s_col_no_bgcolor">
+                       
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="expense_total">
+                                    <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'></span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;text-align:center;'>
+                                    
+                            </div>
+                      </div>
+                    </div>
+               </div>  
+               <t t-if='expense.state!="draft"'>
+                   <t t-if='expense.approval_request_id'>
+                        <table id="expenseapporoverTable" class='table tabel-responsive'>
+                         <thead> 
+                            <tr style='background-color:#875A7B; color:white;'>
+                              <th>Approver</th>  
+                              <th>Employee Number</th>
+                              <th>Job Position</th>  
+                              <th>Department</th>  
+                              <th>Status</th>
+                            </tr>
+                         </thead>    
+                        <tbody> 
+                             <t t-foreach="expense.approval_request_id.approver_ids" t-as="approve_line"> 
+                               <tr>    
+                                  <td><t t-esc='approve_line.user_id.name' /></td>
+                                  <td><t t-esc='approve_line.employee_number'/></td>
+                                  <td>
+                                      <t t-esc='approve_line.job_title'/>
+                                   </td>
+                                  <td><t t-esc='approve_line.department_id.name'/></td> 
+                                  <td>
+                                      <t t-if="approve_line.status=='new'"> 
+                                        <i class="badge badge-pill badge-info" >Next</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='pending'"> 
+                                        <i class="badge badge-pill badge-warning" >Pending</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='approved'"> 
+                                        <i class="badge badge-pill badge-success" >Approved</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='refused'"> 
+                                        <i class="badge badge-pill badge-danger" >Refused</i>  
+                                      </t>
+                                      <t t-if="approve_line.status=='cancel'"> 
+                                        <i class="badge badge-pill badge-danger" >Cancel</i>  
+                                      </t>
+                                   </td>
+                               </tr>    
+                             </t>    
+                        </tbody>
+                      </table>
+                     </t>
+                    </t>
+               
+               
+            
+                 <t t-if='is_multi_cost_center==True'> 
+                     <script src="/de_portal_expence/static/src/js/jquery_min.js"></script> 
+                      <script type="text/javascript">
+                        $(function () { 
+                                var costcenter = $( "#costcenterdistribution" ).val();
+                                if ( costcenter === "0" ) {
+                                    $("#cost_center_detail").hide();
+                                  }
+                                if ( costcenter === "1" ) {
+                                    $("#cost_center_detail").show();
+                                  }
+                                var costcentersplit = $( "#costcentersplit" ).val();
+                                if ( costcentersplit === "0" ) {
+                                    $("#splitted_table").hide();
+                                  }
+                                if ( costcentersplit === "1" ) {
+                                    $("#splitted_table").show();
+                                  }
+                            }); 
+                            $(document).ready(function(){
+                            $("#costcentersplit").change(function(){
+                                var costcentersplit = $( "#costcentersplit" ).val();
+                                if ( costcentersplit === "0" ) {
+                                    $("#splitted_table").hide();
+                                  }
+                                if ( costcentersplit === "1" ) {
+                                    $("#splitted_table").show();
+                                  }
+                            });
+                          $("#costcenterdistribution").change(function(){
+                                var costcenter = $( "#costcenterdistribution" ).val();
+                                if ( costcenter === "0" ) {
+                                    $("#cost_center_detail").hide();
+                                  }
+                                if ( costcenter === "1" ) {
+                                    $("#cost_center_detail").show();
+                                  }
+                            });
+                        });   
+                          
+                       
+                      </script> 
+            
+                            <div class="s_website_form_rows row">
+                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize">
+                                    <label class="col-form-label col-sm-auto" style="width: 200px" for="attachment">
+                                        <span style='color:#495057;'>Show Splitted Lines</span>
+                                    </label>
+                                   <div class="col-sm" id='data_list'>
+                                          <select id="costcentersplit" class="form-control  o_website_form_input" name="cost_center_split" readonly="1" >
+                                                <option value="0">
+                                                    No
+                                                </option>
+                                                <option value="1">
+                                                    Yes
+                                                </option>
+                                       </select>        
+                                    </div>
+                                </div>
+                              </div>
+                          </div> 
+                           
+                  
+                       
+                 
+            
+                <div id='splitted_table'> 
+                <div class="o_notebook" data-name="_default_">
+                          <div class="o_notebook_headers">
+                              <ul class="nav nav-tabs">
+                                  <li class="nav-item">
+                                    <a data-toggle="tab" disable_anchor="true" href="#notebook_page_33378" class="nav-link active" role="tab">Splitted Lines</a>
+                                  </li>                                
+                              </ul>
+                      </div>   
+                    </div>    
+                <table id="expenseTable" class='table tabel-responsive'>
+                    <thead> 
+                    <tr style='background-color:#875A7B; color:white;'>
+                      <th>Expense Date</th>  
+                      <th>Expense Type</th>
+                      <th>Bill Reference</th>
+                      <t t-if='expense.ora_category_id.has_dependent in ("optional","required")'>    
+                        <th>Dependent</th>
+                      </t>    
+                      <t t-if='expense.ora_category_id.has_vehicle in ("optional","required")'>  
+                        <th>Vehicle</th>
+                      </t>
+                      <t t-if='expense.ora_category_id.has_reading in ("optional","required")'>  
+                        <th>Meter Reading</th>  
+                      </t> 
+                     
+                      <th>Control-Account</th>  
+                      <th>Cost Center</th>
+                      <th>Percentage</th>  
+                      <th>Amount</th>
+                         
+                      <th></th>
+                    </tr>
+                    </thead>    
+                    <tbody> 
+                        <t t-foreach="expense.expense_line_ids" t-as="expense_line"> 
+                           <tr>    
+                              <td><t t-esc='expense_line.date' t-options='{"widget": "date"}'/></td>
+                              <td><t t-esc='expense_line.sub_category_id.name'/></td>
+                              <td><t t-esc='expense_line.reference'/></td>
+                              <t t-if='expense.ora_category_id.has_dependent in ("optional","required")'>  
+                                <td>
+                                  <t t-if='expense_line.member_id'>  
+                                    <t t-esc='expense_line.member_id.name'/>
+                                  </t>
+                                    <t t-if='not expense_line.member_id'>  
+                                      Self
+                                  </t>  
+                                </td>
+                              </t>    
+                              <t t-if='expense.ora_category_id.has_vehicle in ("optional","required")'>   
+                                <td><t t-esc='expense_line.fleet_id.name'/></td>
+                              </t>   
+                              <t t-if='expense.ora_category_id.has_reading in ("optional","required")'>    
+                                <td><t t-esc="'{0:,}'.format(int(round(expense_line.meter_reading)))"/></td>
+                              </t> 
+                              
+                              <td><t t-esc="expense_line.product_id.controlled_id.name"/></td>
+                              <td><t t-esc="expense_line.analytic_account_id.name"/></td>
+                              <td><t t-esc="expense_line.percentage"/></td> 
+                              <td><t t-esc="'{0:,}'.format(int(round(expense_line.total_amount)))"/></td>
+                                 
+                               <td class="action_delete">
+                                 <t t-if='expense.state=="draft"'>
+                                   <t t-if='is_editable==True'>  
+                                     <a t-attf-href="/expense/line/delete/#{expense_line.id}?"><i class="fa fa-trash"></i></a>
+                                   </t>
+                                 </t>     
+                               </td>
+                           </tr>    
+                        </t>    
+                    </tbody>
+                </table>
+            </div>  
+            </t>         
+            </p>
+            </div>
+           <div class="card-footer">
+            <i class="fa fa-1x fa-clock-o mr8"/>
+            <small class="o_default_snippet_text">
+            <div class="mt32">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="expense"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+             </div>
+            </small>
+           </div>
+        </div>
+        </section>
+        </div>
+        </t>
+           
+        </t>
+    </template>
+    
+    
+    
+         <template id="create_expense_category" name="expense category request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">
+                         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+                         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                   
+                            <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/de_expense_advances_portal/static/description/tb1.jpg'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Expense Claim Category</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="container mt-4 mb-5">
+                                <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                        <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[2]/div[1]/div[1]/div[1]">
+                                            <section class="s_text_block" data-snippet="s_text_block">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <p>
+                                                                
+                                                            </p>
+                                                                   
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                        <span class="hidden" data-for="contactus_form" data-oe-id="2822" data-oe-xpath="/data/xpath/span" data-oe-model="ir.ui.view" data-oe-field="arch" data-values="{'leave_type_id': '', 'employee_id': '', 'date_start': '', 'date_end': '', 'description': ''}"></span>
+            <div id="category_expense_section" data-oe-id="3374" data-oe-xpath="/data/xpath[2]/div" data-oe-model="ir.ui.view" data-oe-field="arch">
+                    <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        <div class="container">
+                            <form id="categExpenseForm" data-toggle="validator" action="/expense/category/next/">
+                                
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+	                                <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+	                                       <div class="row s_col_no_resize s_col_no_bgcolor">
+	                                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity2">
+	                                               <span class="s_website_form_label_content">Expense Category</span>
+	                                           </label>
+	                                           <div class="col-sm">
+	                                               <select class="form-control  o_website_form_input" name="expense_category" readonly="1">
+	                                                   <t t-foreach="expense_categories" t-as="categ">
+	                                                       <option t-att-value="categ.id">
+	                                                           <t t-esc="categ.name"    />
+	                                                       </option>
+	                                                   </t>
+	                                               </select>
+	                                           </div>
+	                                       </div>
+	                                   </div>
+
+                                       <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+	                                       <div class="row s_col_no_resize s_col_no_bgcolor">
+	                                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="exception">
+	                                               <span class="s_website_form_label_content">Exception</span>
+	                                           </label>
+	                                           <div class="col-sm">
+	                                                <input type="checkbox" class="form-control s_website_form_input" name="exception"  id='exception'  />
+	                                           </div>
+	                                       </div>
+	                                   </div>
+	                               </div>
+                                
+                                <input type="hidden" class="form-control s_website_form_input" name="is_subordinate"  id='is_subordinate'  t-att-value='has_subordinate'/>
+                                
+                                <t t-if='is_subordinate_expense==True'>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+	                                <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+	                                       <div class="row s_col_no_resize s_col_no_bgcolor">
+	                                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="opportunity2">
+	                                               <span class="s_website_form_label_content">Employee</span>
+	                                           </label>
+	                                           <div class="col-sm">
+	                                               <select class="form-control  o_website_form_input" name="employee_id" readonly="1">
+                                                       
+	                                                   <t t-foreach="subordinates" t-as="subordinate">
+	                                                       <option t-att-value="subordinate.id">
+	                                                           <t t-esc="subordinate.name"    />
+	                                                       </option>
+	                                                   </t>
+	                                               </select>
+	                                           </div>
+	                                       </div>
+	                                   </div>
+	                               </div>
+                                  </t>
+                                
+
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                    <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button type="submit" class="btn btn-primary pull-left">Next</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+			</div>
+                    <div class="col-lg-4 mt-4 mt-lg-0">
+                       <div class='section-custom col-md-12'>
+                         <a class="mb-5" id="submit-expense_req" t-attf-href="/my/expenses">
+                            <button t-attf-class="btn btn-primary #{'col-md-10' if multi_type else 'col-md-12'} mb-2">View My Expense</button>
+                          </a>
+                     </div>       
+                                        
+                                        
+                                        
+    <address itemscope="itemscope" itemtype="http://schema.org/Organization">
+        <div data-oe-model="res.company" data-oe-id="1" data-oe-field="partner_id" data-oe-type="contact" data-oe-expression="res_company.partner_id" data-oe-many2one-id="1" data-oe-many2one-model="res.partner" data-oe-contact-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;name&quot;, &quot;address&quot;, &quot;phone&quot;, &quot;mobile&quot;, &quot;email&quot;], &quot;tagName&quot;: &quot;div&quot;, &quot;expression&quot;: &quot;res_company.partner_id&quot;, &quot;type&quot;: &quot;contact&quot;, &quot;inherit_branding&quot;: true, &quot;translate&quot;: false}" data-oe-field-xpath="/t[1]/address[1]/div[1]">
+    <address class="mb-0" itemscope="itemscope" itemtype="http://schema.org/Organization">
+        
+        
+            
+    <div>
+        
+    </div>
+
+        
+        <div itemprop="address" itemscope="itemscope" itemtype="http://schema.org/PostalAddress">
+        </div>
+    
+        
+        
+    </address>
+</div>
+        
+           
+    </address>
+        
+    
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="oe_structure mt-2" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[3]"></div>
+                        </div>
+            
+         
+        </t>
+    </template>
+    
+    
+    
+<template id="create_expense" name="Expense Request">
+<t t-name="website.testexpense-testexepnse">
+<t t-call="website.layout">
+<div id="wrap" class="oe_structure oe_empty">
+<section class="s_quotes_carousel_wrapper o_colored_level" data-vxml="001" data-vcss="001" data-snippet="s_quotes_carousel" data-name="Quotes" style="">
+<div class="s_card card bg-white w-100" data-snippet="s_card" data-name="Card">
+         <script  src="/de_portal_expence/static/src/js/jquery_1_2.js"></script>
+         <script  src="/de_portal_expence/static/src/js/jquery_min.js"></script>
+         <script  src="/de_portal_expence/static/src/js/jquery_ui.js"></script>
+         <script>
+             $(function () {
+                 error_flag=document.getElementById("error_flag").value;
+                 errora_message=document.getElementById("errora_message").value;
+                 if (error_flag=='1') {
+                   alert(errora_message)
+                 }
+             });
+          </script>
+           <input id='error_flag' type="hidden" class="form-control s_website_form_input" name="error_flag"  t-att-value='error_flag'/>
+           <input id='errora_message' type="hidden" class="form-control s_website_form_input" name="errora_message"  t-att-value='errora_message'/>
+          
+        <h4 class="card-header" style="height:40px;">
+        <font style="color: rgb(61, 66, 70);">
+        <div class="o_form_statusbar">
+            <div class="o_statusbar_buttons" style="height:30px;">     
+                <span class='pull-right'>status: <i class="badge badge-pill badge-info" >Draft</i></span>
+           </div>
+         </div>  
+        </font>    
+        </h4>
+        
+       <div class="card-body container border rounded shadow" style='box-shadow:3px;'>
+        <p class="card-text">
+        <br/>
+               <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);'>Employee</span>
+                            </label>
+                            <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="employee_name.name"    /> (<t t-esc="employee_name.emp_number"/>)(Grade:  <span style='color:blue;' t-esc="employee_name.grade_designation.name"/>)
+                            </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content" style='color:rgb(61, 66, 70);' >Manager</span>
+                        </label>
+                        <div class="col-sm" style='color:#666666;'>
+                                <t t-esc="employee_name.parent_id.name"    />
+                        </div>
+                  </div>
+                </div>
+               </div> 
+               
+                 
+                   <div class="s_website_form_rows row s_col_no_bgcolor">
+                         <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="expense_category">
+                                             <span style='color:#495057;'>Expense Category</span>
+                                </label>
+                               <div class="col-sm" id='data_list'>
+                                       <span t-esc='expense_categories.name' />           
+                                </div>
+                            </div>
+                            </div>
+                             
+                            <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="exception">
+                                             <span style='color:#495057;'>Exception</span>
+                                </label>
+                                   <div class="col-sm" id='data_exception'>
+                                       <t t-if='exception=="yes"'>
+                                            Yes
+                                       </t>
+                                       <t t-if='exception=="no"'>
+                                            No
+                                       </t>
+                                   </div>
+                            </div>
+                            </div>
+                        </div>
+                      
+               
+                            
+                        &#160;&#160;&#160;&#160;&#160;
+                      <form  id="portal_expense_form_line"  data-toggle="validator" action="/my/expense/line/save" method="post"  enctype="multipart/form-data"> 
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="ora_category" t-att-value="expense_categories.id"/>
+                        <input id="ora_exception" type="hidden" name="ora_exception" t-att-value="exception"/> 
+                          
+                     
+                               <!-- Expense Date -->
+                  <input id='start_accounting_date' type="hidden" class="form-control s_website_form_input" name="start_accounting_date"   required="1"  t-att-value='start_accounting_date'/>
+                  <input id='end_accounting_date' type="hidden" class="form-control s_website_form_input" name="end_accounting_date"   required="1"  t-att-value='end_accounting_date'/>   
+                  <script type="text/javascript">
+                     function validatedateFormExpensec(event) {
+                          const selected_date=event.target.value;
+                          let start_accounting_date = document.getElementById("start_accounting_date").value;
+                          let end_accounting_date = document.getElementById("end_accounting_date").value;
+                          
+                          if (new Date(selected_date) > new Date(end_accounting_date) ) {
+                            alert("Not Allow to Enter date greater than. "+ end_accounting_date);
+                            event.target.value= end_accounting_date;
+                          }
+                          if (new Date(start_accounting_date) > new Date(selected_date) ) {
+                            alert("Not Allow to Enter date less than "+start_accounting_date);
+                            event.target.value= start_accounting_date;
+                          }
+                      }
+                     
+                  </script>            
+                  <!-- Expense Date -->    
+                                
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                        <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                               <div class="row s_col_no_resize s_col_no_bgcolor">
+                                   <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="expense_date">
+                                       <span class="s_website_form_label_content">Expense Date</span>
+                                   </label>
+                                   <div class="col-sm">
+                                        <input type="date" class="form-control s_website_form_input date_from_edit" name="accounting_date"   required="1"  t-att-value='accounting_date' onchange='validatedateFormExpensec(event)'/>
+                                   </div>
+                               </div>
+                           </div>
+                    </div>
+                           
+                        <div class="s_website_form_rows row s_col_no_bgcolor">
+                         <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="expense_type">
+                                    <span style='color:#495057;'>Expense Type *</span>
+                                </label>
+                               <div class="col-sm" id='data_list'>
+                                       <select id="expense_type" class="form-control  o_website_form_input" name="product_id" readonly="1" required="1">                  
+                                          <t t-if='error_flag=="1"'>    
+                                            <option t-att-value="forcasted['expense_type']">
+                                                 <t t-esc="request.env['expense.sub.category'].search([('id','=',forcasted['expense_type'])]).name"  />
+                                            </option>
+                                           </t>    
+                                            <t t-foreach="products" t-as="product">
+                                                <option t-att-value="product.id">
+                                                    <t t-esc="product.name"  />
+                                                </option>
+                                            </t>
+                                       </select>            
+                                </div>
+                            </div>
+                          </div>
+                          <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="reference">
+                                             <span class="s_website_form_label_content" style='color:#495057;'>Bill Reference No *</span>
+                                </label>
+                                    <div class="col-sm">  
+                                       <t t-if='error_flag=="0"'> 
+                                        <input id='reference' type="char" class="form-control s_website_form_input" name="reference" required="True"  />
+                                        </t> 
+                                        <t t-if='error_flag=="1"'> 
+                                        <input id='reference' type="char" class="form-control s_website_form_input" name="reference" required="True"  t-att-value="forcasted['reference']"/>
+                                        </t> 
+                                    </div>
+                                </div>
+                            </div>  
+                        </div>
+                        <t t-if='expense_categories.has_dependent=="no"'>   
+                               <input id='member' type="hidden" class="form-control s_website_form_input" name="member_id"  t-att-value="0"/>
+                         </t>
+                          <t t-if='expense_categories.has_vehicle=="no"'>   
+                                <input id='fleet' type="hidden" class="form-control s_website_form_input" name="fleet_id"  t-att-value="blank"/>
+
+                           </t> 
+                          <t t-if='expense_categories.has_reading=="no"'>   
+                               <input id='reading' type="hidden" class="form-control s_website_form_input" name="meter_reading"  t-att-value="0"/>
+                         </t>
+                          <t t-if='expense_categories.is_attachment=="no"'>   
+                               <input id='attachment' type="hidden" class="form-control s_website_form_input" name="attachment"  t-att-value="blank"/>
+                         </t>
+                        
+                        <div  class="s_website_form_rows row s_col_no_bgcolor">
+                         
+                        <t t-if='expense_categories.has_vehicle in ("optional","required")'>    
+                         <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="vehicle">
+                                    <span style='color:#495057;'>Vehicle *</span>
+                                </label>
+                               <div class="col-sm" id='data_list'>
+                                       <select id="employee_fleet" class="form-control  o_website_form_input" name="fleet_id" readonly="1" required="1">
+                                          
+                                            <t t-foreach="fleets" t-as="fleet">
+                                                <option t-att-value="fleet.id">
+                                                    <t t-esc="fleet.name"  />
+                                                </option>
+                                            </t>
+                                       </select>            
+                                </div>
+                            </div>
+                          </div>
+                          </t>
+                               
+                          <t t-if='expense_categories.has_reading in ("optional","required")'>   
+                            <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                             <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="reading">
+                                             <span class="s_website_form_label_content" style='color:#495057;'>Vehicle Reading *</span>
+                                </label>
+                                    <div class="col-sm"> 
+                                       <t t-if='error_flag=="0"'> 
+                                        <input id='fleet_reading' type="float" class="form-control s_website_form_input" name="meter_reading"  />
+                                        </t>
+                                        <t t-if='error_flag=="1"'> 
+                                        <input id='fleet_reading' type="float" class="form-control s_website_form_input" name="meter_reading"  t-att-value="forcasted['meter_reading']"/>
+                                        </t>
+                                    </div>
+                                </div>
+                             </div>
+                          </t>    
+                        </div>
+                         
+                        <input type="hidden" class="form-control s_website_form_input" name="uniq_employee_id"  id='uniq_employee_id'  t-att-value='employees.id'/>  
+                              
+                        <div class="s_website_form_rows row s_col_no_bgcolor">
+                          <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="unit_expense">
+                                            <span class="s_website_form_label_content" style='color:#495057;'>Amount *</span>
+                                    </label>
+                                    <div class="col-sm">
+                                        <t t-if='error_flag=="0"'> 
+                                           <input id='unit_amount' type="number" class="form-control s_website_form_input" name="unit_amount" required="True"  />
+                                        </t> 
+                                        <t t-if='error_flag=="1"'> 
+                                           <input id='unit_amount' type="number" class="form-control s_website_form_input" name="unit_amount" required="True"  t-att-value="forcasted['unit_amount']"/>
+                                        </t> 
+                                    </div>
+                              </div>
+                            </div>   
+                         
+                           
+                            
+                        <t t-if='expense_categories.has_dependent in ("optional","required")'>    
+                        <div id='allow_dependent' class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                    <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="dependent">
+                                            <span class="s_website_form_label_content" style='color:#495057;'>Dependent</span>
+                                    </label>
+                                    <div class="col-sm">
+                                            <select id="dependent" class="form-control  o_website_form_input" name="member_id" readonly="1" >
+                                                <t t-if="error_flag=='0' or forcasted['member_id']=='0'">
+                                                   <option value="0">
+                                                      Self
+                                                   </option>
+                                                </t>
+                                                <t t-if="error_flag=='1' and forcasted['member_id']!='0'">
+                                                   <option t-att-value="forcasted['member_id']">
+                                                       <t t-esc="request.env['hr.employee.family'].search([('id','=',forcasted['member_id'])]).name"  />
+                                                   </option>
+                                                </t>
+                                            <t t-foreach="emp_members" t-as="emp_member">
+                                                <option t-att-value="emp_member.id">
+                                                    <t t-esc="emp_member.name"  />
+                                                </option>
+                                            </t>
+                                       </select> 
+                                    </div>
+                              </div>
+                            </div>
+                            </t>  
+                       </div>
+                     
+                           
+                            <div class="s_website_form_rows row">
+                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize">
+                                    <label class="col-form-label col-sm-auto" style="width: 200px" for="attachment">
+                                        <span style='color:#495057;'>Control-account</span>
+                                    </label>
+                                   <div class="col-sm" id='data_list'>
+                                           <select id="controlaccount" class="form-control  o_website_form_input" name="controll_id" readonly="1" >
+                                               
+                                            <t t-if='error_flag=="1"'>
+                                                   <option t-att-value="forcasted['product_id']">
+                                                       <t t-esc="request.env['controlled.account'].sudo().search([('id','=',forcasted['product_id'])]).name"  />
+                                                   </option>
+                                            </t>   
+                                            <t t-foreach="controllers" t-as="controller">
+                                                <option t-att-value="controller.id">
+                                                    <t t-esc="controller.name"  />
+                                                </option>
+                                            </t>
+                                       </select> 
+                                    </div>
+                                </div>
+                              </div>
+                                 <t t-if='expense_categories.is_attachment in ("optional","required")'>    
+                                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                    <div class="row s_col_no_resize">
+                                        <label class="col-form-label col-sm-auto" style="width: 200px" for="attachment">
+                                            <span style='color:#495057;'>Attachments</span>
+                                        </label>
+                                       <div class="col-sm" id='data_list'>
+                                           
+                                           <t t-if='error_flag=="1"'>
+                                              <input id='files' type="file" class="form-control s_website_form_input" name="attachment" multiple='1' t-att-value="forcasted['attachment']" /> 
+                                           </t>
+                                           
+                                           <t t-if='error_flag=="0"'>
+                                              <input id='files' type="file" class="form-control s_website_form_input" name="attachment" multiple='1' /> 
+                                           </t>
+                                        </div>
+                                    </div>
+                                  </div>
+                                 </t>    
+                          </div>    
+                       
+                          
+                          
+                          <t t-if='expense_categories.has_description=="optional"'>    
+                            <div class="s_website_form_rows row">
+                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize">
+                                    <label class="col-form-label col-sm-auto" style="width: 200px" for="description">
+                                        <span style='color:#495057;'>Remarks</span>
+                                    </label>
+                                   <div class="col-sm" id='data_list'>
+                                       <t t-if='error_flag=="0"'>
+                                          <textarea id="description" class="form-control s_website_form_input" name="description" ></textarea> 
+                                       </t>
+                                       <t t-if='error_flag=="1"'>
+                                          <input id="description" type='text' class="form-control s_website_form_input" name="description" t-att-value="forcasted['name']"  /> 
+                                       </t>
+                                    </div>
+                                </div>
+                              </div>
+                          </div>    
+                       </t>    
+                            
+                         <t t-if='expense_categories.has_description=="required"'>    
+                            <div class="s_website_form_rows row">
+                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize">
+                                    <label class="col-form-label col-sm-auto" style="width: 200px" for="description">
+                                        <span style='color:#495057;'>Remarks *</span>
+                                    </label>
+                                   <div class="col-sm" id='data_list'>
+                                        <t t-if='error_flag=="0"'>
+                                          <textarea id="description" class="form-control s_website_form_input" name="description" required="1"></textarea>
+                                        </t>    
+                                       <t t-if='error_flag=="1"'>
+                                          <input id="description" type='text' class="form-control s_website_form_input" name="description" t-att-value="forcasted['name']"  /> 
+                                       </t>
+                                    </div>
+                                </div>
+                              </div>
+                          </div>    
+                       </t>    
+                          
+                        <t t-if='is_multi_cost_center==True'>    
+                            <div class="s_website_form_rows row">
+                             <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                                <div class="row s_col_no_resize">
+                                    <label class="col-form-label col-sm-auto" style="width: 200px" for="attachment">
+                                        <span style='color:#495057;'>Split Expense Charge Account</span>
+                                    </label>
+                                   <div class="col-sm" id='data_list'>
+                                          <select id="costcenterdistribute" class="form-control  o_website_form_input" name="cost_center_distrubute" readonly="1" >
+                                                <option value="0">
+                                                    No
+                                                </option>
+                                                <option value="1">
+                                                    Yes
+                                                </option>
+                                       </select>        
+                                    </div>
+                                </div>
+                              </div>
+                          </div> 
+                              
+                    <div id='cost_center_detaila' class="s_website_form_rows row s_col_no_bgcolor">
+                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">                                                   <table id="iexpenselineTable" class='table tabel-responsive'>
+                            <tbody> 
+                             <t t-foreach="cost_centers" t-as="cost_center">
+                                 <tr>
+                                    <td class='cost_center'><span t-esc='cost_center.cost_center.name'/></td>
+                                    <td class='percentagea'> 
+                                        <input id='percent' type="integer" class="form-control s_website_form_input" name="percentage" multiple='1'  t-att-value='round(cost_center.percentage_charged)'/>%   
+                                    </td>
+                                     <td class='control_account'> 
+                                       <span t-esc='cost_center.controlled_id.name'/> 
+                                        (<span t-esc='cost_center.controlled_id.code'/> ) 
+                                    </td>
+                                 </tr>   
+                             </t>    
+                            </tbody>            
+                        </table>
+                      </div> 
+                    </div>           
+                </t> 
+                          
+                          <input type="hidden" id="create_expense_line_vals" class="form-control s_website_form_input" name="create_expense_line_vals"  multiple="true" />
+                            
+                             <input type="hidden" id="default_cost_center" class="form-control s_website_form_input" name="default_cost_center"  t-att-value='default_analytic.id' />  
+      
+                            
+                      <script src="/de_portal_expence/static/src/js/jquery_min.js"></script> 
+                      <script type="text/javascript">
+                              
+                          
+                        $(function () { 
+                                var costcentera = $( "#costcenterdistribute" ).val();
+                                if ( costcentera === "0" ) {
+                                    $("#cost_center_detaila").hide();
+                                  }
+                                if ( costcentera === "1" ) {
+                                    $("#cost_center_detaila").show();
+                                  }
+                            }); 
+                            $(document).ready(function(){
+                            $("#costcenterdistribute").change(function(){
+                                var costcentera = $( "#costcenterdistribute" ).val();
+                                if ( costcentera === "0" ) {
+                                    $("#cost_center_detaila").hide();
+                                  }
+                                if ( costcentera === "1" ) {
+                                    $("#cost_center_detaila").show();
+                                  }
+                            });
+                        });   
+                          
+                        $(document).ready(function(){
+                        $("#createexpenseline").on('click',function(){
+                           var expense_linelist=[];
+                           // loop over each table row (tr)
+                           $("#iexpenselineTable tr").each(function(){
+                                var currentRow=$(this);
+                                var col1_value=currentRow.find("td:eq(0)").text();
+                                var col2_value=currentRow.find(".percentagea input").val();
+                                var obj={};
+                                obj.col1=col1_value;
+                                obj.col2=col2_value;
+                                expense_linelist.push(obj);
+                           });
+                         expense_linecreate = JSON.stringify(expense_linelist); 
+                         var lista = document.getElementById("create_expense_line_vals")
+                         lista.value = expense_linecreate 
+                        });
+                        });
+                      </script> 
+                            
+                    
+                       
+                           
+                        <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='createexpenseline' type="submit" class="btn btn-primary pull-left">Add Line</button>
+                                        <span id="s_website_form_result"></span>
+                                </div>
+                        </div>    
+                     
+                </form> 
+                
+                <table id="expenseTable" class='table tabel-responsive'>
+                    <thead> 
+                    <tr style='background-color:#875A7B; color:white;'>
+                      <th>Expense Type</th>    
+                      <th>Bill Reference No.</th>  
+                      <th>Amount</th>
+                      <t t-if='expense_categories.is_attachment in ("optional","required")'>  
+                        <th>Attachment</th>
+                      </t>   
+                      <t t-if='expense_categories.has_dependent in ("optional","required")'>  
+                        <th>Dependent</th>
+                      </t>  
+                      <t t-if='expense_categories.has_vehicle in ("optional","required")'> 
+                         <th id='col_vehicle'>Vehicle</th>
+                       </t> 
+                      <t t-if='expense_categories.has_reading in ("optional","required")'> 
+                         <th id='col_vehicle_reading'>Meter Reading</th> 
+                      </t>    
+                      <th></th>  
+                      <th></th>  
+                      <th></th>  
+                    </tr>
+                    </thead>    
+                    <tbody> 
+                        
+                    </tbody>
+                </table>
+            </p>
+            </div>
+           <div class="card-footer">
+            <i class="fa fa-1x fa-clock-o mr8"/>
+            <small class="o_default_snippet_text">
+            <div class="mt32">
+               <!-- 
+                <form  id="portal_expense_attachment" data-toggle="validator" action="/expense/attachment/save" method="post"  enctype="multipart/form-data">
+                    <h4><strong>Attachment</strong></h4>
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="file" id="files" name="attachment" multiple="true" />
+                </form>  -->
+            </div>
+            </small>
+           </div>
+        </div>
+        </section>
+        </div>
+        </t>
+        </t>
+    </template>
+    
+      <template id="de_portal_expence.expense_submited" name="Expense Received">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container">
+                    <div class="row">
+                        <t t-if="request.session.get('form_builder_model_model', '') == 'hr.expense'">
+                            <t t-set="expense" t-value="request.portal._website_form_last_record().sudo()"/>
+                        </t>
+                        <h1 class="text-center"><i class="fa fa-check-circle fa-2x text-success" role="img" aria-label="Success" title="Success"/></h1>
+                        <t t-if="expense">
+                            <h1 class="text-center">Your Expense Request Number is <a t-if="request.session.uid" t-attf-href="/my/timeoff/page/#{leave.id}">#<span t-field="expense.id"/></a><t t-if="not request.session.get('uid')">#<span t-field="expense.id"/></t>.</h1>
+                        </t>
+                        <h1 class="text-center">Thank you for submitting your Expense request!</h1>
+                    </div>
+                </div>
+            </div>
+         </t>
+    </template>
+    
+      <template id="de_portal_expence.re_expense_submited" name="Expense Received">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="oe_structure oe_empty">
+                <div class="container">
+                    <div class="row">
+                        <t t-if="request.session.get('form_builder_model_model', '') == 'hr.expense'">
+                            <t t-set="expense" t-value="request.portal._website_form_last_record().sudo()"/>
+                        </t>
+                        <h1 class="text-center"><i class="fa fa-check-circle fa-2x text-success" role="img" aria-label="Success" title="Success"/></h1>
+                        <t t-if="expense">
+                            <h1 class="text-center">Your Expense Request Number is <a t-if="request.session.uid" t-attf-href="/my/timeoff/page/#{leave.id}">#<span t-field="expense.id"/></a><t t-if="not request.session.get('uid')">#<span t-field="expense.id"/></t>.</h1>
+                        </t>
+                        <h1 class="text-center">Thank you for Adding Chairman Approval!</h1>
+                    </div>
+                </div>
+            </div>
+         </t>
+    </template>
+    
+    
+    <template id="de_portal_expence.expense_submited_validation" name="Expense Document Validation">
+        <t t-call="portal.portal_layout">
+            
+                  <div id="wrap">
+                    <div class="oe_structure" id="oe_structure_website_form_contact_us_thanks_1"/>
+                    <div class="container mt-4">
+                        <div class="row">
+                            <div class="col-lg-7 col-xl-6 mr-lg-auto oe_structure">
+                                <section class="pt40 s_text_block pb40 o_colored_level o_cc o_cc1" data-snippet="s_text_block" data-name="Text">
+                                    <div class="container">
+                                        <span class="d-block fa fa-4x fa-thumbs-down mx-auto rounded-circle bg-primary"/><br/>
+                                        <h1 class="text-center;"><p style='color:red;margin-left:200px'>Warning!</p></h1>
+                                        <div class="pb16 pt16 s_hr" data-snippet="s_hr" data-name="Separator">
+                                            <hr class="mx-auto border-top w-50 border-dark text-center"/>
+                                        </div>
+                                        <h5 class="text-center">
+                                            <span class="fa fa-check-circle"/>
+                                            <span t-esc='warning_message'></span>
+                                        </h5>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="col-lg-4">
+                                <t t-call="website.company_description"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="oe_structure" id="oe_structure_website_form_contact_us_thanks_2"/>
+                  </div>
+           
+         </t>
+    </template>
+    
+    
+
+</odoo>
+
+

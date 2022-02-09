@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<data>
+		<record model="ir.ui.view" id="overtime_allocate_form">
+            <field name="name">hr_overtime_allocate form</field>
+            <field name="model">hr.overtime.allocate</field>
+            <field name="arch" type="xml">
+                <form  create="false" edit="false">
+                    <sheet>
+                         <group>
+                            <group>
+                               <field name='date_start' />
+                            </group>
+                            <group>
+                               <field name='date_end' />
+                            </group>
+                         </group>
+                       <footer>
+                            <button string="Process" name="action_create_overtime" type="object"
+                                class="oe_highlight"/>
+                            <button string="Cancel" special="cancel"
+                                class="oe_link"/>
+                        </footer>  
+    
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="allocate_overtime_action_window">
+        <field name="name">Allocate Overtime</field>
+        <field name="res_model">hr.overtime.allocate</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- menu item -->
+        <menuitem id="overtime_submenu" name="Overtime"
+                   web_icon="de_employee_overtime,static/description/overtime_icon.png" />
+        
+        <menuitem name="Operations" id="attendance_overtime_main_menu" parent="overtime_submenu" sequence="5"/>
+
+        
+    <menuitem name="Allocate Overtime" id="menu_allocate_overtime" parent="attendance_overtime_main_menu"
+                  action="allocate_overtime_action_window" sequence="3"  />
+    
+
+
+	</data>
+</odoo>

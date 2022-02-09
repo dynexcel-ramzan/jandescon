@@ -1,0 +1,31 @@
+<odoo>
+    <data>
+        <data  noupdate="1">
+            <record id="hr_payroll.structure_base" model="hr.payroll.structure">
+                <field eval="[(4, ref('hr_salary_rule_overtime'))]"
+                       name="rule_ids"/>
+            </record>
+        </data>
+        
+    <record id="overtime_request_comp_rule" model="ir.rule">
+        <field name="name">Overtime Request</field>
+        <field name="model_id" ref="model_hr_overtime_request"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+    </record>
+        
+     <record id="hr_overtime_type_comp" model="ir.rule">
+        <field name="name">Overtime Type</field>
+        <field name="model_id" ref="model_hr_overtime_type"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+    </record>
+        
+
+   <record id="hr_overtime_rule_comp_rule" model="ir.rule">
+        <field name="name">Overtime Rule</field>
+        <field name="model_id" ref="model_hr_overtime_rule"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+    </record>
+    
+
+    </data>
+</odoo>

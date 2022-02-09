@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="0">
+        <record id="view_hr_site_attendance_sequence" model="ir.sequence">
+            <field name="name">hr.attendance.site.name</field>
+            <field name="code">hr.attendance.site.name</field>
+            <field name="prefix">SITE/ATTENDANCE/</field>
+            <field name="padding">5</field>
+            <field name="id" eval="False"/>
+        </record>
+
+        <record id="view_hr_site_attendance_config_sequence" model="ir.sequence">
+            <field name="name">hr.attendance.site.config.name</field>
+            <field name="code">hr.attendance.site.config.name</field>
+            <field name="prefix">SITE/CONFIG/</field>
+            <field name="padding">5</field>
+            <field name="id" eval="False"/>
+        </record>
+    </data>
+</odoo>

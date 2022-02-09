@@ -1,0 +1,243 @@
+<odoo>
+    <data>
+        <record id="appraisal_feedback_record_action" model="ir.actions.server">
+            <field name="name">Create Appraisal Records</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="de_appraisal_enhancement.model_hr_appraisal"/>
+            <field name="binding_model_id" ref="de_appraisal_enhancement.model_hr_appraisal"/>
+            <field name="code">records.create_appraisal_record_action()</field>
+        </record>
+        
+<!--         <record id="auto_appraisal_record_cron" model="ir.cron">
+            <field name="name">Create Auto Appraisal Records</field>
+            <field name="model_id" ref="de_appraisal_enhancement.model_hr_appraisal"/>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="code">model.create_appraisal_record_action()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+	        <field name="active" eval="True"/>
+	    </record> -->
+        
+        
+        <record id="mail_template_appraisal_objective" model="mail.template">
+            <field name="name">Hr Appraisal: Appraisal Objective</field>
+            <field name="model_id" ref="de_appraisal_enhancement.model_hr_appraisal_objective"/>
+            <field name="subject">${object.employee_id.name}: Appraisal Objective</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear ${ctx.get('employee_to_name', 'employee')},
+                        <br/><br/>
+                        An appraisal Objective request Submitted From ${object.employee_id.name}.
+                        <br/>
+                        Please Review it and Negotiate with employee.
+                        <br/><br/>
+                        % if ctx.get('recipient_users'):
+                        <p style="margin: 16px 0px 16px 0px;">
+                            <a href="${ctx['url']}"
+                                style="background-color:#875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px;">
+                                View Objective
+                            </a>
+                        </p>
+                        % endif
+                        Please don't hesitate to contact if you have any concern.
+                        <br/><br/>
+                        Thank you! <br/>
+                        The HR department 
+                        <br/><br/>
+                        <tr><td style="padding:15px 20px 10px 20px;">${(object.signature or '')| safe}</td></tr>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+        
+        <!--  Appraisal Feedback  -->
+        
+        <record id="mail_template_appraisal_feedback_m_create" model="mail.template">
+            <field name="name">Hr Appraisal: Appraisal</field>
+            <field name="model_id" ref="de_appraisal_enhancement.model_hr_appraisal_feedback"/>
+            <field name="subject">${object.name.name}: Appraisal</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear ${ctx.get('employee_to_name', 'employee')},
+                        <br/><br/>
+                        Your Appraisal Start
+                        Please review it, add your rating and confirm it as soon as possible.
+                        <br/>
+                        By Submitting your Appraisal review. Click the Button Below.
+                        <br/><br/>
+                        % if ctx.get('recipient_users'):
+                        <p style="margin: 16px 0px 16px 0px;">
+                            <a href="${ctx['url']}"
+                                style="background-color:#875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px;">
+                                View Appraisal
+                            </a>
+                        </p>
+                        % endif
+                        Please don't hesitate to contact if you have any concern.
+                        <br/><br/>
+                        Thank you! <br/>
+                        The HR department 
+                        <br/><br/>
+                       
+                        <tr><td style="padding:15px 20px 10px 20px;">${(object.signature or '')| safe}</td></tr>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+        
+        <record id="mail_template_appraisal_feedback_m1" model="mail.template">
+            <field name="name">Hr Appraisal: Appraisal</field>
+            <field name="model_id" ref="de_appraisal_enhancement.model_hr_appraisal_feedback"/>
+            <field name="subject">${object.name.name}: Appraisal</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear ${ctx.get('employee_to_name', 'employee')},
+                        <br/><br/>
+                        Your Subordinate ${object.name.name} Submitted their Appraisal
+                        Please review it, add your rating and confirm it as soon as possible.
+                        <br/>
+                        Click the Button Below for more detail.
+                        <br/><br/>
+                        % if ctx.get('recipient_users'):
+                        <p style="margin: 16px 0px 16px 0px;">
+                            <a href="${ctx['url']}"
+                                style="background-color:#875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px;">
+                                View Appraisal
+                            </a>
+                        </p>
+                        % endif
+                        Please don't hesitate to contact if you have any concern.
+                        <br/><br/>
+                        Thank you! <br/>
+                        The HR department 
+                        <br/><br/>
+                       
+                        <tr><td style="padding:15px 20px 10px 20px;">${(object.signature or '')| safe}</td></tr>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+        
+        <record id="mail_template_appraisal_feedback_m2" model="mail.template">
+            <field name="name">Hr Appraisal: Appraisal</field>
+            <field name="model_id" ref="de_appraisal_enhancement.model_hr_appraisal_feedback"/>
+            <field name="subject">${object.name.name}: Appraisal</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear ${ctx.get('employee_to_name', 'employee')},
+                        <br/><br/>
+                        Your Appraisal ${object.name.name} Confirm By Your Line Manager ${object.name.parent_id.name}.
+                        Please review it and confirm as soon as possible.
+                        <br/>
+                        Click the Button Below for more detail.
+                        <br/><br/>
+                        % if ctx.get('recipient_users'):
+                        <p style="margin: 16px 0px 16px 0px;">
+                            <a href="${ctx['url']}"
+                                style="background-color:#875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px;">
+                                View Appraisal
+                            </a>
+                        </p>
+                        % endif
+                        Please don't hesitate to contact if you have any concern.
+                        <br/><br/>
+                        Thank you! <br/>
+                        The HR department 
+                        <br/><br/>
+                       
+                        <tr><td style="padding:15px 20px 10px 20px;">${(object.signature or '')| safe}</td></tr>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+        
+         <record id="mail_template_appraisal_feedback_m3" model="mail.template">
+            <field name="name">Hr Appraisal: Appraisal</field>
+            <field name="model_id" ref="de_appraisal_enhancement.model_hr_appraisal_feedback"/>
+            <field name="subject">${object.name.name}: Appraisal</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear ${ctx.get('employee_to_name', 'employee')},
+                        <br/><br/>
+                        Employee ${object.name.name} Appraisal submitted for HOD Approval.
+                        Please review it, add your remarks and confirm it as soon as possible.
+                        <br/>
+                        Click the Button Below for more detail.
+                        <br/><br/>
+                        % if ctx.get('recipient_users'):
+                        <p style="margin: 16px 0px 16px 0px;">
+                            <a href="${ctx['url']}"
+                                style="background-color:#875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px;">
+                                View Appraisal
+                            </a>
+                        </p>
+                        % endif
+                        Please don't hesitate to contact if you have any concern.
+                        <br/><br/>
+                        Thank you! <br/>
+                        The HR department 
+                        <br/><br/>
+                       
+                        <tr><td style="padding:15px 20px 10px 20px;">${(object.signature or '')| safe}</td></tr>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+        
+        <record id="mail_template_appraisal_feedback_m4" model="mail.template">
+            <field name="name">Hr Appraisal: Appraisal</field>
+            <field name="model_id" ref="de_appraisal_enhancement.model_hr_appraisal_feedback"/>
+            <field name="subject">${object.name.name}: Appraisal</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear ${ctx.get('employee_to_name', 'employee')},
+                        <br/><br/>
+                        Congratulations, Your Appraisal successfully completed.
+                        Please review it.
+                        <br/>
+                        Click the Button Below for more detail.
+                        <br/><br/>
+                        % if ctx.get('recipient_users'):
+                        <p style="margin: 16px 0px 16px 0px;">
+                            <a href="${ctx['url']}"
+                                style="background-color:#875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px;">
+                                View Appraisal
+                            </a>
+                        </p>
+                        % endif
+                        Please don't hesitate to contact if you have any concern.
+                        <br/><br/>
+                        Thank you! <br/>
+                        The HR department 
+                        <br/><br/>
+                       
+                        <tr><td style="padding:15px 20px 10px 20px;">${(object.signature or '')| safe}</td></tr>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+        
+        
+    </data>
+</odoo>

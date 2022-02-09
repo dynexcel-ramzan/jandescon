@@ -1,0 +1,2471 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>   
+    <template id="portal_appraisal_feedbacks" name="Appraisals FeedBack">
+         <t t-set="foo" t-value="2 + 1"/>
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Appraisals Feedback</t>
+            </t>
+            <t t-if="not grouped_feedbacks">
+                <div class="alert alert-warning mt8" role="alert">
+                    There are no Appraisals Feedback.
+                </div>
+            </t>
+            <t t-if="grouped_feedbacks">
+                <t t-call="portal.portal_table">
+                    <t t-foreach="grouped_feedbacks" t-as="feedbacks">
+                        <thead>
+                            <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                <th class="text-left">No#</th>
+                                 <th class="text-left">Employee</th>
+                                <th class="text-left">Mid Year Review Date</th>
+                                <th class="text-left">End Year Review Date</th>
+                                <th class="text-left">Performance Period</th>
+                                <th class="text-left">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="feedbacks" t-as="feedback">   
+                            <t t-if="feedback.name.user_id.id == uid">   
+                                
+                                <tr>
+                                      <td class="text-left">
+                                        #<span t-esc="feedback.id" />
+                                    </td>
+                                     <td>
+                                        <a t-attf-href="/appraisal/feedback/#{feedback.id}?{{ keep_query() }}"><span t-field="feedback.name.name"/></a>
+                                    </td>                                   
+                                     
+                                   <td class="text-left">
+                                        <span t-esc="feedback.mid_year_date"  t-options='{"widget": "date"}' />
+                                    </td>
+                                    
+                                     <td class="text-left">
+                                        <span t-esc="feedback.end_year_date"  t-options='{"widget": "date"}' />
+                                    </td>
+                                  
+                                      <td class="text-left">
+                                          <t t-if="feedback.performance_period == '2020'">
+                                            <i class="badge badge-pill badge-info" >FY 2020-21</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2021'">
+                                            <i class="badge badge-pill badge-info" >FY 2021-22</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2022'">
+                                            <i class="badge badge-pill badge-info" >FY 2022-23</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2023'">
+                                            <i class="badge badge-pill badge-info" >FY 2023-24</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2024'">
+                                            <i class="badge badge-pill badge-info" >FY 2024-25</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2025'">
+                                            <i class="badge badge-pill badge-info" >FY 2025-26</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2026'">
+                                            <i class="badge badge-pill badge-info" >FY 2026-27</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2027'">
+                                            <i class="badge badge-pill badge-info" >FY 2027-28</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2028'">
+                                            <i class="badge badge-pill badge-info" >FY 2028-29</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2029'">
+                                            <i class="badge badge-pill badge-info" >FY 2029-30</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2030'">
+                                            <i class="badge badge-pill badge-info" >FY 2030-31</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2031'">
+                                            <i class="badge badge-pill badge-info" >FY 2031-32</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2032'">
+                                            <i class="badge badge-pill badge-info" >FY 2032-33</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2033'">
+                                            <i class="badge badge-pill badge-info" >FY 2033-34</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2034'">
+                                            <i class="badge badge-pill badge-info" >FY 2034-35</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2035'">
+                                            <i class="badge badge-pill badge-info" >FY 2035-36</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2036'">
+                                            <i class="badge badge-pill badge-info" >FY 2036-37</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2037'">
+                                            <i class="badge badge-pill badge-info" >FY 2037-38</i>
+                                        </t>
+                                    <t t-if="feedback.performance_period == '2038'">
+                                            <i class="badge badge-pill badge-info" >FY 2038-39</i>
+                                        </t>
+                                    <t t-if="feedback.performance_period == '2039'">
+                                            <i class="badge badge-pill badge-info" >FY 2039-39</i>
+                                        </t>
+                                    <t t-if="feedback.performance_period == '2040'">
+                                            <i class="badge badge-pill badge-info" >FY 2040-41</i>
+                                        </t>
+                                    </td>
+                                    <td>
+                                         <t t-if="feedback.state =='draft'">
+                                             <i class="badge badge-pill badge-success" >Draft</i>      
+                                          </t>
+                                          <t t-if="feedback.state =='confirm'">
+
+                                              <i class="badge badge-pill badge-success" >Confirm</i>
+                                          </t>
+                                          <t t-if="feedback.state =='sent'">
+
+                                              <i class="badge badge-pill badge-success" >Send For Employee Review </i>
+                                          </t>
+                                          <t t-if="feedback.state =='endorsed_employee'">
+
+                                              <i class="badge badge-pill badge-success" >Endorsed By Employee</i>
+                                          </t>
+                                         <t t-if="feedback.state =='endorsed_hod'">
+
+                                              <i class="badge badge-pill badge-success" >Endorsed By HOD </i>
+                                          </t>
+                                        <t t-if="feedback.state =='done'">
+
+                                              <i class="badge badge-pill badge-success" >Done </i>
+                                          </t> 
+                                          <t t-if="feedback.state =='end_year_appraisee_review'">
+
+                                              <i class="badge badge-pill badge-success" > End Year Appraisee Review</i>
+                                          </t>
+                                          <t t-if="feedback.state =='end_year_appraiser_review'">
+
+                                              <i class="badge badge-pill badge-success" >End Year Appraiser Review </i>
+                                          </t>
+                                           <t t-if="feedback.state =='end_year_sent_emp_view'">
+                                             <i class="badge badge-pill badge-success" >End Year Sent EMP Review</i>      
+                                          </t>
+                                          <t t-if="feedback.state =='end_year_endorsed_emp'">
+
+                                              <i class="badge badge-pill badge-success" >End Year Endorsed By Employee</i>
+                                          </t>
+                                          <t t-if="feedback.state =='end_year_endorse_hod'">
+
+                                              <i class="badge badge-pill badge-success" >End Year Endorsed By HOD</i>
+                                          </t>
+
+                                         <t t-if="feedback.state =='closed'">
+
+                                              <i class="badge badge-pill badge-success" >Closed  </i>
+                                          </t> 
+
+                                    </td>
+                                    
+                            
+                                </tr>
+                            </t>
+                                <t t-if="feedback.name.parent_id.user_id.id == uid">   
+                                
+                                <tr>
+                                      <td class="text-left">
+                                        #<span t-esc="feedback.id" />
+                                    </td>
+                                     <td>
+                                        <a t-attf-href="/appraisal/feedback/#{feedback.id}?{{ keep_query() }}"><span t-field="feedback.name.name"/></a>
+                                    </td>                                   
+                                     
+                                   <td class="text-left">
+                                        <span t-esc="feedback.mid_year_date"  t-options='{"widget": "date"}' />
+                                    </td>
+                                    
+                                     <td class="text-left">
+                                        <span t-esc="feedback.end_year_date"  t-options='{"widget": "date"}' />
+                                    </td>
+                                   
+                                      <td class="text-left">
+                                          <t t-if="feedback.performance_period == '2020'">
+                                            <i class="badge badge-pill badge-info" >FY 2020-21</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2021'">
+                                            <i class="badge badge-pill badge-info" >FY 2021-22</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2022'">
+                                            <i class="badge badge-pill badge-info" >FY 2022-23</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2023'">
+                                            <i class="badge badge-pill badge-info" >FY 2023-24</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2024'">
+                                            <i class="badge badge-pill badge-info" >FY 2024-25</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2025'">
+                                            <i class="badge badge-pill badge-info" >FY 2025-26</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2026'">
+                                            <i class="badge badge-pill badge-info" >FY 2026-27</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2027'">
+                                            <i class="badge badge-pill badge-info" >FY 2027-28</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2028'">
+                                            <i class="badge badge-pill badge-info" >FY 2028-29</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2029'">
+                                            <i class="badge badge-pill badge-info" >FY 2029-30</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2030'">
+                                            <i class="badge badge-pill badge-info" >FY 2030-31</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2031'">
+                                            <i class="badge badge-pill badge-info" >FY 2031-32</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2032'">
+                                            <i class="badge badge-pill badge-info" >FY 2032-33</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2033'">
+                                            <i class="badge badge-pill badge-info" >FY 2033-34</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2034'">
+                                            <i class="badge badge-pill badge-info" >FY 2034-35</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2035'">
+                                            <i class="badge badge-pill badge-info" >FY 2035-36</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2036'">
+                                            <i class="badge badge-pill badge-info" >FY 2036-37</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2037'">
+                                            <i class="badge badge-pill badge-info" >FY 2037-38</i>
+                                        </t>
+                                    <t t-if="feedback.performance_period == '2038'">
+                                            <i class="badge badge-pill badge-info" >FY 2038-39</i>
+                                        </t>
+                                    <t t-if="feedback.performance_period == '2039'">
+                                            <i class="badge badge-pill badge-info" >FY 2039-39</i>
+                                        </t>
+                                    <t t-if="feedback.performance_period == '2040'">
+                                            <i class="badge badge-pill badge-info" >FY 2040-41</i>
+                                        </t>
+                                    </td>
+                                    <td>
+                                          <t t-if="feedback.state =='draft'">
+                                             <i class="badge badge-pill badge-success" >Draft</i>      
+                                          </t>
+                                          <t t-if="feedback.state =='confirm'">
+
+                                              <i class="badge badge-pill badge-success" >Confirm</i>
+                                          </t>
+                                          <t t-if="feedback.state =='sent'">
+
+                                              <i class="badge badge-pill badge-success" >Send For Employee Review </i>
+                                          </t>
+                                          <t t-if="feedback.state =='endorsed_employee'">
+
+                                              <i class="badge badge-pill badge-success" >Endorsed By Employee</i>
+                                          </t>
+                                         <t t-if="feedback.state =='endorsed_hod'">
+
+                                              <i class="badge badge-pill badge-success" >Endorsed By HOD </i>
+                                          </t>
+                                        <t t-if="feedback.state =='done'">
+
+                                              <i class="badge badge-pill badge-success" >Done </i>
+                                          </t> 
+                                          <t t-if="feedback.state =='end_year_appraisee_review'">
+
+                                              <i class="badge badge-pill badge-success" > End Year Appraisee Review</i>
+                                          </t>
+                                          <t t-if="feedback.state =='end_year_appraiser_review'">
+
+                                              <i class="badge badge-pill badge-success" >End Year Appraiser Review </i>
+                                          </t>
+                                           <t t-if="feedback.state =='end_year_sent_emp_view'">
+                                             <i class="badge badge-pill badge-success" >End Year Sent EMP Review</i>      
+                                          </t>
+                                          <t t-if="feedback.state =='end_year_endorsed_emp'">
+
+                                              <i class="badge badge-pill badge-success" >End Year Endorsed By Employee</i>
+                                          </t>
+                                          <t t-if="feedback.state =='end_year_endorse_hod'">
+
+                                              <i class="badge badge-pill badge-success" >End Year Endorsed By HOD</i>
+                                          </t>
+
+                                         <t t-if="feedback.state =='closed'">
+
+                                              <i class="badge badge-pill badge-success" >Closed  </i>
+                                          </t> 
+                                    </td>    
+
+                            
+                                </tr>
+                            </t>
+                                
+                                <t t-if="feedback.name.parent_id.user_id.id != uid">
+                                <t t-if="feedback.name.department_id.manager_id.user_id.id == uid">   
+                                
+                                <tr>
+                                      <td class="text-left">
+                                        #<span t-esc="feedback.id" />
+                                    </td>
+                                     <td>
+                                        <a t-attf-href="/appraisal/feedback/#{feedback.id}?{{ keep_query() }}"><span t-field="feedback.name.name"/></a>
+                                    </td>                                   
+                                     
+                                   <td class="text-left">
+                                        <span t-esc="feedback.mid_year_date" t-options='{"widget": "date"}' />
+                                    </td>
+                                    
+                                     <td class="text-left">
+                                        <span t-esc="feedback.end_year_date" t-options='{"widget": "date"}' />
+                                    </td>
+                                   
+                                      <td class="text-left">
+                                          <t t-if="feedback.performance_period == '2020'">
+                                            <i class="badge badge-pill badge-info" >FY 2020-21</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2021'">
+                                            <i class="badge badge-pill badge-info" >FY 2021-22</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2022'">
+                                            <i class="badge badge-pill badge-info" >FY 2022-23</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2023'">
+                                            <i class="badge badge-pill badge-info" >FY 2023-24</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2024'">
+                                            <i class="badge badge-pill badge-info" >FY 2024-25</i>
+                                        </t>
+                                         <t t-if="feedback.performance_period == '2025'">
+                                            <i class="badge badge-pill badge-info" >FY 2025-26</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2026'">
+                                            <i class="badge badge-pill badge-info" >FY 2026-27</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2027'">
+                                            <i class="badge badge-pill badge-info" >FY 2027-28</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2028'">
+                                            <i class="badge badge-pill badge-info" >FY 2028-29</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2029'">
+                                            <i class="badge badge-pill badge-info" >FY 2029-30</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2030'">
+                                            <i class="badge badge-pill badge-info" >FY 2030-31</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2031'">
+                                            <i class="badge badge-pill badge-info" >FY 2031-32</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2032'">
+                                            <i class="badge badge-pill badge-info" >FY 2032-33</i>
+                                        </t>
+                                        <t t-if="feedback.performance_period == '2033'">
+                                            <i class="badge badge-pill badge-info" >FY 2033-34</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2034'">
+                                            <i class="badge badge-pill badge-info" >FY 2034-35</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2035'">
+                                            <i class="badge badge-pill badge-info" >FY 2035-36</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2036'">
+                                            <i class="badge badge-pill badge-info" >FY 2036-37</i>
+                                        </t>
+                                     <t t-if="feedback.performance_period == '2037'">
+                                            <i class="badge badge-pill badge-info" >FY 2037-38</i>
+                                        </t>
+                                    <t t-if="feedback.performance_period == '2038'">
+                                            <i class="badge badge-pill badge-info" >FY 2038-39</i>
+                                        </t>
+                                    <t t-if="feedback.performance_period == '2039'">
+                                            <i class="badge badge-pill badge-info" >FY 2039-39</i>
+                                        </t>
+                                    <t t-if="feedback.performance_period == '2040'">
+                                            <i class="badge badge-pill badge-info" >FY 2040-41</i>
+                                        </t>
+                                    </td>
+                                    <td>
+                                       <t t-if="feedback.state =='draft'">
+                                         <i class="badge badge-pill badge-success" >Draft</i>      
+                                       </t>
+                                       <t t-if="feedback.state =='confirm'">
+
+                                          <i class="badge badge-pill badge-success" >Confirm</i>
+                                       </t>
+                                      <t t-if="feedback.state =='sent'">
+
+                                          <i class="badge badge-pill badge-success" >Send For Employee Review </i>
+                                      </t>
+                                      <t t-if="feedback.state =='endorsed_employee'">
+
+                                          <i class="badge badge-pill badge-success" >Endorsed By Employee</i>
+                                      </t>
+                                     <t t-if="feedback.state =='endorsed_hod'">
+
+                                          <i class="badge badge-pill badge-success" >Endorsed By HOD </i>
+                                      </t>
+                                    <t t-if="feedback.state =='done'">
+
+                                          <i class="badge badge-pill badge-success" >Done </i>
+                                      </t> 
+                                      <t t-if="feedback.state =='end_year_appraisee_review'">
+
+                                          <i class="badge badge-pill badge-success" > End Year Appraisee Review</i>
+                                      </t>
+                                      <t t-if="feedback.state =='end_year_appraiser_review'">
+
+                                          <i class="badge badge-pill badge-success" >End Year Appraiser Review </i>
+                                      </t>
+                                       <t t-if="feedback.state =='end_year_sent_emp_view'">
+                                         <i class="badge badge-pill badge-success" >End Year Sent EMP Review</i>      
+                                      </t>
+                                      <t t-if="feedback.state =='end_year_endorsed_emp'">
+
+                                          <i class="badge badge-pill badge-success" >End Year Endorsed By Employee</i>
+                                      </t>
+                                      <t t-if="feedback.state =='end_year_endorse_hod'">
+
+                                          <i class="badge badge-pill badge-success" >End Year Endorsed By HOD</i>
+                                      </t>
+
+                                     <t t-if="feedback.state =='closed'">
+
+                                          <i class="badge badge-pill badge-success" >Closed  </i>
+                                      </t> 
+                                    </td>    
+                                   
+                                </tr>
+                            </t>
+                             </t>                                
+                            </t>                               
+                        </tbody>
+                    </t>
+                </t>
+            </t>   
+        </t>
+    </template>
+    
+    
+    
+    
+    <template id="portal_appraisal_feedback" name="Appraisal feedback">
+        <t t-call="portal.portal_layout">
+            <div id="wrap">
+                                         
+            <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                            <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                        <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                    <div class="container">
+                        <h1 style="margin-left:10px">Appraisal</h1>
+                    </div>
+                </section>
+            </div>
+               
+              
+            <form id="feedbackForm"  action="/update/appraisal/feedback/save"  method="post"  enctype="multipart/form-data">
+                  
+                 
+    
+                    <div  class='pull-left'>
+                            <t t-if="feedback.state == 'draft'">
+                                      <t t-if="feedback.name.user_id.id == uid">
+                                        <a t-attf-href="/action/confirm/#{feedback.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%; ">Confirm</div> </a>
+                                      </t>
+                                    </t>
+                                <t t-if="feedback.state == 'confirm'">
+                                   
+                                      <t t-if="feedback.name.parent_id.user_id.id == uid">
+                                        <a t-attf-href="/action/sent/hr/review/#{feedback.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%; ">Send for Employee Review</div> </a>
+                                      </t>
+                                       
+                                    </t>
+                               <t t-if="feedback.state == 'sent'">
+                                   
+                                      <t t-if="feedback.name.user_id.id == uid">
+                                        <a t-attf-href="/action/endorsed/hr/#{feedback.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%; ">Confirm</div> </a>
+                                      </t>
+                                      
+                                    </t>
+                                  <t t-if="feedback.state == 'endorsed_employee'">
+                                   
+                                      <t t-if="feedback.name.department_id.manager_id.user_id.id == uid">
+                                        <a t-attf-href="/action/endorsed/hr/hod/#{feedback.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%;margin-left:12px;">Confirm</div> </a>
+                                           <a t-attf-href="/action/reset/hod/#{feedback.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%;margin-right:8px;">Refuse </div> </a> 
+                                    </t>
+                                 </t>  
+                               <t t-if="feedback.state == 'end_year_appraisee_review'">
+                                   
+                                      <t t-if="feedback.name.user_id.id == uid">
+                                        <a t-attf-href="/action/appraiser/review/#{feedback.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%; ">Confirm</div> </a> 
+                                    </t>
+                                 </t>  
+                               <t t-if="feedback.state == 'end_year_appraiser_review'">
+                                   
+                                      <t t-if="feedback.name.parent_id.user_id.id == uid">
+                                        <a t-attf-href="/action/end/appraiser/review/#{feedback.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%; ">Send For Employee Review</div> </a>
+                                    </t>
+                                 </t>  
+                               
+                                <t t-if="feedback.state == 'end_year_sent_emp_view'">                                   
+                                      <t t-if="feedback.name.user_id.id == uid">
+                                        <a t-attf-href="/action/end/endoresd/review/#{feedback.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%; ">Confirm </div> </a>
+                                    </t>
+                                 </t>  
+                               
+                                <t t-if="feedback.state == 'end_year_endorsed_emp'">
+                                   
+                                      <t t-if="feedback.name.department_id.manager_id.user_id.id == uid">
+                                        <a t-attf-href="/action/end/endoresd/hod/#{feedback.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%;margin-left:12px;">Confirm </div> </a>
+                                        <a t-attf-href="/action/reset/hod/#{feedback.id}?" > <div class="btn btn-primary pull-right" style="height:30px; line-height:100%;margin-right:8px;">Refuse </div> </a>    
+                                    </t>
+                                 </t>
+                </div>
+                <div  class='pull-right'>
+                    <t t-if='feedback.state in ("sent","endorsed_employee", "endorsed_hod","done","end_year_sent_emp_view","end_year_endorsed_emp","end_year_endorsed_hod","closed")'>
+                      Rating:   <i class="badge badge-pill badge-info" ><t t-esc='feedback.rating_level'/></i>
+                    </t>  
+                     <t t-if='feedback.state in ("confirm","end_year_appraiser_review")'>
+                     <t t-if='feedback.name.parent_id.user_id.id==uid'>
+                      Rating:   <i class="badge badge-pill badge-info" ><t t-esc='feedback.rating_level'/></i>
+                    </t>
+                    </t>     
+                </div>    
+                    <br/>
+                    <br/>
+                                
+                        <div class="container">
+                        </div>    
+               <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Employee</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.name"    />
+                                <input type="hidden" class="form-control s_website_form_input" name="employee_id"   t-att-value='employee_name.id' />   
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content">Manager</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="managers"    />
+                        </div>
+                  </div>
+                </div>
+               </div>
+                
+                <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Employee Code</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.emp_number"    />
+                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content">Department</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="employee_name.department_id.name"    />
+                        </div>
+                  </div>
+                </div>
+               </div>  
+                
+                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Grade</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.grade_designation.name"/>
+                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                            <span class="s_website_form_label_content">Job Position</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="employee_name.job_id.name"    />
+                        </div>
+                  </div>
+                </div>
+               </div>  
+               <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                         <span class="s_website_form_label_content">Employee Type</span>
+                            </label>
+                        <div class="col-sm">
+                            <t t-esc="employee_name.emp_type"/>
+                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content">Date Of Joining</span>
+                        </label>
+                        <div class="col-sm">
+                                <t t-esc="employee_name.date"    t-options='{"widget": "date"}'/>
+                        </div>
+                  </div>
+                </div>
+               </div> 
+                
+                <div class="s_website_form_rows row s_col_no_bgcolor">
+                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                     <div class="row s_col_no_resize s_col_no_bgcolor">
+                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="mid_year_date">
+                                <span class="s_website_form_label_content">Mid Year Review Date</span>
+                            </label>
+                     <div class="col-sm">
+                        <t t-esc="feedback.mid_year_date" t-options='{"widget": "date"}'/>                                
+                     </div>
+                  </div>
+                </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content">End Year Review Date</span>
+                        </label>
+                        <div class="col-sm">
+                        <t t-esc="feedback.mid_year_date" t-options='{"widget": "date"}'/>                                         </div>
+                  </div>
+                </div>
+               </div>  
+                
+                                
+                <div class="s_website_form_rows row s_col_no_bgcolor">
+                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                     <div class="row s_col_no_resize s_col_no_bgcolor">
+                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="mid_year_date">
+                                <span class="s_website_form_label_content">Mid Year Deadline Date</span>
+                            </label>
+                     <div class="col-sm">
+                        <t t-esc="feedback.date_mid_deadline" t-options='{"widget": "date"}'/>                                
+                     </div>
+                  </div>
+                </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_Employeee">
+                                <span class="s_website_form_label_content">End Year Deadline Date</span>
+                        </label>
+                        <div class="col-sm">
+                        <t t-esc="feedback.date_end_deadline" t-options='{"widget": "date"}'/>                                         </div>
+                  </div>
+                </div>
+               </div> 
+                
+                      <div class="s_website_form_rows row s_col_no_bgcolor">
+                 <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                     <div class="row s_col_no_resize s_col_no_bgcolor">
+                           <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="status">
+                                <span class="s_website_form_label_content">Status</span>
+                            </label>
+                     <div class="col-sm">
+                           <t t-if="feedback.state =='draft'">
+                             <i class="badge badge-pill badge-success" >Draft</i>      
+                          </t>
+                          <t t-if="feedback.state =='confirm'">
+
+                              <i class="badge badge-pill badge-success" >Confirm</i>
+                          </t>
+                          <t t-if="feedback.state =='sent'">
+
+                              <i class="badge badge-pill badge-success" >Send For Employee Review </i>
+                          </t>
+                          <t t-if="feedback.state =='endorsed_employee'">
+
+                              <i class="badge badge-pill badge-success" >Endorsed By Employee</i>
+                          </t>
+                         <t t-if="feedback.state =='endorsed_hod'">
+
+                              <i class="badge badge-pill badge-success" >Endorsed By HOD </i>
+                          </t>
+                        <t t-if="feedback.state =='done'">
+
+                              <i class="badge badge-pill badge-success" >Done </i>
+                          </t> 
+                          <t t-if="feedback.state =='end_year_appraisee_review'">
+
+                              <i class="badge badge-pill badge-success" > End Year Appraisee Review</i>
+                          </t>
+                          <t t-if="feedback.state =='end_year_appraiser_review'">
+
+                              <i class="badge badge-pill badge-success" >End Year Appraiser Review </i>
+                          </t>
+                           <t t-if="feedback.state =='end_year_sent_emp_view'">
+                             <i class="badge badge-pill badge-success" >End Year Sent EMP Review</i>      
+                          </t>
+                          <t t-if="feedback.state =='end_year_endorsed_emp'">
+
+                              <i class="badge badge-pill badge-success" >End Year Endorsed By Employee</i>
+                          </t>
+                          <t t-if="feedback.state =='end_year_endorse_hod'">
+
+                              <i class="badge badge-pill badge-success" >End Year Endorsed By HOD</i>
+                          </t>
+                         
+                         <t t-if="feedback.state =='closed'">
+
+                              <i class="badge badge-pill badge-success" >Closed  </i>
+                          </t> 
+                                                   
+                     </div>
+                  </div>
+                </div>
+                                    
+                <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                        <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="next_status">
+                                <span class="s_website_form_label_content">Next Status</span>
+                        </label>
+                        <div class="col-sm">
+                           <t t-if="feedback.state =='draft'">
+                             <i class="badge badge-pill badge-success" >Confirm</i>      
+                          </t>
+                          <t t-if="feedback.state =='confirm'">
+
+                              <i class="badge badge-pill badge-success" >Send For Employee Review</i>
+                          </t>
+                          <t t-if="feedback.state =='sent'">
+
+                              <i class="badge badge-pill badge-success" >Endorsed By Employee </i>
+                          </t>
+                          <t t-if="feedback.state =='endorsed_employee'">
+
+                              <i class="badge badge-pill badge-success" >Endorsed By HOD </i>
+                          </t> 
+                        <t t-if="feedback.state =='done'">
+
+                              <i class="badge badge-pill badge-success" >End Year Appraisee Review </i>
+                          </t> 
+                          <t t-if="feedback.state =='end_year_appraisee_review'">
+
+                              <i class="badge badge-pill badge-success" > End Year Appraiser Review</i>
+                          </t>
+                          <t t-if="feedback.state =='end_year_appraiser_review'">
+
+                              <i class="badge badge-pill badge-success" >End Year Sent EMP Review </i>
+                          </t>
+                           <t t-if="feedback.state =='end_year_sent_emp_view'">
+                             <i class="badge badge-pill badge-success" >End Year Endorsed By Employee</i>      
+                          </t>
+                          <t t-if="feedback.state =='end_year_endorsed_emp'">
+
+                              <i class="badge badge-pill badge-success" >End Year Endorsed By HOD</i>
+                          </t>
+                          <t t-if="feedback.state =='end_year_endorsed_hod'">
+
+                              <i class="badge badge-pill badge-success" >Closed </i>
+                          </t>
+                          <t t-if="feedback.state =='endorsed_hod'">
+
+                              <i class="badge badge-pill badge-success" >Done </i>
+                          </t> 
+                         <t t-if="feedback.state =='end_year_endorse_hod'">
+
+                              <i class="badge badge-pill badge-success" >Done </i>
+                          </t> 
+                                                     
+                    </div>
+                  </div>
+                </div>
+               </div> 
+                
+         
+                                    
+            
+                <input id='ffeedbackid' type="hidden" class="form-control s_website_form_input" name="ffeedback_id"  t-att-value="feedback.id"/>
+                
+              
+                
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+
+                <input id='recordid' type="hidden" class="form-control s_website_form_input" name="record_id"   t-att-value="feedback.id"/>
+                
+                </form> 
+                
+                <t t-if="feedback.state in ('end_year_appraisee_review','end_year_appraiser_review','end_year_sent_emp_view','end_year_endorsed_emp','end_year_endorse_hod','closed')">
+                <h3><p style='color:red;'>Full Year Review</p></h3>
+                <h5><p style='color:blue;'>Bussiness Objective</p></h5>                     
+                 <div >                 
+                  <t t-set='sr_count' t-value='0'/>   
+                  <t t-foreach="feedback.feedback_objective_lines" t-as="line"> 
+                    <section class="s_text_image pt32 pb32 o_colored_level"  style='box-shadow:3px;' data-snippet="s_image_text" data-name="Image - Text">
+                  <t t-set='sr_count' t-value='sr_count + 1'/>   
+                    <div class="container" style='box-shadow:3px;'>                      
+                      <div class="row align-items-center">
+                        <div class="col-lg-12 pt16 pb16 o_colored_level col-lg-12 border rounded shadow">
+                            <div data-snippet="s_share"  data-name="Share">
+                                <i class="pull-left">Objective# <t t-esc='sr_count'/></i>                               
+                                <i class="badge badge-pill badge-info pull-right" ><t t-esc='line.priority'/></i>            
+                            </div>  
+                            <br/>
+                             <h2><t t-esc='line.objective'/></h2>
+                              <p class="o_default_snippet_text"><t t-esc='line.full_remarks'/></p>
+                              <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating"> 
+                                 <t t-set='ostar_count' t-value='0'/>   
+                                 <i class="s_rating_icons o_not_editable">
+                                  <span class="s_rating_active_icons">
+                                  <t t-foreach="range(int(line.employee_rating_score))" t-as="score"> 
+                                    <t t-set='ostar_count' t-value='ostar_count + 1'/>     
+                                    <i class="fa fa-star"/>
+                                  </t>    
+                                  </span>
+                                  <span class="s_rating_inactive_icons">
+                                  <t t-foreach="range(5- ostar_count)" t-as="scorenil"> 
+                                     <i class="fa fa-star-o"/>
+                                  </t>    
+                                  </span>
+                                  <i class="badge badge-pill badge-info" ><t t-esc='line.employee_rating_level'/> </i>   
+  
+                                </i>
+                              </i>
+                              <p class="o_default_snippet_text"><t t-esc='line.full_remarks_mngr'/></p>      
+                             <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating">                   
+                                <t t-set='mstar_count' t-value='0'/>   
+                                 <i class="s_rating_icons o_not_editable">
+                                  <span class="s_rating_active_icons">
+                                  <t t-foreach="range(int(line.manager_rating_score))" t-as="score"> 
+                                    <t t-set='mstar_count' t-value='mstar_count + 1'/>     
+                                    <i class="fa fa-star"/>
+                                  </t>    
+                                  </span>
+                                  <span class="s_rating_inactive_icons">
+                                  <t t-foreach="range(5-mstar_count)" t-as="scorenil"> 
+                                     <i class="fa fa-star-o"/>
+                                  </t>    
+                                  </span>
+                                  <i class="badge badge-pill badge-info" ><t t-esc='line.manager_rating_level'/> </i>  
+
+                                </i>
+                                 
+                              </i>
+                        <div>
+                               <div data-snippet="s_share"  data-name="Share">
+                                     <i class="badge badge-pill badge-success pull-left" ><t t-esc='line.weightage'/> %</i>                                              <t t-if='feedback.name.user_id.id==uid'>
+                                      <t t-if='feedback.state=="end_year_appraisee_review"'>  
+                                     <a t-attf-href="/edit/feedback/full/year/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                   </t>
+                                   </t>
+                                   <t t-if='feedback.name.parent_id.user_id.id==uid'>
+                                      <t t-if='feedback.state=="end_year_appraiser_review"'>  
+                                     <a t-attf-href="/edit/feedback/full/year/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                   </t>
+                                   </t>
+                                </div>
+                        </div>      
+                        </div>
+                      </div>
+                    </div>
+                  </section> 
+                 </t>     
+                </div>
+                    <br/>
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_full_remarks">
+                                <span class="s_website_form_label_content">Employee Comments:</span>
+                            </label>
+                        <div class="col-sm">                        
+                            <t t-esc="feedback.half_year_appraiser_objective_comment" />                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                   <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                     <div class="row s_col_no_resize s_col_no_bgcolor">
+                         <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_full_manager_remarks">
+                                <span class="s_website_form_label_content">Manager Comments:</span>
+                            </label>
+                        <div class="col-sm">                        
+                            <t t-esc="feedback.full_year_appraiser_objective_comment" />                                
+                                </div>
+                     </div>
+                   </div>
+               </div>
+                
+                     <h5><p style='color:blue;'>Core Values</p></h5>
+                 <div>                
+                  <t t-set='sr_count' t-value='0'/>   
+                  <t t-foreach="feedback.feedback_values_lines" t-as="line"> 
+                    <section class="s_text_image pt32 pb32 o_colored_level"  style='box-shadow:3px;' data-snippet="s_image_text" data-name="Image - Text">
+                  <t t-set='sr_count' t-value='sr_count + 1'/>   
+                    <div class="container" style='box-shadow:3px;'>                      
+                      <div class="row align-items-center">
+                        <div class="col-lg-12 pt16 pb16 o_colored_level col-lg-12 border rounded shadow">
+                            <div data-snippet="s_share"  data-name="Share">
+                                <i class="pull-left">Core Value# <t t-esc='sr_count'/></i>
+                                <i class="badge badge-pill badge-info pull-right" ><t t-esc='line.priority'/></i>            
+                            </div>  
+                            <br/>
+                             <h2><t t-esc='line.core_values'/></h2>                                   
+                              <p class="o_default_snippet_text"><t t-esc='line.full_remarks'/></p>                                                          <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating"> 
+                                 <t t-set='corehalfstar_count' t-value='0'/>   
+                                 <i class="s_rating_icons o_not_editable">
+                                  <span class="s_rating_active_icons">
+                                  <t t-foreach="range(int(line.employee_rating_score))" t-as="chalfscore"> 
+                                    <t t-set='corehalfstar_count' t-value='corehalfstar_count + 1'/>     
+                                    <i class="fa fa-star"/>
+                                  </t>    
+                                  </span>
+                                  <span class="s_rating_inactive_icons">
+                                  <t t-foreach="range(5-corehalfstar_count)" t-as="corehalf"> 
+                                     <i class="fa fa-star-o"/>
+                                  </t>    
+                                  </span>
+                                  <i class="badge badge-pill badge-info" ><t t-esc='line.employee_rating_level'/> </i>     
+                                </i>
+                              </i>
+                              <p class="o_default_snippet_text"><t t-esc='line.full_remarks_mngr'/></p>
+                              <p class="o_default_snippet_text">                              
+                              <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating">                   
+                                <t t-set='m_core_half_star_count' t-value='0'/>   
+                                 <i class="s_rating_icons o_not_editable">
+                                  <span class="s_rating_active_icons">
+                                  <t t-foreach="range(int(line.manager_rating_score))" t-as="m_core_half"> 
+                                    <t t-set='m_core_half_star_count' t-value='m_core_half_star_count + 1'/>     
+                                    <i class="fa fa-star"/>
+                                  </t>    
+                                  </span>
+                                  <span class="s_rating_inactive_icons">
+                                  <t t-foreach="range(5-m_core_half_star_count)" t-as="m_core_h"> 
+                                     <i class="fa fa-star-o"/>
+                                  </t>    
+                                  </span>
+                                   <i class="badge badge-pill badge-info" ><t t-esc='line.manager_rating_level'/> </i>  
+                                </i>                                 
+                             </i>
+                         </p>     
+                            
+                              <div>  
+                                    <div data-snippet="s_share"  data-name="Share">
+                                      <i class="badge badge-pill badge-success pull-left" ><t t-esc='line.weightage'/> %</i>                                                 <t t-if='feedback.name.user_id.id==uid'>
+                                          <t t-if='feedback.state=="end_year_appraisee_review"'>  
+                                            <a t-attf-href="/edit/fullyear/values/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                          </t>
+                                        </t>
+                                        <t t-if='feedback.name.parent_id.user_id.id==uid'>
+                                          <t t-if='feedback.state=="end_year_appraiser_review"'>  
+                                            <a t-attf-href="/edit/fullyear/values/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                          </t>
+                                        </t>
+                                    </div>
+                                
+                            </div>      
+                        </div>
+                      </div>
+                    </div>
+                  </section> 
+                 </t>     
+                </div>
+                
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                <span class="s_website_form_label_content">Employee Comments:</span>
+                            </label>
+                        <div class="col-sm">                        
+                            <t t-esc="feedback.half_year_appraiser_value_comment" />                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                   <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                     <div class="row s_col_no_resize s_col_no_bgcolor">
+                         <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                <span class="s_website_form_label_content">Manager Comments:</span>
+                            </label>
+                        <div class="col-sm">                        
+                            <t t-esc="feedback.full_year_appraiser_value_comment" />                                
+                                </div>
+                     </div>
+                   </div>
+               </div>
+                
+                </t>                
+                <h3><p style='color:red;'>Half Year Review</p></h3>
+                <h5><p style='color:blue;'>Bussiness Objective</p></h5>                    
+                 <div>                 
+                  <t t-set='sr_count' t-value='0'/>   
+                  <t t-foreach="feedback.feedback_objective_appraisee_lines" t-as="line"> 
+                    <section class="s_text_image pt32 pb32 o_colored_level"  style='box-shadow:3px;' data-snippet="s_image_text" data-name="Image - Text">
+                  <t t-set='sr_count' t-value='sr_count + 1'/>   
+                    <div class="container" style='box-shadow:3px;'>                      
+                      <div class="row align-items-center">
+                        <div class="col-lg-12 pt16 pb16 o_colored_level col-lg-12 border rounded shadow">
+                            <div data-snippet="s_share"  data-name="Share">
+                                <i class="pull-left">Objective# <t t-esc='sr_count'/></i>                               
+                                <i class="badge badge-pill badge-info pull-right" ><t t-esc='line.priority'/></i>            
+                            </div>  
+                            <br/>
+                             <h2><t t-esc='line.objective'/></h2>                              
+                              <p class="o_default_snippet_text"><t t-esc='line.remarks'/></p>
+                                <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating"> 
+                                 <t t-set='corefullstar_count' t-value='0'/>   
+                                 <i class="s_rating_icons o_not_editable">
+                                  <span class="s_rating_active_icons">
+                                   <t t-foreach="range(int(line.employee_rating_score))" t-as="cfullscore"> 
+                                     <t t-set='corefullstar_count' t-value='corefullstar_count + 1'/>     
+                                     <i class="fa fa-star"/>
+                                   </t>    
+                                  </span>
+                                  <span class="s_rating_inactive_icons">
+                                  <t t-foreach="range(5-corefullstar_count)" t-as="corefull"> 
+                                     <i class="fa fa-star-o"/>
+                                  </t>    
+                                  </span>
+                                  <i class="badge badge-pill badge-info" ><t t-esc='line.employee_rating_level'/> </i>   
+  
+                                </i>
+                              </i>
+                             <p class="o_default_snippet_text"><t t-esc='line.remarks_mngr'/></p>
+                             <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating">                   
+                                <t t-set='m_obj_full_star_count' t-value='0'/>   
+                                 <i class="s_rating_icons o_not_editable">
+                                  <span class="s_rating_active_icons">
+                                  <t t-foreach="range(int(line.manager_rating_score))" t-as="m_core_half"> 
+                                    <t t-set='m_obj_full_star_count' t-value='m_obj_full_star_count + 1'/>     
+                                    <i class="fa fa-star"/>
+                                  </t>    
+                                  </span>
+                                  <span class="s_rating_inactive_icons">
+                                  <t t-foreach="range(5-m_obj_full_star_count)" t-as="m_obj_h"> 
+                                     <i class="fa fa-star-o"/>
+                                  </t>    
+                                  </span>
+                                  <i class="badge badge-pill badge-info" ><t t-esc='line.manager_rating_level'/> </i>  
+
+                                </i>
+                                 
+                              </i>
+                            
+                            
+                              <div>                                  
+                                 <div data-snippet="s_share"  data-name="Share">
+                                      <i class="badge badge-pill badge-success pull-left" ><t t-esc='line.weightage'/> %</i>  
+                                       <t t-if='feedback.name.user_id.id==uid'>
+                                         <t t-if='feedback.state=="draft"'> 
+                                          <a t-attf-href="/edit/feedback/objective/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                           </t>
+                                        </t>
+                                        <t t-if='feedback.name.parent_id.user_id.id==uid'>
+                                         <t t-if='feedback.state=="confirm"'> 
+                                          <a t-attf-href="/edit/feedback/objective/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                           </t>
+                                        </t>
+                                    </div>
+                                </div>      
+                        </div>
+                      </div>
+                    </div>
+                  </section> 
+                 </t>     
+                </div> 
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                     <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                <span class="s_website_form_label_content">Employee Comments:</span>
+                            </label>
+                        <div class="col-sm">                        
+                            <t t-esc="feedback.objective_comment" />                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                   <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                     <div class="row s_col_no_resize s_col_no_bgcolor">
+                         <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                <span class="s_website_form_label_content">Manager Comments:</span>
+                            </label>
+                        <div class="col-sm">                        
+                            <t t-esc="feedback.full_year_objective_comment" />                                
+                                </div>
+                     </div>
+                   </div>
+               </div>                
+                  <h5 ><p style='color:blue;'>Core Values</p></h5>
+                 <div>                 
+                  <t t-set='sr_count' t-value='0'/>   
+                  <t t-foreach="feedback.feedback_values_appraisee_lines" t-as="line"> 
+                    <section class="s_text_image pt32 pb32 o_colored_level"  style='box-shadow:3px;' data-snippet="s_image_text" data-name="Image - Text">
+                  <t t-set='sr_count' t-value='sr_count + 1'/>   
+                    <div class="container" style='box-shadow:3px;'>                      
+                      <div class="row align-items-center">
+                        <div class="col-lg-12 pt16 pb16 o_colored_level col-lg-12 border rounded shadow">
+                            <div data-snippet="s_share"  data-name="Share">
+                                <i class="pull-left">Core Value#<t t-esc='sr_count'/></i>
+                               
+                                <i class="badge badge-pill badge-info pull-right" ><t t-esc='line.priority'/></i>            
+                            </div>  
+                            <br/>
+                             <h2><t t-esc='line.core_values'/></h2>       
+                              <p class="o_default_snippet_text"><t t-esc='line.remarks'/></p>
+                               <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating"> 
+                                 <t t-set='core_emp_star_count' t-value='0'/>   
+                                 <i class="s_rating_icons o_not_editable">
+                                  <span class="s_rating_active_icons">
+                                  <t t-foreach="range(int(line.employee_rating_score))" t-as="emp_score"> 
+                                    <t t-set='core_emp_star_count' t-value='core_emp_star_count + 1'/>     
+                                    <i class="fa fa-star"/>
+                                  </t>    
+                                  </span>
+                                  <span class="s_rating_inactive_icons">
+                                  <t t-foreach="range(5-core_emp_star_count)" t-as="core_emp_full"> 
+                                     <i class="fa fa-star-o"/>
+                                  </t>    
+                                  </span>
+                                  <i class="badge badge-pill badge-info" ><t t-esc='line.employee_rating_level'/> </i>   
+  
+                                </i>
+                              </i>
+                               
+                              <p class="o_default_snippet_text"><t t-esc='line.remarks_mngr'/></p>
+                              <p class="o_default_snippet_text">
+                               
+                             <i class="o_default_snippet_text s_rating pt16 pb16" data-vcss="001" data-icon="fa-star" data-snippet="s_rating" data-name="Rating">                   
+                                <t t-set='m_core_full_star_count' t-value='0'/>   
+                                 <i class="s_rating_icons o_not_editable">
+                                  <span class="s_rating_active_icons">
+                                  <t t-foreach="range(int(line.manager_rating_score))" t-as="m_core_full"> 
+                                    <t t-set='m_core_full_star_count' t-value='m_core_full_star_count + 1'/>     
+                                    <i class="fa fa-star"/>
+                                  </t>    
+                                  </span>
+                                  <span class="s_rating_inactive_icons">
+                                  <t t-foreach="range(5-m_core_full_star_count)" t-as="m_core_f"> 
+                                     <i class="fa fa-star-o"/>
+                                  </t>    
+                                  </span>
+                                  <i class="badge badge-pill badge-info" ><t t-esc='line.manager_rating_level'/> </i>  
+
+                                </i>
+                                 
+                              </i>
+                            </p>  
+                              <div>                                  
+                                 <div data-snippet="s_share"  data-name="Share">
+                                      <i class="badge badge-pill badge-success pull-left" ><t t-esc='line.weightage'/> %</i>
+                                      <t t-if='feedback.name.user_id.id==uid'>
+                                       <t t-if='feedback.state=="draft"'>
+                                         <a t-attf-href="/edit/feedback/values/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                      </t>
+                                      </t>    
+                                      <t t-if='feedback.name.parent_id.user_id.id==uid'>
+                                         <t t-if='feedback.state=="confirm"'>  
+                                         <a t-attf-href="/edit/feedback/values/line/#{line.id}?" class="fa fa-pencil-square-o pull-right" style="font-size:20px;color:green"></a>
+                                        </t>
+                                       </t>    
+                                    </div>
+                                </div>      
+                        </div>
+                      </div>
+                    </div>
+                  </section> 
+                 </t>     
+                </div>
+                
+                    <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                <span class="s_website_form_label_content">Employee Comments:</span>
+                            </label>
+                        <div class="col-sm">                        
+                            <t t-esc="feedback.value_comment" />                                
+                                </div>
+                            </div>
+                        </div>
+                                    
+                   <div class="form-group col-6 s_website_form_field" data-type="char" data-name="Field">
+                     <div class="row s_col_no_resize s_col_no_bgcolor">
+                         <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                <span class="s_website_form_label_content">Manager Comments:</span>
+                            </label>
+                        <div class="col-sm">                        
+                            <t t-esc="feedback.full_year_value_comment" />                                
+                                </div>
+                     </div>
+                   </div>
+               </div>
+                
+                <br/>
+                
+            <form id="feedbackdataentryForm"  action="/appraisal/feedback/data/save"  method="post"  enctype="multipart/form-data">
+                    
+                    <!--  Comments start  -->
+                    
+                 <t t-if="feedback.state not in ('end_year_appraisee_review','end_year_appraiser_review','end_year_sent_emp_view','end_year_endorsed_emp','end_year_endorse_hod','closed')">
+                    <t t-if='feedback.name.user_id.id==uid'>
+                        <t t-if='feedback.state=="draft"'>
+                         <div class="s_website_form_rows row s_col_no_bgcolor">
+                         <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                    <span class="s_website_form_label_content">Objective Comments</span>
+                                </label>
+                            <div class="col-sm">
+                                   <t t-if='feedback.state=="draft"'>
+                                       <input id='objective_comment' type="text" class="form-control s_website_form_input" name="objective_comment"  t-att-value="feedback.objective_comment"/>
+                                   </t>
+                                   <t t-if='feedback.state!="draft"'>
+                                       <t t-esc="feedback.objective_comment" /> 
+                                   </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="s_website_form_rows row s_col_no_bgcolor">
+                         <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                            <div class="row s_col_no_resize s_col_no_bgcolor">
+                                <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_value">
+                                    <span class="s_website_form_label_content">Core Value Comments</span>
+                                </label>
+                            <div class="col-sm">
+                                <t t-if='feedback.state=="draft"'>
+                                    <input id='value_comment' type="text" class="form-control s_website_form_input" name="value_comment"  t-att-value="feedback.value_comment"/>
+                                </t>
+                                  <t t-if='feedback.state!="draft"'>
+                                       <t t-esc="feedback.value_comment" /> 
+                                   </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>   
+                     </t>
+                    </t>    
+                  <t t-if='feedback.name.parent_id.user_id.id==uid'>
+                     <t t-if='feedback.state=="confirm"'> 
+                      <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_objective">
+                                <span class="s_website_form_label_content">Objective Comments</span>
+                            </label>
+                        <div class="col-sm">
+                                <t t-if='feedback.state=="confirm"'>
+                                  <input id='full_year_objective_comment' type="text" class="form-control s_website_form_input" name="full_year_objective_comment"  t-att-value="feedback.full_year_value_comment"/>
+                                </t>
+                                <t t-if='feedback.state!="confirm"'>
+                                    <t t-esc="feedback.full_year_value_comment" /> 
+                                </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                     <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_comments">
+                                <span class="s_website_form_label_content">Core Value Comments</span>
+                            </label>
+                            <div class="col-sm"> 
+                               <t t-if='feedback.state=="confirm"'>
+                                  <input id='full_year_value_comment' type="text" class="form-control s_website_form_input" name="full_year_value_comment"  t-att-value="feedback.full_year_value_comment"/>
+                                </t>    
+                                 <t t-if='feedback.state!="confirm"'>
+                                    <t t-esc="feedback.full_year_value_comment" /> 
+                                </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    </t>
+                      </t>
+                   </t> 
+                    
+                    <t t-if="feedback.state in ('end_year_appraisee_review','end_year_appraiser_review','end_year_sent_emp_view','end_year_endorsed_emp','end_year_endorse_hod','closed')">
+                    <t t-if='feedback.name.user_id.id==uid'>
+                     <t t-if='feedback.state=="end_year_appraisee_review"'>   
+                     <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                <span class="s_website_form_label_content">Objective Comments</span>
+                            </label>
+                        <div class="col-sm"> 
+                             <t t-if='feedback.state=="end_year_appraisee_review"'>
+                                <input id='half_year_appraiser_objective_comment' type="text" class="form-control s_website_form_input" name="half_year_appraiser_objective_comment"  t-att-value="feedback.half_year_appraiser_objective_comment"/>
+                               </t>
+                                 <t t-if='feedback.state!="end_year_appraisee_review"'>
+                                    <t t-esc="feedback.half_year_appraiser_objective_comment" /> 
+                                </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_value">
+                                <span class="s_website_form_label_content">Core Value Comments</span>
+                            </label>
+                        <div class="col-sm">
+                              <t t-if='feedback.state=="end_year_appraisee_review"'>
+                                <input id='half_year_appraiser_value_comment' type="text" class="form-control s_website_form_input" name="half_year_appraiser_value_comment"  t-att-value="feedback.half_year_appraiser_value_comment"/>
+                              </t>
+                                <t t-if='feedback.state!="end_year_appraisee_review"'>
+                                    <t t-esc="feedback.half_year_appraiser_value_comment" /> 
+                                </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>   
+                 </t>
+                 </t>       
+                  <t t-if='feedback.name.parent_id.user_id.id==uid'>
+                     <t t-if='feedback.state=="end_year_appraiser_review"'> 
+                      <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_objective">
+                                <span class="s_website_form_label_content">Objective Comments</span>
+                            </label>
+                        <div class="col-sm"> 
+                              <t t-if='feedback.state=="end_year_appraiser_review"'>
+                                <input id='full_year_appraiser_objective_comment' type="text" class="form-control s_website_form_input" name="full_year_appraiser_objective_comment"  t-att-value="feedback.full_year_appraiser_objective_comment"/>
+                              </t>    
+                                 <t t-if='feedback.state!="end_year_appraiser_review"'>
+                                    <t t-esc="feedback.full_year_appraiser_objective_comment" /> 
+                                 </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                     <div class="s_website_form_rows row s_col_no_bgcolor">
+                     <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="manager_comments">
+                                <span class="s_website_form_label_content">Core Value Comments</span>
+                            </label>
+                            <div class="col-sm"> 
+                                <t t-if='feedback.state=="end_year_appraiser_review"'>
+                                   <input id='full_year_appraiser_value_comment' type="text" class="form-control s_website_form_input" name="full_year_appraiser_value_comment"  t-att-value="feedback.full_year_appraiser_value_comment"/> 
+                               </t>     
+                                 <t t-if='feedback.state!="end_year_appraiser_review"'>
+                                    <t t-esc="feedback.full_year_appraiser_value_comment" /> 
+                                 </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                     </t>
+                    </t>  
+                    </t>      
+                    
+                    <!--  Comments End -->
+                    
+                    <!-- Data Entry Start -->
+                    
+                     <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                <span class="s_website_form_label_content">Training Need</span>
+                            </label>
+                        <div class="col-sm"> 
+                            <t t-if='feedback.name.user_id.id==uid'>
+                               <t t-if='feedback.state=="draft"'> 
+                                   <input id='training_need' type="text" class="form-control s_website_form_input" name="training_need"  t-att-value="feedback.training_need"/>
+                               </t>
+                               </t> 
+                             <t t-if='feedback.state!="draft"'> 
+                                    <t t-esc="feedback.training_need" /> 
+                               </t> 
+                             
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                <div class="s_website_form_rows row s_col_no_bgcolor">
+
+                <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                       <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                            <span class="s_website_form_label_content">Career Aspirations in next 2 to 3 years *</span>
+                        </label>
+                        <div class="col-sm">
+                            <t t-if='feedback.name.user_id.id==uid'>
+                             <t t-if='feedback.state=="draft"'>    
+                                <input id='future_aspiration' type="text" class="form-control s_website_form_input" name="future_aspiration"  t-att-value="feedback.future_aspiration"  required="1"/>
+                            </t>
+                           </t>
+                            <t t-if='feedback.state!="draft"'>    
+                               <t t-esc="feedback.future_aspiration" /> 
+                            </t>
+                             
+                        </div>
+                   </div>
+                  </div>
+                 </div>
+                <input id='ffeedbackid' type="hidden" class="form-control s_website_form_input" name="ffeedback_id"  t-att-value="feedback.id"/>
+                
+                <div class="s_website_form_rows row s_col_no_bgcolor">
+                    <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="employee_objective">
+                                <span class="s_website_form_label_content">Feedback to line manager *</span>
+                            </label>
+                        <div class="col-sm"> 
+                             <t t-if='feedback.name.user_id.id==uid'>
+                               <t t-if='feedback.state in ("sent","end_year_appraisee_review","end_year_sent_emp_view")'>  
+                                <input id='feedback_to_manager' type="text" class="form-control s_website_form_input" name="feedback_to_manager"  t-att-value="feedback.feedback_to_manager" required="1"/>
+                               </t>     
+                            </t>    
+                            <t t-if='feedback.state not in ("sent","end_year_appraisee_review","end_year_sent_emp_view")'> 
+                               <t t-esc="feedback.feedback_to_manager" /> 
+                            </t>   
+                                </div>
+                            </div>
+                        </div>
+                                    
+                  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>           
+                         
+                        <script>
+                              $(function () {
+                            
+                                 var promotion_measure = $( "#promotion_measure" ).val();
+                                if ( promotion_measure === "no" ) {                                    
+                                   $("#date_effective").hide();  
+                                    $("#promotion_position").hide();  
+                                    $("#promotion_grade").hide();                                    
+                                  }
+                                if ( promotion_measure === "yes" ) {                                    
+                                   $("#date_effective").show();  
+                                    $("#promotion_position").show();  
+                                    $("#promotion_grade").show();                                    
+                                  }
+                               
+                               
+                            
+                            });
+                             
+                            
+                            $("#promotion_measure").change(function(){
+                                var promotion_measure = $( "#promotion_measure" ).val();
+                                if ( promotion_measure === "no" ) {                                   
+                                   $("#date_effective").hide();  
+                                    $("#promotion_position").hide();  
+                                    $("#promotion_grade").hide();  
+                                  } 
+                                 if ( promotion_measure === "yes" ) {                                    
+                                   $("#date_effective").show();  
+                                    $("#promotion_position").show();  
+                                    $("#promotion_grade").show();                                 
+                                  }
+                                 if ( promotion_measure === "blank" ) {                                    
+                                   $("#promotion_position").hide();  
+                                    $("#promotion_grade").hide();                                     
+                                  }                                
+                              });                                                          
+                            }); 
+                        </script>
+
+               </div>
+                                        
+                     
+                       
+                    <!-- Employee and Manager Behavioural Assessment -->
+                        <t t-if="feedback.state in ('end_year_sent_emp_view','end_year_endorsed_emp','end_year_endore_hod','closed')">
+                          <t t-if="feedback.name.user_id.id ==uid" >
+                               <p style='color:blue;'><h4>Strengths/Weaknesses and Training</h4></p>    
+                       <div class="row">                             
+                           <br/>                      
+                               <div class="col-md-6" style='color:blue;'> <strong>Strengths/Achievements</strong><br/>
+                                  <span t-esc="feedback.strength_1" />                                       
+                                  <span t-esc="feedback.strength_2" />    
+                                  <span t-esc="feedback.strength_3" />                                       
+                                  <span t-esc="feedback.strength_4" />
+                                  <span t-esc="feedback.strength_5" />                                    
+                               </div>  
+                           
+                               <div class="col-md-6" style='color:blue;'> <strong>Weaknesses/Area for Improvement : </strong><br/>
+                                 <span t-esc="feedback.improvements_1" />                                       
+                                  <span t-esc="feedback.improvements_2" />    
+                                  <span t-esc="feedback.improvements_3" />                                       
+                                  <span t-esc="feedback.improvements_4" />
+                                  <span t-esc="feedback.improvements_5" />
+                                
+                              </div>
+                    </div> 
+                              
+                     <div class="row">                             
+                           <br/>                       
+                               <div class="col-md-6" style='color:blue;'> <strong>Training</strong><br/>
+                                 <span t-esc="feedback.training_1" />                                       
+                                  <span t-esc="feedback.training_2" />    
+                                  <span t-esc="feedback.training_3" />                                       
+                                  <span t-esc="feedback.training_4" />
+                                  <span t-esc="feedback.training_5" />                  
+                                 
+                               </div>  
+                           
+                               <div class="col-md-6" style='color:blue;'> <strong>Reason : </strong><br/>
+                                     <span t-esc="feedback.reason_1" />                                       
+                                      <span t-esc="feedback.reason_2" />    
+                                      <span t-esc="feedback.reason_3" />                                       
+                                      <span t-esc="feedback.reason_4" />
+                                      <span t-esc="feedback.reason_5" />  
+                            </div>
+                         
+                       </div>       
+                          </t>  
+                        </t>    
+                       
+                       <t t-if="feedback.state in ('end_year_sent_emp_view','end_year_endorsed_emp','end_year_endore_hod','closed')">
+                          <t t-if="feedback.name.department_id.manager_id.user_id.id ==uid" >
+                               <p style='color:blue;'><h4>Strengths/Weaknesses and Training</h4></p>    
+                       <div class="row">                             
+                           <br/>                      
+                               <div class="col-md-6" style='color:blue;'> <strong>Strengths/Achievements</strong><br/>
+                                  <span t-esc="feedback.strength_1" />                                       
+                                  <span t-esc="feedback.strength_2" />    
+                                  <span t-esc="feedback.strength_3" />                                       
+                                  <span t-esc="feedback.strength_4" />
+                                  <span t-esc="feedback.strength_5" />                                    
+                               </div>  
+                           
+                               <div class="col-md-6" style='color:blue;'> <strong>Weaknesses/Area for Improvement : </strong><br/>
+                                 <span t-esc="feedback.improvements_1" />                                       
+                                  <span t-esc="feedback.improvements_2" />    
+                                  <span t-esc="feedback.improvements_3" />                                       
+                                  <span t-esc="feedback.improvements_4" />
+                                  <span t-esc="feedback.improvements_5" />
+                                
+                              </div>
+                    </div> 
+                              
+                     <div class="row">                             
+                           <br/>                       
+                               <div class="col-md-6" style='color:blue;'> <strong>Training</strong><br/>
+                                 <span t-esc="feedback.training_1" />                                       
+                                  <span t-esc="feedback.training_2" />    
+                                  <span t-esc="feedback.training_3" />                                       
+                                  <span t-esc="feedback.training_4" />
+                                  <span t-esc="feedback.training_5" />                  
+                                 
+                               </div>  
+                           
+                               <div class="col-md-6" style='color:blue;'> <strong>Reason : </strong><br/>
+                                     <span t-esc="feedback.reason_1" />                                       
+                                      <span t-esc="feedback.reason_2" />    
+                                      <span t-esc="feedback.reason_3" />                                       
+                                      <span t-esc="feedback.reason_4" />
+                                      <span t-esc="feedback.reason_5" />  
+                            </div>
+                         
+                       </div> 
+                              <br/>
+                              <div class='row'>
+                                     
+                                       <strong>Promotion To Position	: </strong><br/>
+                                            <i class="badge badge-pill badge-info" ><span t-esc="feedback.promotion_position" /></i><br/> 
+                                       
+                              
+                              </div>    
+                              <br/>
+                              <div class='row'>
+                                     
+                                       
+                                       <strong>Promotion To Grade : </strong>
+                                          <br/>
+                                           <i class="badge badge-pill badge-info" ><span t-esc="feedback.promotion_grade" /></i><br/> 
+                                       
+                              
+                              </div> 
+                              <br/>
+                              <div class='row'>
+                                     
+                                       <strong>With Effect From : </strong><br/>
+                                       <span t-esc="feedback.date_effective"  t-options='{"widget": "date"}'/>
+                                     
+                              
+                              </div>    
+                          </t>  
+                        </t>    
+                         
+                        <t t-if="feedback.state in ('end_year_appraiser_review','end_year_sent_emp_view','end_year_endorsed_emp','end_year_endore_hod','closed')"> 
+                        
+                            
+                        <t t-if="feedback.name.parent_id.user_id.id ==uid">    
+                        <h4><p style='color:blue;'>Strengths/Weaknesses and Training</p></h4> 
+                       <div class="row">                             
+                           <br/>
+                       
+                               <div class="col-md-6" style='color:blue;'> <strong>Strengths/Achievements</strong>
+                                  <t t-if="feedback.state == 'end_year_appraiser_review'">    
+                                  <input id="strength_1"  type="float" class="form-control s_website_form_input" name="strength_1"  t-att-value="feedback.strength_1"  multiple="true" />
+                                   
+                                 <input id="strength_2"  type="float" class="form-control s_website_form_input" name="strength_2"  t-att-value="feedback.strength_2"  multiple="true" />
+                                 
+                                   <input id="strength_3"  type="float" class="form-control s_website_form_input" name="strength_3"  t-att-value="feedback.strength_3"  multiple="true" />
+                                   
+                                   <input id="strength_4"  type="float" class="form-control s_website_form_input" name="strength_4"  t-att-value="feedback.strength_4"  multiple="true" />
+                                   
+                                   <input id="strength_5"  type="float" class="form-control s_website_form_input" name="strength_5"  t-att-value="feedback.strength_5"  multiple="true" />
+                                </t>
+                                   <t t-if="feedback.state != 'end_year_appraiser_review'">
+                                       <br/>
+                                        <span t-esc="feedback.strength_1" />                                     
+                                        <span t-esc="feedback.strength_2" />    
+                                        <span t-esc="feedback.strength_3" />                                       
+                                        <span t-esc="feedback.strength_4" />
+                                        <span t-esc="feedback.strength_5" />   
+                                   </t>
+                               </div>  
+                           
+                               <div class="col-md-6" style='color:blue;'> <strong>Weaknesses/Area for Improvement : </strong>
+                                <t t-if="feedback.state == 'end_year_appraiser_review'">    
+  
+                                  <input id="improvements_1"  type="float" class="form-control s_website_form_input" name="improvements_1"  t-att-value="feedback.improvements_1"  multiple="true" />
+                                   
+                                 <input id="improvements_2"  type="float" class="form-control s_website_form_input" name="improvements_2"  t-att-value="feedback.improvements_2"  multiple="true" />
+                                 
+                                   <input id="improvements_3"  type="float" class="form-control s_website_form_input" name="improvements_3"  t-att-value="feedback.improvements_3"  multiple="true" />
+                                   
+                                   <input id="improvements_4"  type="float" class="form-control s_website_form_input" name="improvements_4"  t-att-value="feedback.improvements_4"  multiple="true" />
+                                   
+                                   <input id="improvements_5"  type="float" class="form-control s_website_form_input" name="improvements_5"  t-att-value="feedback.improvements_5"  multiple="true" />
+                                 </t>
+                                   <t t-if="feedback.state != 'end_year_appraiser_review'">  
+                                       <br/>
+                                        <span t-esc="feedback.improvements_1" />                                       
+                                        <span t-esc="feedback.improvements_2" />    
+                                        <span t-esc="feedback.improvements_3" />                                       
+                                        <span t-esc="feedback.improvements_4" />
+                                        <span t-esc="feedback.improvements_5" />   
+                                   </t>
+                                
+                               </div>
+                         
+                         </div> 
+                              
+                     <div class="row">                             
+                           <br/>
+                       
+                               <div class="col-md-6" style='color:blue;'> <strong>Training</strong>
+                                  <t t-if="feedback.state == 'end_year_appraiser_review'">    
+     
+                                  <input id="training_1"  type="float" class="form-control s_website_form_input" name="training_1"  t-att-value="feedback.training_1"  multiple="true" />
+                                   
+                                 <input id="training_2"  type="float" class="form-control s_website_form_input" name="training_2"  t-att-value="feedback.training_2"  multiple="true" />
+                                 
+                                   <input id="training_3"  type="float" class="form-control s_website_form_input" name="training_3"  t-att-value="feedback.training_3"  multiple="true" />
+                                   
+                                   <input id="training_4"  type="float" class="form-control s_website_form_input" name="training_4"  t-att-value="feedback.training_4"  multiple="true" />
+                                   
+                                   <input id="training_5"  type="float" class="form-control s_website_form_input" name="training_5"  t-att-value="feedback.training_5"  multiple="true" />
+                                </t>
+                                   <t t-if="feedback.state != 'end_year_appraiser_review'">
+                                       <br/>
+                                        <span t-esc="feedback.training_1" />                                     
+                                        <span t-esc="feedback.training_2" />    
+                                        <span t-esc="feedback.training_3" />                                       
+                                        <span t-esc="feedback.training_4" />
+                                        <span t-esc="feedback.training_5" />   
+                                   </t>
+                                   
+                               </div>  
+                           
+                               <div class="col-md-6" style='color:blue;'> <strong>Reason : </strong>
+                                      <t t-if="feedback.state == 'end_year_appraiser_review'">    
+  
+                                      <input id="reason_1"  type="float" class="form-control s_website_form_input" name="reason_1"  t-att-value="feedback.reason_1"  multiple="true" />
+
+                                     <input id="reason_2"  type="float" class="form-control s_website_form_input" name="reason_2"  t-att-value="feedback.reason_2"  multiple="true" />
+
+                                       <input id="reason_3"  type="float" class="form-control s_website_form_input" name="reason_3"  t-att-value="feedback.reason_3"  multiple="true" />
+
+                                       <input id="reason_4"  type="float" class="form-control s_website_form_input" name="reason_4"  t-att-value="feedback.reason_4"  multiple="true" />
+
+                                       <input id="reason_5"  type="float" class="form-control s_website_form_input" name="reason_5"  t-att-value="feedback.reason_5"  multiple="true" />
+                                </t>
+                                  <t t-if="feedback.state != 'end_year_appraiser_review'"> 
+                                      <br/>
+                                        <span t-esc="feedback.reason_1" />                                     
+                                        <span t-esc="feedback.reason_2" />    
+                                        <span t-esc="feedback.reason_3" />                                       
+                                        <span t-esc="feedback.reason_4" />
+                                        <span t-esc="feedback.reason_5" />   
+                                   </t> 
+                                </div>                         
+                            </div>  
+                              <br/>
+                          <div class="row">                             
+                              <br/>                       
+                              <div  class="col-md-6" style='color:blue;'> <strong>Promotion</strong>
+                                  <t t-if="feedback.state == 'end_year_appraiser_review'">    
+                                 <select   id='promotion_measure'  t-att-value="feedback.recommend_promotion"  class="form-control  s_website_form_input" name="recommend_promotion" >
+                                   <option value="blank"></option>
+                                   <option value="no">No</option>
+                                   <option value="yes">Yes</option>                               
+                                 </select>
+                                  </t>                                  
+                                   <span t-esc="feedback.recommend_promotion" /><br/>
+                                 </div>  
+                              </div> 
+                               <div class="col-md-6">
+                                    <t t-if="feedback.state == 'end_year_appraiser_review'">    
+                                        <strong>Promotion To Position	: </strong>
+                                          <select class="form-control  o_website_form_input" name="promotion_position" readonly="1" >                                   <option value="blank"></option>
+                                                <t t-foreach="job_positions" t-as="position">
+                                                    
+                                                    <option t-att-value="position.name">
+                                                        <t t-esc="position.name"    />
+                                                    </option>
+                                                </t>
+                                        </select> 
+                                            <i class="badge badge-pill badge-info" ><span t-esc="feedback.promotion_position" /></i><br/> 
+                                       <strong>Promotion To Grade : </strong>
+                                          <select class="form-control  o_website_form_input" name="promotion_grade" readonly="1" >                                               <option value="blank"></option>
+                                                <t t-foreach="grade_types" t-as="type">
+                                                   
+                                                    <option t-att-value="type.name">
+                                                        <t t-esc="type.name"    />
+                                                    </option>
+                                                </t>
+                                        </select>
+                                           <i class="badge badge-pill badge-info" ><span t-esc="feedback.promotion_grade" /></i><br/> 
+                                       
+                                       <strong>With Effect From : </strong>
+                                       <input id="date_effective"  type="date" class="form-control s_website_form_input" name="date_effective"  t-att-value="feedback.date_effective"  multiple="true" />
+                                </t> 
+                                    <!--  Review Feedback -->
+                                   
+                                   <t t-if="feedback.state != 'end_year_appraiser_review'">    
+                                       
+                                       <strong>Promotion To Position	: </strong><br/>
+                                            <i class="badge badge-pill badge-info" ><span t-esc="feedback.promotion_position" /></i><br/> 
+                                       <strong>Promotion To Grade : </strong>
+                                          <br/>
+                                           <i class="badge badge-pill badge-info" ><span t-esc="feedback.promotion_grade" /></i><br/> 
+                                       
+                                       <strong>With Effect From : </strong>
+                                       <span t-esc="feedback.date_effective"  t-options='{"widget": "date"}'/><br/>
+                                     
+                                   </t>
+                                  
+                                </div>              
+                                
+                    </t>          
+                    </t>
+                    
+                    <!-- End   -->                   
+                    <br/>
+                    <br/>
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+
+                <input id='recordid' type="hidden" class="form-control s_website_form_input" name="record_id"   t-att-value="feedback.id"/>
+                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                        <div style="width: 200px;" class="s_website_form_label"></div>
+                          <t t-if="state not in ('endorsed_hod','done','end_year_endorse_hod','closed')">
+                             <button id='feedbackdatasubmit' type="submit" class="btn btn-primary pull-left">Save</button>
+                         </t>
+                     
+                </div>
+                     
+                </form>
+                <br/>
+                
+            <div class="mt32">
+                <h4><strong>Message and communication history</strong></h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="object" t-value="feedback"/>
+                    <t t-set="pid" t-value="pid"/>
+                    <t t-set="hash" t-value="hash"/>
+                </t>
+            </div>
+                </div>    
+        </t>    
+    </template>   
+    
+    
+      <!--  Edit Objective Line  -->   
+    
+        <template id="edit_full_year_objective_line" name="edit full obj line Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">                                         
+                    <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Appraisal</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <form id="saleForm"  action="/update/values/feedback/line/save"  method="post"  enctype="multipart/form-data">                            
+                                <div class="container mt-4 mb-5">
+                                 <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                    </div>  
+                                    </div>  
+                                 </div>  
+                                        
+                        <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        </section>
+                                
+                        <div class="container">
+                        </div>    
+                              <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Objective</span>
+                                                <span class="s_website_form_mark"> </span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                                <span t-esc='exist_line_obj.objective'/>
+                                              
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>     
+                               <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Measuring Indicator</span>
+                                                <span class="s_website_form_mark"> </span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                                <span t-esc='exist_line_obj.obj_description'/>
+                                              
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>      
+                               
+                              <t t-if='exist_line_obj.feedback_id.name.user_id.id==uid'>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Rating Level</span>
+                                                <span class="s_website_form_mark"> *</span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                            <select  id="empratinglevelline" class="form-control  s_website_form_input" name="employee_rating_level" t-att-value="exist_line_obj.employee_rating_level" required='1'>
+                                                <option value="blank"> </option>
+                                                <option value="Outstanding Performance">Outstanding Performance</option>
+                                                <option value="Excellent Performance">Excellent Performance</option>
+                                                <option value="Strong Performance">Strong Performance</option>
+                                                <option value="Needs Improvement">Needs Improvement</option>
+                                                <option value="Unsatisfactory">Unsatisfactory</option>
+                                            </select> 
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>
+                              
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="objective">
+                                               <span class="s_website_form_label_content">Objective Remarks</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='full_remarks' type="text" class="form-control s_website_form_input" name="full_remarks"    t-att-value="exist_line_obj.full_remarks"/>
+                                               
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+
+                                </t>
+                                
+                                <t t-if='exist_line_obj.feedback_id.name.parent_id.user_id.id==uid'>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Rating Level</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                            <select  id="manager_rating_level" class="form-control  s_website_form_input" name="manager_rating_level" t-att-value="exist_line_obj.manager_rating_level" required='1'>
+                                                <option value="blank"> </option>
+                                                <option value="Outstanding Performance">Outstanding Performance</option>
+                                                <option value="Excellent Performance">Excellent Performance</option>
+                                                <option value="Strong Performance">Strong Performance</option>
+                                                <option value="Needs Improvement">Needs Improvement</option>
+                                                <option value="Unsatisfactory">Unsatisfactory</option>
+                                            </select> 
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>
+                              
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="objective">
+                                               <span class="s_website_form_label_content">Objective Remarks</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='full_remarks_mngr' type="text" class="form-control s_website_form_input" name="full_remarks_mngr"     t-att-value="exist_line_obj.full_remarks_mngr"/>
+                                               
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+
+                                </t>
+                                <input id='id' type="hidden" class="form-control s_website_form_input" name="line_id"  t-att-value="exist_line_obj.id"/>
+
+                                
+                               
+                                                                                                  
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+                                    
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='objectivesubmit' type="submit" class="btn btn-primary pull-left">Update</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                <br/>                                    
+                                </form>                                                             
+                            </div>
+         
+        </t>
+    </template>
+    
+    
+    
+    
+    
+    
+    <!--  Edit Objective Line  -->   
+    
+        <template id="edit_feedback_bussiness_objective_line" name="edit feedback objective line Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">                                         
+                    <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Appraisal</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <form id="saleForm"  action="/update/obj/feedback/line/save"  method="post"  enctype="multipart/form-data">                            
+                                <div class="container mt-4 mb-5">
+                                 <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                    </div>  
+                                    </div>  
+                                 </div>  
+                                        
+                        <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        </section>
+                                
+                        <div class="container">
+                        </div>    
+                              <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Objective</span>
+                                                <span class="s_website_form_mark"> *</span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                                  <span t-esc='exist_line_obj.objective'/>
+                                             
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>
+                                
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Measuring Indicator</span>
+                                                <span class="s_website_form_mark"> </span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                                <span t-esc='exist_line_obj.obj_description'/>
+                                              
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>      
+                               
+                              <t t-if='exist_line_obj.feedback_id.name.user_id.id==uid'>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Rating Level</span>
+                                                <span class="s_website_form_mark"> *</span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                            <select  id="empratinglevelline" class="form-control  s_website_form_input" name="employee_rating_level" t-att-value="exist_line_obj.employee_rating_level" required='1'>
+                                                <option value="blank"> </option>
+                                                <option value="Outstanding Performance">Outstanding Performance</option>
+                                                <option value="Excellent Performance">Excellent Performance</option>
+                                                <option value="Strong Performance">Strong Performance</option>
+                                                <option value="Needs Improvement">Needs Improvement</option>
+                                                <option value="Unsatisfactory">Unsatisfactory</option>
+                                            </select> 
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>
+                              
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="objective">
+                                               <span class="s_website_form_label_content">Objective Remarks</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='remarks' type="text" class="form-control s_website_form_input" name="remarks"    t-att-value="exist_line_obj.remarks"/>
+                                               
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+
+                                </t>
+                                
+                                <t t-if='exist_line_obj.feedback_id.name.parent_id.user_id.id==uid'>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Rating Level</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                            <select  id="manager_rating_level" class="form-control  s_website_form_input" name="manager_rating_level" t-att-value="exist_line_obj.manager_rating_level" required='1'>
+                                                <option value="blank"> </option>
+                                                <option value="Outstanding Performance">Outstanding Performance</option>
+                                                <option value="Excellent Performance">Excellent Performance</option>
+                                                <option value="Strong Performance">Strong Performance</option>
+                                                <option value="Needs Improvement">Needs Improvement</option>
+                                                <option value="Unsatisfactory">Unsatisfactory</option>
+                                            </select> 
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>
+                              
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="objective">
+                                               <span class="s_website_form_label_content">Objective Remarks</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='remarks_mngr' type="text" class="form-control s_website_form_input" name="remarks_mngr"     t-att-value="exist_line_obj.remarks_mngr"/>
+                                               
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+
+                                </t>
+                                <input id='id' type="hidden" class="form-control s_website_form_input" name="line_id"  t-att-value="exist_line_obj.id"/>
+                                                                                                
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+                                    
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='objectivesubmit' type="submit" class="btn btn-primary pull-left">Update</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                <br/>                                    
+                                </form>                                                             
+                            </div>
+         
+        </t>
+    </template>
+    
+    
+    
+    
+     <!--  Edit Objective Line  -->   
+    
+        <template id="edit_full_year_value_line" name="edit full year values line Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">                                         
+                    <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Appraisal</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <form id="saleForm"  action="/update/fullyear/values/line/save"  method="post"  enctype="multipart/form-data">                            
+                                <div class="container mt-4 mb-5">
+                                 <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                    </div>  
+                                    </div>  
+                                 </div>  
+                                        
+                        <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        </section>
+                                
+                        <div class="container">
+                        </div>           
+                              <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Core Values</span>
+                                                <span class="s_website_form_mark"> *</span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                                <t t-esc='exist_line_obj.core_values' />
+                                               
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>        
+                                
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Description</span>
+                                                <span class="s_website_form_mark"> *</span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                                <t t-esc='exist_line_obj.core_description' />
+                                               
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>        
+                                    
+                              <t t-if='exist_line_obj.feedback_id.name.user_id.id==uid'>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Rating Level</span>
+                                                <span class="s_website_form_mark"> *</span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                            <select  id="empratinglevelline" class="form-control  s_website_form_input" name="employee_rating_level" t-att-value="exist_line_obj.employee_rating_level" required='1'>
+                                                <option value="blank"> </option>
+                                                <option value="Outstanding Performance">Outstanding Performance</option>
+                                                <option value="Excellent Performance">Excellent Performance</option>
+                                                <option value="Strong Performance">Strong Performance</option>
+                                                <option value="Needs Improvement">Needs Improvement</option>
+                                                <option value="Unsatisfactory">Unsatisfactory</option>
+                                            </select> 
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>                              
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="objective">
+                                               <span class="s_website_form_label_content">Objective Remarks</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='full_remarks' type="text" class="form-control s_website_form_input" name="full_remarks"    t-att-value="exist_line_obj.full_remarks"/>
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                                <br/>
+                                  
+                                </t>
+                                
+                                <t t-if='exist_line_obj.feedback_id.name.parent_id.user_id.id==uid'>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Rating Level</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                            <select  id="manager_rating_level" class="form-control  s_website_form_input" name="manager_rating_level" t-att-value="exist_line_obj.manager_rating_level" required='1'>
+                                                <option value="blank"> </option>
+                                                <option value="Outstanding Performance">Outstanding Performance</option>
+                                                <option value="Excellent Performance">Excellent Performance</option>
+                                                <option value="Strong Performance">Strong Performance</option>
+                                                <option value="Needs Improvement">Needs Improvement</option>
+                                                <option value="Unsatisfactory">Unsatisfactory</option>
+                                            </select> 
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>
+                              
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="objective">
+                                               <span class="s_website_form_label_content">Objective Remarks</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='full_remarks_mngr' type="text" class="form-control s_website_form_input" name="full_remarks_mngr"     t-att-value="exist_line_obj.full_remarks_mngr"/>
+                                               
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+
+                                </t>
+                                <input id='id' type="hidden" class="form-control s_website_form_input" name="line_id"  t-att-value="exist_line_obj.id"/>                               
+                                                                                                  
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+                                    
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='objectivesubmit' type="submit" class="btn btn-primary pull-left">Update</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                <br/>                                    
+                               </form> 
+                            </div>         
+                        </t>
+              </template>
+    
+    
+    
+     <!--  Edit Objective Line  -->   
+    
+        <template id="edit_feedback_values_objective_line" name="edit feedback values line Request">
+        <t t-call="portal.portal_layout">
+               <div id="wrap">                                         
+                    <div class="oe_structure" data-oe-model="ir.ui.view" data-oe-id="2052" data-oe-field="arch" data-oe-xpath="/t[1]/t[1]/div[1]/div[1]">
+                                <section class="s_title parallax s_parallax_is_fixed bg-white-100 pt24 pb24" data-vcss="001" data-snippet="s_title" data-scroll-background-ratio="1">
+                                    <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_banner_default_image'); background-position: 50% 0;"></span>
+                                    <div class="o_we_bg_filter bg-white-50"></div>
+                                    
+                                    <div class="container">
+                                        <h1 style="margin-left:10px">Appraisal</h1>
+                                    </div>
+                                </section>
+                            </div>
+                            <form id="saleForm"  action="/update/obj/values/line/save"  method="post"  enctype="multipart/form-data">                            
+                                <div class="container mt-4 mb-5">
+                                 <div class="row">
+                                    <div class="col-lg-7 col-xl-6 mr-lg-auto">
+                                    </div>  
+                                    </div>  
+                                 </div>  
+                                        
+                        <section class="s_website_form" data-vcss="001" data-snippet="s_website_form">
+                        </section>
+                                
+                        <div class="container">
+                        </div>  
+                                  <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Core Value</span>
+                                                <span class="s_website_form_mark"> </span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                              <t t-esc='exist_line_obj.core_values'/>
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                 <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Description</span>
+                                                <span class="s_website_form_mark"> </span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                              <t t-esc='exist_line_obj.core_description'/>
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                              <t t-if='exist_line_obj.feedback_id.name.user_id.id==uid'>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Rating Level</span>
+                                                <span class="s_website_form_mark"> *</span>
+
+                                            </label>
+                                            <div class="col-sm">
+                                            <select  id="empratinglevelline" class="form-control  s_website_form_input" name="employee_rating_level" t-att-value="exist_line_obj.employee_rating_level" required='1'>
+                                                <option value="blank"> </option>
+                                                <option value="Outstanding Performance">Outstanding Performance</option>
+                                                <option value="Excellent Performance">Excellent Performance</option>
+                                                <option value="Strong Performance">Strong Performance</option>
+                                                <option value="Needs Improvement">Needs Improvement</option>
+                                                <option value="Unsatisfactory">Unsatisfactory</option>
+                                            </select> 
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>                              
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="objective">
+                                               <span class="s_website_form_label_content">Objective Remarks</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='remarks' type="text" class="form-control s_website_form_input" name="remarks"    t-att-value="exist_line_obj.remarks"/>
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                                <br/>
+                                  
+                                </t>
+                                
+                                <t t-if='exist_line_obj.feedback_id.name.parent_id.user_id.id==uid'>
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                     <div class="form-group col-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="date">
+                                                <span class="s_website_form_label_content">Rating Level</span>
+                                                <span class="s_website_form_mark"> *</span>
+                                            </label>
+                                            <div class="col-sm">
+                                            <select  id="manager_rating_level" class="form-control  s_website_form_input" name="manager_rating_level" t-att-value="exist_line_obj.manager_rating_level" required='1'>
+                                                <option value="blank"> </option>
+                                                <option value="Outstanding Performance">Outstanding Performance</option>
+                                                <option value="Excellent Performance">Excellent Performance</option>
+                                                <option value="Strong Performance">Strong Performance</option>
+                                                <option value="Needs Improvement">Needs Improvement</option>
+                                                <option value="Unsatisfactory">Unsatisfactory</option>
+                                            </select> 
+                                            </div>
+                                        </div>
+                                    </div>                                       
+                                </div>
+                                <br/>
+                              
+                                <div class="s_website_form_rows row s_col_no_bgcolor">
+                                 <div class="form-group col-12 s_website_form_field" data-type="char" data-name="Field">
+                                        <div class="row s_col_no_resize s_col_no_bgcolor">
+                                            <label class="col-form-label col-sm-auto s_website_form_label" style="width: 200px" for="objective">
+                                               <span class="s_website_form_label_content">Objective Remarks</span>
+                                                <span class="s_website_form_mark"> </span>
+                                            </label>
+                                            <div class="col-sm">
+                                                <input id='remarks_mngr' type="text" class="form-control s_website_form_input" name="remarks_mngr"     t-att-value="exist_line_obj.remarks_mngr"/>
+                                               
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br/>
+
+                                </t>
+                                <input id='id' type="hidden" class="form-control s_website_form_input" name="line_id"  t-att-value="exist_line_obj.id"/>                               
+                                                                                                  
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/> 
+                                    
+                                 <div class="form-group col-12 s_website_form_submit" data-name="Submit Button">
+                                        <div style="width: 200px;" class="s_website_form_label"></div>
+                                        <button id='objectivesubmit' type="submit" class="btn btn-primary pull-left">Update</button>
+                                        <span id="s_website_form_result"></span>
+                                    </div>
+                                <br/>                                    
+                               </form> 
+                            </div>         
+                        </t>
+              </template>
+
+</odoo>
+
+
