@@ -30,31 +30,37 @@ class ApprisalReportXlS(models.AbstractModel):
         
         sheet.write(1,0, 'Employee Number',bold)
         sheet.write(1,1, 'Employee' ,bold)
-        sheet.write(1,2, 'Work location' ,bold)
-        sheet.write(1,3, 'Department' ,bold)
-        sheet.write(1,4, 'objective year',bold)
-        sheet.write(1,5, 'states',bold)
-        sheet.write(1,6, 'company',bold)
-        sheet.write(1,7, 'Grade Type',bold)
-        sheet.write(1,8, 'Employee Type',bold)
-        sheet.write(1,9, 'Job Position',bold)
-        sheet.write(1,10, 'Grade',bold)
-        sheet.write(1,11, 'Remarks',bold)
+        sheet.write(1,2, 'Employee Status' ,bold)   
+        sheet.write(1,3, 'Work location' ,bold)
+        sheet.write(1,4, 'Department' ,bold)
+        sheet.write(1,5, 'Objective Year',bold)
+        sheet.write(1,6, 'Status',bold)
+        sheet.write(1,7, 'Company',bold)
+        sheet.write(1,8, 'Grade Type',bold)
+        sheet.write(1,9, 'Employee Type',bold)
+        sheet.write(1,10, 'Job Position',bold)
+        sheet.write(1,11, 'Grade',bold)
+        sheet.write(1,12, 'Remarks',bold)
         
         row = 3
         Apprisal_objective = self.env['hr.appraisal.objective'].search([])
         for line in lines: 
-            
+            employee_type = '-'
+            if line.employee_id.emp_type=='permanent':
+                employee_type = 'Regular'  
+            if line.employee_id.emp_type=='contractor':
+                employee_type = 'Contractual'  
             sheet.write(row, 0, line.emploee_code, format1)
             sheet.write(row, 1, line.employee_id.name, format1)
-            sheet.write(row, 2, line.department_id.name, format1)
-            sheet.write(row, 3, line.work_location_id.name, format1)
-            sheet.write(row, 4, line.objective_year, format1)  
-            sheet.write(row, 5, line.state, format1)
-            sheet.write(row, 6, line.company_id.name, format1) 
-            sheet.write(row, 7, line.grade_type_id.name, format1) 
-            sheet.write(row, 8, line.employee_id.emp_type, format1)  
-            sheet.write(row, 9, line.job_id.name, format1)
-            sheet.write(row, 10, line.employee_id.grade_designation.name, format1) 
-            sheet.write(row, 11, line.description, format1)
+            sheet.write(row, 2, 'Active' if line.employee_id.active==True else 'In-Active', format1)
+            sheet.write(row, 3, line.department_id.name, format1)
+            sheet.write(row, 4, line.work_location_id.name, format1)
+            sheet.write(row, 5, 'FY-2021-22', format1)  
+            sheet.write(row, 6, line.state, format1)
+            sheet.write(row, 7, line.company_id.name, format1) 
+            sheet.write(row, 8, line.grade_type_id.name, format1) 
+            sheet.write(row, 9,  str(employee_type), format1)  
+            sheet.write(row, 10, line.job_id.name, format1)
+            sheet.write(row, 11, line.employee_id.grade_designation.name, format1) 
+            sheet.write(row, 12, line.description, format1)
             row += 1           

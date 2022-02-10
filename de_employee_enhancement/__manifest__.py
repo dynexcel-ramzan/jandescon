@@ -24,6 +24,7 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'security/security.xml',   
         'views/employee_enhancement_views.xml',
         'views/grade_type_view.xml',
         'views/designation_type_view.xml',

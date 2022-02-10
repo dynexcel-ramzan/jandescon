@@ -142,8 +142,8 @@ class HREmployee(models.Model):
             time_off_for_annual = self.env['hr.leave.type'].search(
                 [('is_annual_leave', '=', True), ('fiscal_year', '=', current_date.year),
                  ('company_id', '=', employee.company_id.id)])
-            if employee.confirm_date and time_off_for_annual:
-                if employee.confirm_date == current_date_year_ago or employee.confirm_date < current_date_year_ago:
+            if employee.date and time_off_for_annual:
+                if employee.date == current_date_year_ago or employee.date < current_date_year_ago:
                     num_of_days = 0
                     if employee.emp_type == 'permanent':
                         if employee.pro_rate_annual_leaves_allocated == False:

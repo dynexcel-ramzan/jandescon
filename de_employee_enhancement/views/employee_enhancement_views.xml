@@ -96,7 +96,7 @@
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='mobile_phone']" position="before">
-                    <field name="employee_number"/>
+                    <field name="employee_number" invisible='1'/>
                 </xpath>    
 <!--                Header -->
                 <xpath expr="//form/sheet/notebook" position="before">
@@ -253,6 +253,31 @@
             </xpath>
         </field>
     </record>
+
+    <!--  <record id="action_hr_expense_account_emp_rights" model="ir.actions.act_window">
+            <field name="name">Employee Expenses</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,kanban,form,pivot,graph</field>
+             <field name="search_view_id" ref="hr_expense_sheet_view_search"/>
+            <field name="view_id" ref="view_hr_expense_sheet_tree"/> 
+            <field name="domain">[]</field>
+            <field name="context">{
+                'search_default_approved': 1,
+                'search_default_to_post': 1,
+            }
+            </field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new expense report
+              </p><p>
+                Once you have created your expense, submit it to your manager who will validate it.
+              </p>
+            </field>
+        </record>
+    
+    <menuitem id="menu_hr_expense_account_employee_expenses_claim" name="Employee Expenses Claim" sequence="22" parent="hr.menu_hr_employee_payroll"  action="action_hr_expense_account_emp_rights" groups='de_employee_enhancement.group_employee_enhancement_expense'/>
+
+    -->
 
 
   </data>

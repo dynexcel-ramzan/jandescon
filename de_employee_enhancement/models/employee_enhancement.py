@@ -6,6 +6,35 @@ from werkzeug.urls import url_encode
 
 from odoo.exceptions import UserError
 
+class HrJob(models.Model):
+    _inherit = 'hr.job'
+
+class HrRecruitmentSource(models.Model):
+    _inherit = 'hr.recruitment.source'
+
+class HrEmployeeBase(models.AbstractModel):
+    _inherit = "hr.employee.base"
+    
+    @api.depends('department_id')
+    def _compute_parent_id(self):
+        for employee in self.filtered('department_id.manager_id'):
+            employee.parent_id = employee.parent_id
+
+
+
+class ResCompany(models.Model):
+    _inherit = 'res.company'
+
+    @api.model
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
+        args = args or []
+        if name:
+            # Be sure name_search is symetric to name_get
+            name = name.split(' / ')[-1]
+            args = ['|', ('name',operator, name),('segment1', operator , name)] + args
+        return self._search(args, limit=limit, access_rights_uid=name_get_uid)
+
+
 
 class EmployeeEnhancement(models.Model):
     _inherit = 'hr.employee'
@@ -23,8 +52,8 @@ class EmployeeEnhancement(models.Model):
     emp_number = fields.Char('Employee Number', required=True)
     emp_status = fields.Char('Employee Status')
     emp_type = fields.Selection([
-        ('permanent', 'Permanent'),
-        ('contractor', 'Contractor'),
+        ('permanent', 'Regular'),
+        ('contractor', 'Contractual'),
         ('freelancer', 'Freelancer'),
         ('inter', 'Intern'),
         ('part_time', 'Part Time'),
@@ -32,7 +61,7 @@ class EmployeeEnhancement(models.Model):
         ('outsource', 'Outsource'),
         ], string='Employee Type', index=True, copy=False, default='permanent', track_visibility='onchange', required=True)
     section = fields.Char('Section')
-    father_name = fields.Char("Father's Name", required=True)
+    father_name = fields.Char("Father's Name", required=False)
     grade_type = fields.Many2one('grade.type', required=True)
     grade_designation = fields.Many2one('grade.designation', required=True)
     date = fields.Date('Date of Joining', required=True)
@@ -69,8 +98,8 @@ class EmployeeEnhancement(models.Model):
                 'number_next_actual': 1,
                 'prefix': '',
             }
-            exist_sequence= self.env['ir.sequence'].create(seq_vals) 
-        self.employee_number = self.env['ir.sequence'].next_by_code('hr.employee.sequence') or _('New')
+            exist_sequence= self.env['ir.sequence'].sudo().create(seq_vals) 
+        self.employee_number = self.env['ir.sequence'].sudo().next_by_code('hr.employee.sequence') or _('New')
     
     
     @api.model
@@ -91,51 +120,70 @@ class EmployeeEnhancement(models.Model):
             self.env['mail.channel'].sudo().search([
                 ('subscription_department_ids', 'in', employee.department_id.id)
             ])._subscribe_users()
-        employee.action_auto_employee_number_sequence()    
+        #employee.action_auto_employee_number_sequence()    
         return employee
 
-    @api.constrains('emp_number')
+    @api.onchange('name','emp_type')
+    def onchange_name(self):
+        for line in self:
+            line.action_auto_employee_number_sequence()  
+            if line.emp_type=='permanent':
+                self.emp_number= self.employee_number
+            if  line.emp_type!='permanent' and line.company_id.id not in (2,8,5):
+                self.emp_number= 'C-'+self.employee_number
+            if  line.emp_type!='permanent' and line.company_id.id==2:
+                self.emp_number= 'O'+self.employee_number
+            if  line.emp_type!='permanent' and line.company_id.id==8:
+                self.emp_number= 'DTI-'+self.employee_number
+            if  line.emp_type!='permanent' and line.company_id.id==5:
+                self.emp_number= 'IN'+self.employee_number    
+
+    @api.constrains('emp_number','cnic')
     def _check_emp_number(self):
     	if self.emp_number:
             number_exist = self.env['hr.employee'].search([('emp_number','=',self.emp_number),('cnic','!=',self.cnic)])
             if number_exist:
                 raise UserError('Not Allow to Enter Duplicate Employee Number! Please change Employee Number.')    
 
-    @api.constrains('probation_period')
+    @api.constrains('probation_period','emp_type')
     def _check_probation_period(self):
         for line in self:
-            if line.probation_period:
-                emp_type = self.env['hr.employee'].search([('emp_type','=','permanent'),('cnic','!=',self.cnic)])  
-                if not emp_type:
-                    raise UserError(_('Probation Only Allow for Regular Employee!'))
+            if line.emp_type != 'permanent' and line.probation_period:
+                raise UserError(_('Probation Only Allow for Regular Employee!'))
                     
-    @api.constrains('pf_member')
+                    
+    @api.constrains('pf_member','emp_type','probation_period')
     def _check_pf_member(self):
         for line in self:
-            if line.pf_member=='yes_with':
-                emp_type = self.env['hr.employee'].search([('emp_type','!=','permanent')])  
-                if  emp_type:
-                    raise UserError(_('PFUND Only Allow for Regular Employee!'))  
+            date = fields.date.today()
+            if line.date:
+                prob_date = line.probation_period
+                date = line.date + relativedelta(months=int(prob_date))
+            if line.pf_member in ('yes_with','yes_without') and line.emp_type=='permanent' and date > fields.date.today():
+                raise UserError(_('PFUND Only Allow for Confirm Employee!'))
+            if line.pf_member in ('yes_with','yes_with') and line.emp_type!='permanent':
+                raise UserError(_('PFUND Only Allow for Regular Employee!'))     
+              
      
-    @api.constrains('emp_type')
+    @api.constrains('emp_type','birthday')
     def _check_employee_type(self):
         for line in self:
-            if line.emp_type:
+            if line.emp_type and line.birthday: 
                 service_period = (fields.date.today() - line.birthday).days
                 if service_period > 21915 and line.emp_type=='permanent':
                     raise UserError(_('Regular Employee Type Only allow for Age less than 60 year!')) 
     
-    @api.constrains('eobi_member')
+    @api.constrains('eobi_member', 'birthday')
     def _check_eobi_member(self):
         for line in self:
-            if line.eobi_member=='yes':
+            if line.eobi_member=='yes' and line.birthday:
                 service_period = (fields.date.today() - line.birthday).days
                 if service_period > 21915:
                     raise UserError(_('EOBI Only Allow for Employee Age less than 60 year!'))  
                  
 
     
-    @api.constrains('cnic')
+    @api.constrains('cnic','emp_number')
     def _check_cnic(self):
         if self.cnic:
             cnic_exist = self.env['hr.employee'].search([('cnic','=',self.cnic),('emp_number','!=',self.emp_number)])
