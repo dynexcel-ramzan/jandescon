@@ -1,0 +1,9 @@
+<odoo>
+     <report id="hr_location_wise_report_xlx"
+            model="report.de_employee_reports.location_wise_xlx"
+            string="Employee Location Wise Report"
+            report_type="xlsx"
+            name="de_employee_reports.location_wise_xlx"
+            file="de_employee_reports.location_wise_xlx"
+    />
+</odoo>

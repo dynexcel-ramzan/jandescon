@@ -8,3 +8,11 @@ class ORAFiscalYear(models.Model):
     _description = 'ORA Fiscal Year'
 
     name = fields.Char(string='Name')
+
+    
+class HrEmployee(models.Model):
+    _inherit = 'hr.employee' 
+    
+    
+    retirement_date = fields.Date(string='Retirement Date')
+    retirement_age = fields.Integer(string='Retirement Age')

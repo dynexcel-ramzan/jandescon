@@ -4,12 +4,12 @@ from odoo.exceptions import UserError
 
 class EmployeeRetirement(models.AbstractModel):
     _name = 'report.de_employee_reports.retirement_xlx'
-    _description = 'HR Recruitment Report'
+    _description = 'HR Retirement Report'
     _inherit = 'report.report_xlsx.abstract'
     
     
     def generate_xlsx_report(self, workbook, data, lines):
-        data = self.env['ora.recruitment.wizard'].browse(self.env.context.get('active_ids'))
+        data = self.env['ora.retirement.wizard'].browse(self.env.context.get('active_ids'))
         format1 = workbook.add_format({'font_size': '12', 'align': 'center', 'bold': False})
         format2 = workbook.add_format({'font_size': '12', 'align': 'center', 'bold': False})
         sheet = workbook.add_worksheet('Employee Hirring Report')
@@ -23,7 +23,7 @@ class EmployeeRetirement(models.AbstractModel):
         sheet.set_column('M:N', 30,)
         sheet.write(0,3,str(data.start_date.strftime('%d-%b-%Y')),bold)
         sheet.write(0,5,str(data.end_date.strftime('%d-%b-%Y')),bold)
-        employees=self.env['hr.employee'].search([('date','>=',data.start_date),('date','<=',data.end_date),('company_id','=',data.company_id.id)], order='emp_type desc')
+        employees=self.env['hr.employee'].search([('date','>=',data.start_date),('date','<=',data.end_date),('id','in',data.employee_ids.ids)], order='emp_type desc')
         sheet.write(1,0, 'SR#',bold)
         sheet.write(1,1, 'Employee Number',bold)
         sheet.write(1,2, 'Employee' ,bold)
@@ -45,9 +45,9 @@ class EmployeeRetirement(models.AbstractModel):
             sheet.write(row, 2, str(line.name), format1)
             sheet.write(row, 3, str(line.emp_type), format1)
             sheet.write(row, 4, str(line.grade_type.name), format1)
-            sheet.write(row, 5, str(line.grade_type.name), format1)
-            sheet.write(row, 6, str(line.grade_type.name), format1)
-            sheet.write(row, 7, str(line.grade_type.name), format1)
+            sheet.write(row, 5, str(line.date), format1)
+            sheet.write(row, 6, str(line.retirement_age if line.retirement_age else 60), format1)
+            sheet.write(row, 7, str(line.retirement_date), format1)
             sheet.write(row, 8, str(line.job_id.name if line.job_id else '-'), format1)
             sheet.write(row, 9, str(line.grade_designation.name if line.grade_designation else '-'), format1)
             sheet.write(row, 10, str(line.department_id.name if line.department_id else '-'), format1)  

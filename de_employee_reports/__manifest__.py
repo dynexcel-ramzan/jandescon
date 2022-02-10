@@ -25,7 +25,7 @@
     'version': '14.0.0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','report_xlsx','hr', 'hr_holidays'],
+    'depends': ['base','report_xlsx','hr', 'hr_holidays','de_employee_overtime'],
 
     # always loaded
     'data': [
@@ -33,10 +33,16 @@
         'wizard/leave_balance_wizard.xml',
         'wizard/hr_recruitment_wizard.xml',
         'wizard/hr_retirement_wizard.xml',
+        'wizard/hr_resignation_wizard.xml',
+        'wizard/hr_location_wise_wizard.xml',
+        'wizard/hr_probation_wizard.xml',
         'reports/leave_balance_report.xml',
         'reports/hr_recruitment_report.xml',
         'reports/hr_retirement_report.xml',
-        'views/views.xml',
+        'reports/hr_resignation_report.xml',
+        'reports/location_wise_report.xml',
+        'reports/hr_probation_report.xml',
+        'views/hr_employee_views.xml',
         'views/templates.xml',
     ],
     # only loaded in demonstration mode

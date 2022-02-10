@@ -1,0 +1,9 @@
+<odoo>
+     <report id="hr_probation_report_xlx"
+            model="report.de_employee_reports.probation_xlx"
+            string="Employee Probation Report"
+            report_type="xlsx"
+            name="de_employee_reports.probation_xlx"
+            file="de_employee_reports.probation_xlx"
+    />
+</odoo>
