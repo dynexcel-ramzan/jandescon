@@ -6,3 +6,5 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 5,access.grade.designation,model_grade_designation,,1,1,1,1
 6,access.employee.asset,model_employee_asset,,1,1,1,1
 7,access.employee.benefit.line,model_employee_benefit_line,,1,1,1,1
+8,access.hr.job,model_hr_job,,1,1,1,1
+9,access.hr.recruitment.source,model_hr_recruitment_source,,1,1,1,1

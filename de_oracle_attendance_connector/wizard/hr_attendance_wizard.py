@@ -2,6 +2,7 @@ import logging
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
+from datetime import date, datetime, timedelta
 
 _logger = logging.getLogger(__name__)
 
@@ -11,21 +12,34 @@ class HrAttendanceProcess(models.Model):
     _description = 'Attendance Process'
     
     date_from = fields.Date(string='Date From', required=True)
-    date_to = fields.Date(string='Date to') 
-    is_filter = fields.Boolean(string='Is Date Filter')
+    date_to = fields.Date(string='Date to', required=True) 
     employee_ids = fields.Many2many('hr.employee', string='Employees')
     
     def action_manually_process_att(self):
-        employeelist = []
-        delta_days = 30
-        if self.is_filter == True:    
-            delta_days = (self.date_to - self.date_from).days + 1
-         
-        user_attendance = self.env['hr.user.attendance']
-        for emp in self.employee_ids:
-            employeelist.append(emp.id)    
-        user_attendance.action_attendace_validated(employeelist,delta_days)
-
+        employeelist = []   
+        delta_days = (self.date_to - self.date_from).days + 1 
+        for employee in self.employee_ids:
+            attendances = self.env['hr.attendance'].sudo().search([('employee_id','=', employee.id),('att_date','>=',self.date_from),('att_date','<=',self.date_to),('shift_id.shift_type','=', 'night')], order='check_in asc')
+            for attendee in attendances:
+                if attendee.check_out == False and attendee.shift_id.shift_type == 'night':
+                    next_day_attendance=self.env['hr.attendance'].sudo().search([('employee_id','=', employee.id),('att_date','=',attendee.att_date+timedelta(1)) ], limit=1)
+                    if next_day_attendance.check_in and next_day_attendance.check_out:
+                        attendee.update({
+                            'check_out': next_day_attendance.check_in,
+                        })
+                        next_day_attendance.update({
+                             'check_in': next_day_attendance.check_out,
+                             'check_out': False,
+                        })
+                    elif next_day_attendance.check_in:
+                        attendee.update({
+                            'check_out': next_day_attendance.check_in,
+                        })
+                        next_day_attendance.update({
+                            'check_in': False
+                        })
+                        #next_day_attendance.unlink()
+                        
 
 
 class HrAttendanceWizard(models.TransientModel):

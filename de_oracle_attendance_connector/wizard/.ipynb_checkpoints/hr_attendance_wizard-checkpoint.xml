@@ -25,8 +25,14 @@
 					<footer>
 						<button name="cron_download_oracle_attendance" type="object"
 							string="Download Attendance" class="oe_highlight" />
-						<button name="cron_hr_user_attendance_validate_dcl" type="object"
-							string="Validate Attendance" class="oe_highlight" groups="base.group_no_one" />
+						<button name="cron_process_oracle_attendance" type="object"
+							string="Process Attendance" class="oe_highlight" groups="base.group_no_one" />
+                        <button name="cron_download_oracle_missing_attendance_a" type="object"
+							string="Download Attendance A" class="oe_highlight" groups="base.group_no_one" />
+                        <button name="cron_download_oracle_missing_attendance_b" type="object"
+							string="Download Attendance B" class="oe_highlight" groups="base.group_no_one" />
+                        <button name="cron_download_oracle_missing_attendance_c" type="object"
+							string="Download Attendance C" class="oe_highlight" groups="base.group_no_one" />
 						
 						<button special="cancel" string="Cancel" />
 					</footer>
@@ -39,6 +45,63 @@
 
 		<menuitem id="sync_oracle_user_attendance_menu" parent="menu_hr_user_attendance_my_attendances"
 			sequence="110" name="Synchronize" action="action_sync_oracle_user_attendance"  groups="de_oracle_attendance_connector.group_oracle_attendance"/>
+
+                        <!--Display form view of wizard-->    
+        <record id="view_manually_attendance_process_wizard_form" model="ir.ui.view">
+            <field name="name">attendance.process.wizard.form</field>
+            <field name="model">attendance.process.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Attendance Process">
+                    <group>
+                        
+                       <group>
+                         <field name="date_from" />
+                      </group>
+                        
+                      <group>
+                          <field name="date_to" />
+                      </group>                        
+                        
+                    </group>
+                    <notebook>
+                        <page string="Employees">
+                            <field name="employee_ids">
+                                <tree editable="bottom">
+                                    <field name="id" invisible="1"/>
+                                    <field name="name" />
+                                    <field name="department_id" /> 
+                                    <field name="company_id" />                                    
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button string='Process' name="action_manually_process_att" type="object" default_focus="1" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!--Open the wizard on click of menu-->
+        <record id="open_manually_attendance_process_wizard_action" model="ir.actions.act_window">
+            <field name="name">Attendance Process</field>
+            <field name="res_model">attendance.process.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_manually_attendance_process_wizard_form"/>
+        </record>
+      
+       <menuitem
+        id="manually_attendance_process_menu"
+        name="Attendance Process"
+        parent="hr_attendance.menu_hr_attendance_manage_attendances"
+        sequence="6"
+        action="open_manually_attendance_process_wizard_action"
+    />
+      
+     
+
 
 	</data>
 </odoo>

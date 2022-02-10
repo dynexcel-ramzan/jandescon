@@ -46,9 +46,7 @@ class HrLeaveAllocation(models.Model):
         if holiday.validation_type == 'hr':
             holiday.message_subscribe(partner_ids=(holiday.employee_id.parent_id.user_id.partner_id | holiday.employee_id.leave_manager_id.partner_id).ids)
         if not self._context.get('import_file'):
-
-            holiday.activity_update()
-            
+            pass
         return holiday
     
    
@@ -75,6 +73,13 @@ class HrLeaveAllocation(models.Model):
                 })
                 approval_request_id = self.env['approval.request'].create(request_list)
                 approval_request_id._onchange_category_id()
+                if not  approval_request_id.approver_ids:
+                    vals ={
+                         'user_id': 2,
+                         'request_id': approval_request_id.id,
+                         'status': 'pending',
+                        }
+                    approvers=self.env['approval.approver'].sudo().create(vals)
                 approval_request_id.action_confirm()
                 approval_request_id.action_date_confirm_update()
                 line.approval_request_id = approval_request_id.id

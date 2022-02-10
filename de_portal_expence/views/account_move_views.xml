@@ -12,6 +12,29 @@
             </xpath>
         </field>
     </record>
+    
+     <record id="action_hr_expense_account" model="ir.actions.act_window">
+            <field name="name">Employee Expenses</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="view_mode">tree,kanban,form,pivot,graph</field>
+<!--             <field name="search_view_id" ref="hr_expense_sheet_view_search"/>
+            <field name="view_id" ref="view_hr_expense_sheet_tree"/> -->
+            <field name="domain">[]</field>
+            <field name="context">{
+                'search_default_approved': 1,
+                'search_default_to_post': 1,
+            }
+            </field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new expense report
+              </p><p>
+                Once you have created your expense, submit it to your manager who will validate it.
+              </p>
+            </field>
+        </record>
+    
+    <menuitem id="menu_hr_expense_account_employee_expenses_claim" name="Employee Expenses Claim" sequence="22" parent="account.menu_finance_payables"  action="action_hr_expense_account" groups='de_portal_expence.group_account_expense_claim_voucher'/>
 
 </odoo>
 

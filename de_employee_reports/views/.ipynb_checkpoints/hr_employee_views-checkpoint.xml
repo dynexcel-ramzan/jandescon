@@ -1,0 +1,17 @@
+<odoo>
+  <data>
+
+        <record model="ir.ui.view" id="view_hr_employee_retirement_date">
+            <field name="name">hr.employee.form.retirement</field>
+                <field name="model">hr.employee</field>
+                <field name="inherit_id" ref="hr.view_employee_form"/>
+                <field name="arch" type="xml">
+                    <xpath expr="//field[@name='barcode']" position="after">
+                        <field name="retirement_date"/>
+                        <field name="retirement_age"/>
+                    </xpath>    
+            </field>
+        </record>
+   
+  </data>
+</odoo>

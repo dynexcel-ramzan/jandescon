@@ -8,15 +8,16 @@
         <field name="arch" type="xml">
             
             <xpath expr="//header" position="inside">
-                <button name="action_document_verify"  string="Document Received" type="object" class="oe_highlight" attrs="{'invisible': ['|',('state', 'not in', ['submit', 'approve']),('document_received', '=',True)]}"/>
+                <button name="action_document_verify"  string="Document Received" type="object" class="oe_highlight" attrs="{'invisible': ['|',('state', 'not in', ['submit', 'approve']),('document_received', '=',True)]}" groups='account.group_account_manager'/>
                 <button name="action_deposit"  string="Deposit" type="object" class="oe_highlight" attrs="{'invisible': ['|','|', ('state', '!=', 'done'),('is_deposit', '=',True),('is_deposit_adjusted', '=',True)]}"/>
-<!--                  <button name="action_view_portal"  string="View Form" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', ('approve', 'post' ,'done'))]}"/> -->
+
             </xpath>    
             <xpath expr="//group[@name='employee_details']" position="after">
                 <group name='extra_details'>
                    <field name="ora_category_id" />
                    <field name="document_received" invisible='1'/>
                    <field name="is_deposit" invisible='1'/>
+                   <field name="is_deposit_sign" invisible='1'/> 
                    <field name="is_deposit_adjusted" invisible='1'/> 
                    <field name="exception"/>
                    <field name="employee_number"/> 
@@ -25,7 +26,7 @@
             </xpath>
             <xpath expr="//notebook//page[@name='expenses']" position="before">
                 <page string='Expense Lines'>
-                <field name="expense_sheet_line_ids" nolabel="1" widget="many2many" domain="[('state', '=', 'draft'), ('employee_id', '=', employee_id), ('company_id', '=', company_id)]" options="{'reload_on_button': True}" context="{'form_view_ref' : 'hr_expense.hr_expense_view_form_without_header', 'default_company_id': company_id, 'default_employee_id': employee_id}">
+                <field name="expense_sheet_line_ids" nolabel="1" widget="many2many" >
                             <tree decoration-danger="is_refused" editable="bottom">
                                 <field name="date" optional="show"/>
                                 <field name="name"/>

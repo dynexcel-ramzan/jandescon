@@ -100,7 +100,12 @@
                                    </t>     
                                 </t>
                                 <t t-if="expense.state == 'submit'">
-                                    <i class="badge badge-pill badge-warning" >To Approve</i>
+                                    <t t-if='not expense.approval_request_id' >
+                                       <i class="badge badge-pill badge-warning" >To Validate</i>
+                                    </t>  
+                                    <t t-if='expense.approval_request_id' >
+                                       <i class="badge badge-pill badge-warning" >To Approve</i> 
+                                    </t>
                                 </t>
                                 <t t-if="expense.state == 'cancel'">
                                     <i class="badge badge-pill badge-danger" >Refused</i>

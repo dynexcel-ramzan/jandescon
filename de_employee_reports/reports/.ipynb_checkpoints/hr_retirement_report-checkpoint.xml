@@ -1,0 +1,9 @@
+<odoo>
+     <report id="hr_retirement_report_xlx"
+            model="report.de_employee_reports.retirement_xlx"
+            string="Employee Retirement Report"
+            report_type="xlsx"
+            name="de_employee_reports.retirement_xlx"
+            file="de_employee_reports.retirement_xlx"
+    />
+</odoo>

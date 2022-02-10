@@ -22,7 +22,7 @@ class HREmployee(models.Model):
         # to search Timeoff For Allocated During Probation and Current Target Year
         for employee in employees_id:
             time_off_for_probation = self.env['hr.leave.type'].search(
-                [('allocated_during_probation', '=', True), ('target_year', '=', current_date.year)
+                [('allocated_during_probation', '=', True), ('fiscal_year', '=', current_date.year)
                     , ('company_id', '=', employee.company_id.id)])
             if employee.date and time_off_for_probation:
                 if employee.date.year == current_date.year:
@@ -93,7 +93,7 @@ class HREmployee(models.Model):
          
         for employee in employees_id:
             time_off_for_probation = self.env['hr.leave.type'].search(
-                [('allocated_during_probation', '=', True), ('target_year', '=', current_date.year)
+                [('allocated_during_probation', '=', True), ('fiscal_year', '=', current_date.year)
                     , ('company_id', '=', employee.company_id.id)])
             
             if employee.confirm_date and time_off_for_probation:
@@ -140,10 +140,10 @@ class HREmployee(models.Model):
         current_date_year_ago = date.today() - relativedelta(days=365)
         for employee in employees_id:
             time_off_for_annual = self.env['hr.leave.type'].search(
-                [('is_annual_leave', '=', True), ('target_year', '=', current_date.year),
+                [('is_annual_leave', '=', True), ('fiscal_year', '=', current_date.year),
                  ('company_id', '=', employee.company_id.id)])
-            if employee.confirm_date and time_off_for_annual:
-                if employee.confirm_date == current_date_year_ago or employee.confirm_date < current_date_year_ago:
+            if employee.date and time_off_for_annual:
+                if employee.date == current_date_year_ago or employee.date < current_date_year_ago:
                     num_of_days = 0
                     if employee.emp_type == 'permanent':
                         if employee.pro_rate_annual_leaves_allocated == False:

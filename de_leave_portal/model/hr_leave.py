@@ -2,6 +2,8 @@
 from odoo import api, fields, models, _
 
     
+
+
     
 class HrLeaveType(models.Model):
     _inherit = 'hr.leave.type'      

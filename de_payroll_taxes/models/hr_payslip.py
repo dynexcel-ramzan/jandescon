@@ -7,6 +7,8 @@ from datetime import date, datetime, timedelta
 class HrPayslip(models.Model):
     _inherit = 'hr.payslip'
     
+    employee_number = fields.Char(related='employee_id.emp_number')
+    work_location_id = fields.Many2one('hr.work.location', string='Work Location', compute='_compute_work_location', store=True)  
     is_salary_Stop = fields.Boolean(string='Stop Salary')
     current_month_tax_amount = fields.Float(string='Tax Amount')
     arrears_amount = fields.Float(string='Arrears Amount')
@@ -17,6 +19,13 @@ class HrPayslip(models.Model):
     tax_year = fields.Char(string='Year')
     next_fiscal_month = fields.Date(string='Next Month')
     net_work_days = fields.Float(string='Net Days', compute='_compute_net_workdays')
+
+    @api.depends('work_location_id')
+    def _compute_work_location(self):
+        for slip in self:
+            slip.update({
+               'work_location_id': slip.employee_id.work_location_id.id,
+            })
 
     @api.depends('worked_days_line_ids', 'worked_days_line_ids.number_of_days')
     def _compute_net_workdays(self):

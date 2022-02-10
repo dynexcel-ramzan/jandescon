@@ -28,7 +28,7 @@
                              <field name="tax_amount" attrs="{'readonly': [('post', '=', 'Y')]}"/>
                             <field name="company_id" attrs="{'readonly': [('post', '=', 'Y')]}" force_save="1" />
                             <field name="remaining_amount" readonly='1' force_save="1" />
-                            <field name="dist_month"  force_save="1" />
+                            <field name="dist_month"  force_save="1"  attrs="{'readonly': [('post', '=', 'Y')]}" />
                             
                         </group>
                        </group>

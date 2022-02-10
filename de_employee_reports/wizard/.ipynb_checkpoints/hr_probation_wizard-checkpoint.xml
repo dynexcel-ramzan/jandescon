@@ -1,0 +1,47 @@
+<odoo>
+  <data>
+           <!--Display form view of wizard-->    
+        <record id="view_hr_probation_wizard_form_ora" model="ir.ui.view">
+            <field name="name">ora.probation.wizard.form</field>
+            <field name="model">ora.probation.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Probation Report">
+                    <group> 
+                       <group>
+                           <field name="company_id" />
+                           <field name="start_date" />
+                      </group>  
+                       <group>
+                           <field name="end_date" />
+                      </group>   
+                    </group>
+                    
+                    <footer>
+                        <button string='Print' name="action_check_report" type="object" default_focus="1" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!--Open the wizard on click of menu-->
+        <record id="open_employee_probation_wizard_action" model="ir.actions.act_window">
+            <field name="name">Employee Probation Report</field>
+            <field name="res_model">ora.probation.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_hr_probation_wizard_form_ora"/>
+        </record>
+
+      
+       <menuitem
+        id="employee_probation_report_menu"
+        name="Employee Probation Report"
+        parent="hr.hr_menu_hr_reports"
+        sequence="4"
+        action="open_employee_probation_wizard_action"
+      />
+      
+     
+  </data>
+</odoo>

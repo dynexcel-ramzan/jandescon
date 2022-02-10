@@ -41,6 +41,12 @@ class OracleSettingConnector(models.Model):
                 raise UserError('Not Allow to enter date greater than currenct date! '+str(fields.date.today()))
             
     def action_process_attendance_count(self):
+        conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.8.191:1521/PROD')
+        cur = conn.cursor()
+        statementa = "select * from attend_data where card_no='00001086' and creation_date>=sysdate-80"
+        cur.execute(statementa)
+        adate_execution_count = cur.fetchall()
+        raise UserError(str(adate_execution_count))
         self.attendance_count_lines.unlink()
         if not self.count_date_from:
             raise UserError('Please select Count Date From inside Count Attendance tab!')
@@ -249,12 +255,12 @@ class OracleSettingConnector(models.Model):
                 }
                 user_attendance = self.env['hr.user.attendance'].create(vals)
 
-    def action_get_missing_attendance_data_b(self):
+    def _action_get_missing_attendance_data_ba(self):
         user_attendance = self.env['hr.user.attendance']
         attendance_ids = []
         conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.8.191:1521/PROD')
         cur = conn.cursor()
-        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-15 and p.creation_date<=sysdate-9  and p.mac_number not in (48,49)"
+        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-12 and p.creation_date<=sysdate-9  and p.mac_number not in (48,49)"
         cur.execute(statement)
         attendances = cur.fetchall()
         for attendance in attendances:
@@ -284,12 +290,82 @@ class OracleSettingConnector(models.Model):
                 }
                 user_attendance = self.env['hr.user.attendance'].create(vals)
 
-    def action_get_missing_attendance_data_c(self):
+    def _action_get_missing_attendance_data_bb(self):
         user_attendance = self.env['hr.user.attendance']
         attendance_ids = []
         conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.8.191:1521/PROD')
         cur = conn.cursor()
-        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-20 and p.creation_date<=sysdate-14  and p.mac_number not in (48,49)"
+        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-15 and p.creation_date<=sysdate-11  and p.mac_number not in (48,49)"
+        cur.execute(statement)
+        attendances = cur.fetchall()
+        for attendance in attendances:
+            employee = self.env['hr.employee'].search([('barcode', '=', attendance[2])], limit=1)
+            timestamdata = attendance[6]
+            timestamp1 = timestamdata.strftime("%Y-%m-%d %H:%M:%S")
+            timestamp = datetime.strptime(timestamp1, '%Y-%m-%d %H:%M:%S') - relativedelta(hours=+ 5)
+            attendance_data1 = attendance[3]
+            attendance_data = datetime.strptime(timestamp1, '%Y-%m-%d %H:%M:%S')
+            timedata = attendance[0]
+            time = timedata
+            duplicate_attendance = user_attendance.search(
+                [('card_no', '=', attendance[2]),
+                 ('timestamp', '=', timestamp)], limit=1)
+            if not duplicate_attendance:
+                
+                vals = {
+                    'timestamp': timestamp,
+                    'device_id': attendance[1],
+                    'employee_id': employee.id,
+                    'card_no': attendance[2],
+                    'attendance_date': attendance_data,
+                    'company_id': employee.company_id.id,
+                    'remarks': attendance[5],
+                    'time': attendance[0],
+                    'updation_date': attendance[6],
+                }
+                user_attendance = self.env['hr.user.attendance'].create(vals)
+
+
+    def _action_get_missing_attendance_data_ca(self):
+        user_attendance = self.env['hr.user.attendance']
+        attendance_ids = []
+        conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.8.191:1521/PROD')
+        cur = conn.cursor()
+        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-18 and p.creation_date<=sysdate-14  and p.mac_number not in (48,49)"
+        cur.execute(statement)
+        attendances = cur.fetchall()
+        for attendance in attendances:
+            employee = self.env['hr.employee'].search([('barcode', '=', attendance[2])], limit=1)
+            timestamdata = attendance[6]
+            timestamp1 = timestamdata.strftime("%Y-%m-%d %H:%M:%S")
+            timestamp = datetime.strptime(timestamp1, '%Y-%m-%d %H:%M:%S') - relativedelta(hours=+ 5)
+            attendance_data1 = attendance[3]
+            attendance_data = datetime.strptime(timestamp1, '%Y-%m-%d %H:%M:%S')
+            timedata = attendance[0]
+            time = timedata
+            duplicate_attendance = user_attendance.search(
+                [('card_no', '=', attendance[2]),
+                 ('timestamp', '=', timestamp)], limit=1)
+            if not duplicate_attendance:
+              
+                vals = {
+                    'timestamp': timestamp,
+                    'device_id': attendance[1],
+                    'employee_id': employee.id,
+                    'card_no': attendance[2],
+                    'attendance_date': attendance_data,
+                    'company_id': employee.company_id.id,
+                    'remarks': attendance[5],
+                    'time': attendance[0],
+                    'updation_date': attendance[6],
+                }
+                user_attendance = self.env['hr.user.attendance'].create(vals)
+    def _action_get_missing_attendance_data_cb(self):
+        user_attendance = self.env['hr.user.attendance']
+        attendance_ids = []
+        conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.8.191:1521/PROD')
+        cur = conn.cursor()
+        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-20 and p.creation_date<=sysdate-17  and p.mac_number not in (48,49)"
         cur.execute(statement)
         attendances = cur.fetchall()
         for attendance in attendances:
@@ -319,12 +395,47 @@ class OracleSettingConnector(models.Model):
                 }
                 user_attendance = self.env['hr.user.attendance'].create(vals)
 
-    def action_get_missing_attendance_data_d(self):
+    def _action_get_missing_attendance_data_da(self):
         user_attendance = self.env['hr.user.attendance']
         attendance_ids = []
         conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.8.191:1521/PROD')
         cur = conn.cursor()
-        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-25 and p.creation_date<=sysdate-19  and p.mac_number not in (48,49)"
+        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-22 and p.creation_date<=sysdate-19  and p.mac_number not in (48,49)"
+        cur.execute(statement)
+        attendances = cur.fetchall()
+        for attendance in attendances:
+            employee = self.env['hr.employee'].search([('barcode', '=', attendance[2])], limit=1)
+            timestamdata = attendance[6]
+            timestamp1 = timestamdata.strftime("%Y-%m-%d %H:%M:%S")
+            timestamp = datetime.strptime(timestamp1, '%Y-%m-%d %H:%M:%S') - relativedelta(hours=+ 5)
+            attendance_data1 = attendance[3]
+            attendance_data = datetime.strptime(timestamp1, '%Y-%m-%d %H:%M:%S')
+            timedata = attendance[0]
+            time = timedata
+            duplicate_attendance = user_attendance.search(
+                [('card_no', '=', attendance[2]),
+                 ('timestamp', '=', timestamp)], limit=1)
+            if not duplicate_attendance:
+              
+                vals = {
+                    'timestamp': timestamp,
+                    'device_id': attendance[1],
+                    'employee_id': employee.id,
+                    'card_no': attendance[2],
+                    'attendance_date': attendance_data,
+                    'company_id': employee.company_id.id,
+                    'remarks': attendance[5],
+                    'time': attendance[0],
+                    'updation_date': attendance[6],
+                }
+                user_attendance = self.env['hr.user.attendance'].create(vals)
+
+    def _action_get_missing_attendance_data_db(self):
+        user_attendance = self.env['hr.user.attendance']
+        attendance_ids = []
+        conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.8.191:1521/PROD')
+        cur = conn.cursor()
+        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-25 and p.creation_date<=sysdate-21  and p.mac_number not in (48,49)"
         cur.execute(statement)
         attendances = cur.fetchall()
         for attendance in attendances:
@@ -355,12 +466,12 @@ class OracleSettingConnector(models.Model):
                 user_attendance = self.env['hr.user.attendance'].create(vals)
 
 
-    def action_get_missing_attendance_data_e(self):
+    def _action_get_missing_attendance_data_ea(self):
         user_attendance = self.env['hr.user.attendance']
         attendance_ids = []
         conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.8.191:1521/PROD')
         cur = conn.cursor()
-        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-30 and p.creation_date<=sysdate-24  and p.mac_number not in (48,49)"
+        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-27 and p.creation_date<=sysdate-24  and p.mac_number not in (48,49)"
         cur.execute(statement)
         attendances = cur.fetchall()
         for attendance in attendances:
@@ -391,12 +502,49 @@ class OracleSettingConnector(models.Model):
                 user_attendance = self.env['hr.user.attendance'].create(vals)
 
 
-    def _action_all_previous_missing_attendance(self):
+
+    def _action_get_missing_attendance_data_eb(self):
         user_attendance = self.env['hr.user.attendance']
         attendance_ids = []
         conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.8.191:1521/PROD')
         cur = conn.cursor()
-        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-52 and p.creation_date<=sysdate-47  and p.mac_number not in (48,49)"
+        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-30 and p.creation_date<=sysdate-26  and p.mac_number not in (48,49)"
+        cur.execute(statement)
+        attendances = cur.fetchall()
+        for attendance in attendances:
+            employee = self.env['hr.employee'].search([('barcode', '=', attendance[2])], limit=1)
+            timestamdata = attendance[6]
+            timestamp1 = timestamdata.strftime("%Y-%m-%d %H:%M:%S")
+            timestamp = datetime.strptime(timestamp1, '%Y-%m-%d %H:%M:%S') - relativedelta(hours=+ 5)
+            attendance_data1 = attendance[3]
+            attendance_data = datetime.strptime(timestamp1, '%Y-%m-%d %H:%M:%S')
+            timedata = attendance[0]
+            time = timedata
+            duplicate_attendance = user_attendance.search(
+                [('card_no', '=', attendance[2]),
+                 ('timestamp', '=', timestamp)], limit=1)
+            if not duplicate_attendance:
+              
+                vals = {
+                    'timestamp': timestamp,
+                    'device_id': attendance[1],
+                    'employee_id': employee.id,
+                    'card_no': attendance[2],
+                    'attendance_date': attendance_data,
+                    'company_id': employee.company_id.id,
+                    'remarks': attendance[5],
+                    'time': attendance[0],
+                    'updation_date': attendance[6],
+                }
+                user_attendance = self.env['hr.user.attendance'].create(vals)
+
+
+    def _action_all_previous_missing_attendance_va(self):
+        user_attendance = self.env['hr.user.attendance']
+        attendance_ids = []
+        conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.8.191:1521/PROD')
+        cur = conn.cursor()
+        statement = "select p.att_time AS timestamp, p.mac_number AS machine, p.card_no AS card, p.att_date AS attendance_date, p.creation_date AS creation_date, p.remarks AS remarks, p.updation_date AS updation_date from attend_data p where p.creation_date>=sysdate-35 and p.creation_date<=sysdate-30  and p.mac_number not in (48,49)"
         cur.execute(statement)
         attendances = cur.fetchall()
         for attendance in attendances:

@@ -45,6 +45,7 @@
 						
                         <field name= "readonly_status" invisible = "1"/>
                         <field name= "emploee_code"  readonly = "1"/>
+                        <field name= "is_posted"  invisible = "1"/>   
                         <field name= "emploee_type" readonly = "1" />
                         <field name= "grade_type_id" readonly = "1"/>
                         <field name= "cwork_location_id" invisible = "1"/>

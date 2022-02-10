@@ -16,6 +16,7 @@
                     <field name='member_id' attrs="{'invisible': [('member_id', '==', False)]}"/>
                     <field name='sub_category_id' />
                     <field name='sheet_line_id' invisible='1'/>
+                    <field name='percentage' invisible='1'/>
                     <field name='meter_reading'   attrs="{'invisible': [('meter_reading', '==', 0)]}"/>
                     <field name='fleet_id'   attrs="{'invisible': [('fleet_id', '==', False)]}"/>
                     <field name="attachment_id"  widget="many2many_binary"  ></field>

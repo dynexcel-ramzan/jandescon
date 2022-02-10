@@ -20,3 +20,7 @@ class OraExpenseCategory(models.Model):
     is_special = fields.Boolean(string='Special')
     has_dependent = fields.Selection(CATEGORY_SELECTION, string="Dependent", default="no", required=True)
     is_manager = fields.Boolean(string='Line Manager Approval')
+    is_amount_limit = fields.Boolean(string='Amount Limit')
+    vehicle_meter_approval = fields.Boolean(string='Vehicle Meter Approval')
+    company_ids = fields.Many2many('res.company', string='Companies')
+    hr_approval = fields.Boolean(string='HR Approval')

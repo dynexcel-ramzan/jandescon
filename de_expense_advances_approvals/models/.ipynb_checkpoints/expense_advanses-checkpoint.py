@@ -12,7 +12,7 @@ class AdvanceAgainstExpenses(models.Model):
     _description = 'Advance Against Expenses Inh'
     
     
-    category_id = fields.Many2one('approval.category', related='employee_id.adv_exp_id')
+    categ_id = fields.Many2one('approval.category', string='Category')
     approval_request_id = fields.Many2one('approval.request', string="Approval")
     
             
@@ -28,9 +28,20 @@ class AdvanceAgainstExpenses(models.Model):
     @api.model
     def create(self, vals):
         sheet = super(AdvanceAgainstExpenses, self.with_context(mail_create_nosubscribe=True, mail_auto_subscribe_no_notify=True)).create(vals)
-        if sheet.category_id:
+        sheet.action_approval_category()
+        sheet.action_amount_limitation()
+        if sheet.categ_id:
             sheet.action_create_approval_request_adv_exp()
         return sheet
+    
+    
+    def action_amount_limitation(self):
+        for line in self:
+            ext_approver_line = self.env['advance.amount.approver.line'].sudo().search([('end_amount','<', line.amount),('company_id','=', line.employee_id.company_id.id)], order='end_amount desc', limit=1)
+            exceeding_limit = 0
+            if ext_approver_line:
+                exceeding_limit = ext_approver_line.end_amount
+                raise UserError('You Are Not Allow to Enter Amount Greater than '+str(round(exceeding_limit))) 
     
     def action_approval_category(self):
         for line in self:
@@ -42,7 +53,7 @@ class AdvanceAgainstExpenses(models.Model):
                     'is_parent_approver': True,
                 }
                 expense_category = self.env['approval.category'].sudo().create(category)
-            line.category_id=expense_category.id
+            line.categ_id=expense_category.id
             
     def action_create_approval_request_adv_exp(self):
         approver_ids  = []
@@ -52,7 +63,7 @@ class AdvanceAgainstExpenses(models.Model):
             request_list.append({
                     'name': str(line.employee_id.name)+ ' Advance Ref# '+str(line.name),
                     'request_owner_id': line.employee_id.user_id.id,
-                    'category_id': line.category_id.id,
+                    'category_id': line.categ_id.id,
                     'exp_adv_id': line.id,
                     'reason': 'Advance',
                     'request_status': 'new',

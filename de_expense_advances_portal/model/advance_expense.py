@@ -28,7 +28,7 @@ class AdvanceAgainstExpense(models.Model):
         vals = {
             'partner_id': self.partner_id.id,            
             'date': self.date,
-            'journal_id': self.env['account.journal'].search([('company_id','=',self.partner_id.company_id.id),('name','=','Blank Journal')], limit=1).id,
+            'journal_id': self.env['account.journal'].search([('company_id','=',self.employee_id.company_id.id),('name','=','Blank Journal')], limit=1).id,
             'amount': self.amount,
             'ref': self.description,
             'payment_type': 'outbound',

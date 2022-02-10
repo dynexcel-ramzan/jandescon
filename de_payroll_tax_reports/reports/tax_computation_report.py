@@ -74,13 +74,18 @@ class PayrollTaxComputation(models.AbstractModel):
                 }) 
             
         tax_range=self.env['hr.tax.range.line'].search([('year','=',docs.date_to.year)])
-        if payslips: 
-            
-            pfund_amount = (ppfund_amount*12) 
-            exceed_limit=False
-            if   pfund_amount > 150000:
-                pfund_amount = pfund_amount - 150000  
-                exceed_limit = True   
+        if payslips:             
+            if (docs.employee_id.pf_member == 'yes_with' or docs.employee_id.pf_member == 'yes_without' and docs.employee_id.company_id.id==6): 
+                pf=((contract.wage * 9)/100)*12
+            elif (docs.employee_id.pf_member == 'yes_with' or docs.employee_id.pf_member == 'yes_without' and docs.employee_id.company_id.id!=6): 
+                pf=((contract.wage * 6.3)/100)*12
+            apf=0
+            if docs.employee_id.id==3630:
+                pf=(((contract.wage * 6.3)/100)*11 ) + 19054
+            if(pf>150000):
+                pfund_amount=pf-150000
+                exceed_limit = True 
+ 
             return {
                 'docs': docs,
                 'payslips': payslips,

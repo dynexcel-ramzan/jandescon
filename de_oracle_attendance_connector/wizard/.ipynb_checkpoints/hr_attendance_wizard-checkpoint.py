@@ -2,8 +2,44 @@ import logging
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
+from datetime import date, datetime, timedelta
 
 _logger = logging.getLogger(__name__)
+
+
+class HrAttendanceProcess(models.Model):
+    _name = 'attendance.process.wizard'
+    _description = 'Attendance Process'
+    
+    date_from = fields.Date(string='Date From', required=True)
+    date_to = fields.Date(string='Date to', required=True) 
+    employee_ids = fields.Many2many('hr.employee', string='Employees')
+    
+    def action_manually_process_att(self):
+        employeelist = []   
+        delta_days = (self.date_to - self.date_from).days + 1 
+        for employee in self.employee_ids:
+            attendances = self.env['hr.attendance'].sudo().search([('employee_id','=', employee.id),('att_date','>=',self.date_from),('att_date','<=',self.date_to),('shift_id.shift_type','=', 'night')], order='check_in asc')
+            for attendee in attendances:
+                if attendee.check_out == False and attendee.shift_id.shift_type == 'night':
+                    next_day_attendance=self.env['hr.attendance'].sudo().search([('employee_id','=', employee.id),('att_date','=',attendee.att_date+timedelta(1)) ], limit=1)
+                    if next_day_attendance.check_in and next_day_attendance.check_out:
+                        attendee.update({
+                            'check_out': next_day_attendance.check_in,
+                        })
+                        next_day_attendance.update({
+                             'check_in': next_day_attendance.check_out,
+                             'check_out': False,
+                        })
+                    elif next_day_attendance.check_in:
+                        attendee.update({
+                            'check_out': next_day_attendance.check_in,
+                        })
+                        next_day_attendance.update({
+                            'check_in': False
+                        })
+                        #next_day_attendance.unlink()
+                        
 
 
 class HrAttendanceWizard(models.TransientModel):
@@ -20,67 +56,44 @@ class HrAttendanceWizard(models.TransientModel):
 
     device_ids = fields.Many2many('oracle.setting.connector', string='Connector', default=_get_all_device_ids, domain=[('state', '=', 'active')])
     
-    
    
     def cron_download_oracle_attendance(self):
         devices = self.env['oracle.setting.connector'].search([('state', '=', 'active')])
         for device in devices:
             device.action_get_attendance_data()
-    # DCL    
-        
-    def cron_hr_user_attendance_validate_dcl(self):
-        user_attendance = self.env['hr.user.attendance']
-        user_attendance.action_attendace_validated_dcl()
-    
-    
-    #   Rousch Pakistan Power Limited
-    
-    def action_attendace_validated_rousch(self):
-        user_attendance = self.env['hr.user.attendance']
-        user_attendance.action_attendace_validated_rousch()    
-        
-   
-        #   Inspectest (Pvt) Limited
-    
-    def action_attendace_validated_ipl(self):
-        user_attendance = self.env['hr.user.attendance']
-        user_attendance.action_attendace_validated_ipl()    
-        
-    #   Gray Mackenzie Engineering Services W.L.L
-    
-    def action_attendace_validated_dmesw(self):
-        user_attendance = self.env['hr.user.attendance']
-        user_attendance.action_attendace_validated_dmesw()    
-        
-       
-        #   Gray Mackenzie Engineering Services LLC
-    
-    def action_attendace_validated_gmesl(self):
-        user_attendance = self.env['hr.user.attendance']
-        user_attendance.action_attendace_validated_gmesl()    
-        
-        #   Descon Technical Institute
-    
-    def action_attendace_validated_dti(self):
-        user_attendance = self.env['hr.user.attendance']
-        user_attendance.action_attendace_validated_dti()    
-            
-    #   Descon Power Solutions (Private) Limited
-    
-    def action_attendace_validated_dps(self):
-        user_attendance = self.env['hr.user.attendance']
-        user_attendance.action_attendace_validated_dps()    
-        
-    #   Descon Oxychem Limited
-    
-    def action_attendace_validated_dol(self):
-        user_attendance = self.env['hr.user.attendance']
-        user_attendance.action_attendace_validated_dol()    
-        
-    #   Altern Energy Limited
+
+    def cron_process_oracle_attendance(self):
+        devices = self.env['oracle.setting.connector'].search([('state', '=', 'active')])
+        for device in devices:
+            device.action_attendance_process()
+
+    def cron_download_oracle_missing_attendance_a(self):
+        devices = self.env['oracle.setting.connector'].search([('state', '=', 'active')])
+        for device in devices:
+            device.action_get_missing_attendance_data_a()
+
+    def cron_download_oracle_missing_attendance_b(self):
+        devices = self.env['oracle.setting.connector'].search([('state', '=', 'active')])
+        for device in devices:
+            device.action_get_missing_attendance_data_b()
+
+    def cron_download_oracle_missing_attendance_c(self):
+        devices = self.env['oracle.setting.connector'].search([('state', '=', 'active')])
+        for device in devices:
+            device.action_get_missing_attendance_data_c()
 
     
-    def action_attendace_validated_ael(self):
-        user_attendance = self.env['hr.user.attendance']
-        user_attendance.action_attendace_validated_ael()    
-                
+    def cron_download_oracle_missing_attendance_aa(self):
+        devices = self.env['oracle.setting.connector'].search([('state', '=', 'active')])
+        for device in devices:
+            device.action_get_missing_attendance_data_aa()   
+
+    def cron_download_oracle_missing_attendance_d(self):
+        devices = self.env['oracle.setting.connector'].search([('state', '=', 'active')])
+        for device in devices:
+            device.action_get_missing_attendance_data_d() 
+
+    def cron_download_oracle_missing_attendance_e(self):
+        devices = self.env['oracle.setting.connector'].search([('state', '=', 'active')])
+        for device in devices:
+            device.action_get_missing_attendance_data_e()        

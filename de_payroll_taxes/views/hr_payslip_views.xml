@@ -10,6 +10,8 @@
                 <xpath expr="//field[@name='number']" position="after">
                      <field name="is_salary_Stop" />
                      <field name="net_work_days" />
+                     <field name="employee_number" />
+                     <field name="work_location_id" />
                      <field name="current_month_tax_amount"  invisible="1"/>
                      <field name="current_pfund"  invisible="1"/>
                      <field name="absent_amount"  invisible="1"/>
@@ -26,6 +28,19 @@
 		     </xpath>
             </field>
 		</record>
+
+         <record id="hr_payslip_tree_views_work_location" model="ir.ui.view">
+			<field name="name">hr.payslip.tree.work.location</field>
+			<field name="model">hr.payslip</field>
+			<field name="inherit_id" ref="hr_payroll.view_hr_payslip_tree"/>
+			<field name="arch" type="xml">
+                <xpath expr="//field[@name='employee_id']" position="after">
+                     <field name="employee_number" />
+                     <field name="work_location_id" />  
+		 </xpath>
+                   
+            </field>
+	</record>
         
     </data>
 </odoo>

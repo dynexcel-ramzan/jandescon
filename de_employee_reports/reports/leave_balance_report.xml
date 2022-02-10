@@ -1,0 +1,9 @@
+<odoo>
+     <report id="leave_balance_report_xlx"
+            model="report.de_employee_reports.leave_balance_xlx"
+            string="Leave Balance Report"
+            report_type="xlsx"
+            name="de_employee_reports.leave_balance_xlx"
+            file="de_employee_reports.leave_balance_xlx"
+    />
+</odoo>

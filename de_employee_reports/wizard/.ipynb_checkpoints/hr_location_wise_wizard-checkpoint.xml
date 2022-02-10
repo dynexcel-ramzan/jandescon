@@ -1,0 +1,48 @@
+<odoo>
+  <data>
+           <!--Display form view of wizard-->    
+        <record id="view_hr_location_wise_wizard_form_ora" model="ir.ui.view">
+            <field name="name">ora.location.wise.wizard.form</field>
+            <field name="model">ora.location.wise.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Location Wise Report">
+                     <notebook>
+                        <page string="Locations">
+                            <field name="work_location_ids">
+                                <tree editable="bottom">
+                                    <field name="id" invisible="1"/>
+                                    <field name="name" />                                    
+                                    <field name="company_id" />                                    
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button string='Print' name="action_check_report" type="object" default_focus="1" class="oe_highlight"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!--Open the wizard on click of menu-->
+        <record id="open_ora_location_wise_wizard_action" model="ir.actions.act_window">
+            <field name="name">Employee Location Wise Report</field>
+            <field name="res_model">ora.location.wise.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_hr_location_wise_wizard_form_ora"/>
+        </record>
+
+      
+       <menuitem
+        id="employee_location_wise_report_menu"
+        name="Employee Location Wise Report"
+        parent="hr.hr_menu_hr_reports"
+        sequence="4"
+        action="open_ora_location_wise_wizard_action"
+      />
+      
+     
+  </data>
+</odoo>

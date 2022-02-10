@@ -109,6 +109,11 @@
                                                     'end_year_appraisee_review'))]}">
                             <field name="rating_level" />
                             <field name="rating_score" />
+
+                            <field name="employee_rating_level" invisible="1"/>
+                            <field name="employee_rating_score" invisible="1" />
+                            <field name="employee_rating_score_calc" invisible="1" />
+
                             <field name="objective_score" readonly = "1" invisible="1"/>
                             <field name="objective_rating" readonly = "1"  invisible="1"/>
                             <field name="behavioral_score" readonly = "1"  invisible="1"/>
