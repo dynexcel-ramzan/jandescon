@@ -63,7 +63,7 @@ class EmployeeReportXlS(models.AbstractModel):
                             working_hours += attendee.worked_hours
                         if   (working_hours > (current_shift.hours_per_day-1.5)):
                             pass
-                        elif (working_hours < (current_shift.hours_per_day-1.5)) and (working_hours >(current_shift.hours_per_day/2)):
+                        elif (working_hours < (current_shift.hours_per_day-1.5)) and (working_hours >((current_shift.hours_per_day)/2)-1.5):
                             remarks = 'Half Present'
                             if is_holiday != True:
                                 if rectification.state=='approved':
@@ -71,7 +71,7 @@ class EmployeeReportXlS(models.AbstractModel):
                                 elif leave_status=='validate' and leave_number_of_days >= 0.5:
                                     pass
                                 elif leave_status=='validate' and leave_number_of_days == 0.25:
-                                    if working_hours < ((current_shift.hours_per_day/4)*3):
+                                    if working_hours < (((current_shift.hours_per_day-1.5)/4)*3):
                                         absent_category = True
                                         remarks = 'Half Present (Leave[Approved] (0.25))'
                                     else:

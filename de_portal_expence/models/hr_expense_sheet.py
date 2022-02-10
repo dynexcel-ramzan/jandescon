@@ -11,13 +11,17 @@ from odoo.tools import email_split, float_is_zero
 
 class HrExpenseSheet(models.Model):
     _inherit = 'hr.expense.sheet'
+
+    def action_submit_sheet(self):
+        self.write({'state': 'submit'})
     
     name = fields.Char(string="Name", required=True, copy=False, readonly=True, index=True,
                           default=lambda self: _('New'))
     ora_category_id = fields.Many2one('ora.expense.category', string='Expense Category')
     document_received = fields.Boolean(string='Document Received')
     is_deposit = fields.Boolean(string='Deposit')
-    is_deposit_adjusted = fields.Boolean(string='Deposit')
+    is_deposit_sign = fields.Boolean(string='Deposit Sign')
+    is_deposit_adjusted = fields.Boolean(string='Adjusted', compute='_compute_deposit_adjusted')
     exception = fields.Boolean(string='Exception')
     employee_number = fields.Char(related='employee_id.emp_number')
     grade = fields.Many2one(related='employee_id.grade_designation')
@@ -34,8 +38,18 @@ class HrExpenseSheet(models.Model):
             'edit': False,
         }
         return res
-
     
+    def _compute_deposit_adjusted(self):
+        for expense in self:
+            if  expense.state=='done' and expense.is_deposit_sign==False:
+                expense.update({
+                    'is_deposit_adjusted': True
+                })    
+            else:
+                expense.update({
+                    'is_deposit_adjusted': False
+                })
+                
     def action_expnese_sequence(self):
         exist_sequence=self.env['ir.sequence'].sudo().search([('code','=','expense.sheet.sequence')], limit=1)
         if not exist_sequence:
@@ -52,10 +66,6 @@ class HrExpenseSheet(models.Model):
     @api.constrains('state')
     def _check_state(self):
         for expense in self:
-            if  expense.state=='done' and expense.is_deposit==False:
-                expense.update({
-                    'is_deposit_adjusted': True
-                })
             if expense.state=='post':
                 expense.account_move_id.update({
                     'expense_id': expense.id, 

@@ -26,8 +26,7 @@ class TaxCredit(models.Model):
     def unlink(self):
         for line in self:
             if line.post != 'N':
-                raise UserError(_('You cannot delete an Document  which is Reconciled. '))
-     
+                raise UserError(_('You cannot delete an Document  which is Reconciled. '))     
             return super(TaxCredit, self).unlink()  
     
     @api.constrains('date')
@@ -35,7 +34,7 @@ class TaxCredit(models.Model):
         for line in self:
             if line.date:
                 line.update({
-                    'period': line.date.month,
+                    'fiscal_month': line.date.month,
                     'tax_year': line.date.year,
                 })
                 

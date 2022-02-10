@@ -1,0 +1,9 @@
+<odoo>
+     <report id="hr_resignation_report_xlx"
+            model="report.de_employee_reports.resignation_xlx"
+            string="Employee Resignation Report"
+            report_type="xlsx"
+            name="de_employee_reports.resignation_xlx"
+            file="de_employee_reports.resignation_xlx"
+    />
+</odoo>

@@ -243,18 +243,25 @@
                                      </t>    
                                     <t t-if='expense.state=="submit" '>
                                         <t t-if='not expense.approval_request_id' >
-                                          <i class="badge badge-pill badge-warning">To Validate</i>
+                                          To Validate
                                         </t>  
                                         <t t-if='expense.approval_request_id' >
-                                           <i class="badge badge-pill badge-warning">To Approve</i> 
+                                           To Approve
                                         </t> 
                                     </t>     
                               </t> 
                             </t>     
-                            <t t-if='is_deposit==True'>  
+                            <t t-if='expense.is_deposit==True'>  
                               <span t-esc='expense.state'/>
                             </t>
-                            <t t-if='is_deposit_adjusted==True'>  
+                           <t t-if='expense.state=="done"'>
+                            <t t-if='expense.is_deposit_adjusted==False'>    
+                             <t t-if='expense.is_deposit==False'>  
+                               Posted
+                             </t>
+                            </t>    
+                           </t>
+                            <t t-if='expense.is_deposit_adjusted==True'>  
                               Adjusted
                             </t>  
                        </i>

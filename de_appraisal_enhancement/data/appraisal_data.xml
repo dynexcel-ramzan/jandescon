@@ -21,6 +21,46 @@
 	        <field name="active" eval="True"/>
 	    </record> -->
         
+
+
+        <!--  Appraisal Feedback  -->
+        
+        <record id="mail_template_appraisal_objective_deadline" model="mail.template">
+            <field name="name">Hr Appraisal: Appraisal</field>
+            <field name="model_id" ref="de_appraisal_enhancement.model_hr_appraisal_feedback"/>
+            <field name="subject">${object.name.name}: Appraisal</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear ${ctx.get('employee_to_name', 'employee')},
+                        <br/><br/>
+                        You are required to complete your Self-Evaluation in Odoo no later than tomorrow 22nd January, as per plan your Goal Form will automatically be moved to Line Manager stage and you will no longer be able to appraise yourself in Odoo
+Please review it, add your rating and confirm it before deadline. 
+                        <br/>
+                        To Submitting your Appraisal review. Click the Button Below.
+                        <br/><br/>
+                        % if ctx.get('recipient_users'):
+                        <p style="margin: 16px 0px 16px 0px;">
+                            <a href="${ctx['url']}"
+                                style="background-color:#875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px;">
+                                View Appraisal
+                            </a>
+                        </p>
+                        % endif
+                        Please don't hesitate to contact if you have any concern.
+                        <br/><br/>
+                        Thank you! <br/>
+                        The HR department 
+                        <br/><br/>
+                       
+                        <tr><td style="padding:15px 20px 10px 20px;">${(object.signature or '')| safe}</td></tr>
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
         
         <record id="mail_template_appraisal_objective" model="mail.template">
             <field name="name">Hr Appraisal: Appraisal Objective</field>

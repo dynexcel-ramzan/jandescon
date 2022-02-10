@@ -38,6 +38,7 @@
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'wizard/account_payment_register_views.xml',
         'views/product_product_views.xml',
         'views/res_company_views.xml',
         'views/grade_designation_line_views.xml',

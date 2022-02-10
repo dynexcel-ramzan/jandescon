@@ -21,6 +21,8 @@
                         <filter string="Employee" name="employee_id" domain="[]" context="{'group_by': 'employee_id'}"/>
                         <filter string="Employee Number" name="employee_number" domain="[]" context="{'group_by': 'employee_number'}"/> 
                         <filter string="Department" name="dept_id" domain="[]" context="{'group_by': 'dept_id'}"/>
+                        <filter string="Work Location" name="work_location_id" domain="[]" context="{'group_by': 'work_location_id'}"/>
+          
                     </group>
                 </search>
             </field>
@@ -47,17 +49,18 @@
                    
                     <group>
                         <group>
-                            <field name="employee_id"/>
-                            <field name="department_id"/>
-                           <field name="company_id"/>
+                            <field name="employee_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="department_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                           <field name="company_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                           <field name="work_location_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
 
 
                         </group>
                         <group name="duration_group">
-                            <field name="employee_number"/> 
-                            <field name="start_date"/>
+                            <field name="employee_number" attrs="{'readonly': [('state', '!=', 'draft')]}"/> 
+                            <field name="start_date" attrs="{'readonly': [('state', '!=', 'draft')]}" />
                             
-                            <field name="end_date"/>
+                            <field name="end_date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                           
                             
                         </group>
@@ -93,6 +96,7 @@
                 <tree string="Schedule" multi_edit="1" sample="1" create="false" edit="false" delete="true">
                      <field name="employee_id"/>
                      <field name="employee_number"/> 
+                      <field name="work_location_id"/>
                     <field name="department_id"/>
                     <field name="start_date"/>       
                     <field name="end_date"/>

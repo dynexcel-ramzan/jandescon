@@ -257,11 +257,17 @@ class CreateApproval(http.Controller):
         period = 0
         ora_unit = 'amount'
         for rec in employee.grade_designation.grade_line_ids:
-            if product.id == rec.expense_type.id:
+            if   product.parent_id:  
+                if product.parent_id.id == rec.expense_type.id:
+                    flag = True
+                    limit = rec.limit
+                    ora_unit = rec.ora_unit
+                    period = int(rec.period)
+            elif product.id == rec.expense_type.id:
                 flag = True
                 limit = rec.limit
                 ora_unit = rec.ora_unit
-                period = int(rec.period)
+                period = int(rec.period)   
         expense_period_date = fields.date.today() - relativedelta(years=period)
         if flag == False and exception!=True:
             warning_message="You are not allowed to make Claim against the selected expense type"
@@ -272,12 +278,23 @@ class CreateApproval(http.Controller):
                     , ('state', '!=', 'refused'),
                  ('payment_mode', '=', 'own_account')])
             sum = 0
+            
+            if product.parent_id: 
+                employee_expenses_parent = request.env['hr.expense'].search(
+                [('sub_category_id', '=', product.parent_id.id), ('employee_id', '=', employee.id)
+                    , ('state', '!=', 'refused'),
+                 ('payment_mode', '=', 'own_account')]) 
+                
+                for expensep in employee_expenses_parent:
+                    if (expensep.create_date.date() > expense_period_date and expensep.create_date.date() <= fields.date.today()):
+                        sum = sum + expensep.total_amount  
+                        
             for expense in employee_expenses:
                 if (expense.create_date.date() > expense_period_date and expense.create_date.date() <= fields.date.today()):
                     sum = sum + expense.total_amount
-            sum = round(sum, 2)            
-            sum_current = sum + float(kw.get('unit_amount')) 
-            if sum_current > limit and product.ora_unit!='km' and exception!=True:
+                              
+            sum_current = sum + float(kw.get('unit_amount'))
+            if sum_current > limit and product.ora_unit!='km' and exception!=True and product.ora_category_id.is_amount_limit==True:
                 limit_amount = limit-sum
                 warning_message="Limit ("+str(product.name)+'): '+ str('{0:,}'.format(int(round(limit)))) + "\n"+ " Already Claimed: " + str('{0:,}'.format(int(round(sum)))) + "\n" + " Remaining Amount: "+str('{0:,}'.format(int(round(limit_amount if limit_amount > 0 else 0))))+ "\n" +' Current Amount: '+ str('{0:,}'.format(int(round(float(kw.get('unit_amount'))))))+ "\n" +" You are not allowed to enter amount greater than remaining amount. "+ "\n" +" You may use Exception Option. "
                 return request.render("de_portal_expence.create_expense",expense_page_content(categ=ora_category.id, exception=exception, employee=employee.id, warning=warning_message, forcasted=forcasted_data, acounting_date=kw.get('acounting_date')))
@@ -526,11 +543,17 @@ class CreateApproval(http.Controller):
         ora_unit = 'amount'
         employee=expense_sheet.employee_id
         for rec in employee.grade_designation.grade_line_ids:
-            if product.id == rec.expense_type.id:
+            if   product.parent_id:
+                if product.parent_id.id == rec.expense_type.id:
+                    flag = True
+                    limit = rec.limit
+                    ora_unit = rec.ora_unit
+                    period = int(rec.period)
+            elif product.id == rec.expense_type.id:
                 flag = True
                 limit = rec.limit
                 ora_unit = rec.ora_unit
-                period = int(rec.period)
+                period = int(rec.period)    
         expense_period_date = fields.date.today() - relativedelta(years=period)
         if flag == False and expense_sheet.exception!=True:
             warning_message="You are not allowed to make Claim against the selected expense type"
@@ -541,12 +564,24 @@ class CreateApproval(http.Controller):
                     , ('state', '!=', 'refused'),
                  ('payment_mode', '=', 'own_account')])
             sum = 0
+            if product.parent_id:
+                
+                employee_expenses_parent = request.env['hr.expense'].search(
+                [('sub_category_id', '=', product.parent_id.id), ('employee_id', '=', employee.id)
+                    , ('state', '!=', 'refused'),
+                 ('payment_mode', '=', 'own_account')]) 
+                for expensep in employee_expenses_parent:
+                    
+                    if (expensep.create_date.date() > expense_period_date and expensep.create_date.date() <= fields.date.today()):
+                        sum = sum + expensep.total_amount 
+                        
             for expense in employee_expenses:
+                
                 if (expense.create_date.date() > expense_period_date and expense.create_date.date() <= fields.date.today()):
                     sum = sum + expense.total_amount
             sum = round(sum, 2)        
             sum_current = sum + float(kw.get('unit_amount')) 
-            if sum_current > limit and product.ora_unit!='km' and expense_sheet.exception!=True:
+            if sum_current > limit and product.ora_unit!='km' and expense_sheet.exception!=True and product.ora_category_id.is_amount_limit==True:
                 limit_amount = limit-sum
                 warning_message="Limit ("+str(product.name)+'): '+ str('{0:,}'.format(int(round(limit)))) + "\n"+ " Already Claimed: " + str('{0:,}'.format(int(round(sum)))) + "\n" + " Remaining Amount: "+str('{0:,}'.format(int(round(limit_amount if limit_amount > 0 else 0))))+ "\n" +' Current Amount: '+ str('{0:,}'.format(int(round(float(kw.get('unit_amount'))))))+ "\n" +" You are not allowed to enter amount greater than remaining amount. "+ "\n" +" You may use Exception Option. "
                 return request.render("de_portal_expence.portal_my_expense", expense_page_content(expense=expense_sheet.id, categ=ora_category.id, exception=expense_sheet.exception, warning=warning_message, forcasted=forcasted_data))

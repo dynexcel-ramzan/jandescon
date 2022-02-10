@@ -9,7 +9,9 @@
                 <xpath expr="//field[@name='user_type_id']" position="after">
                       <field name='controlled_id' />
                       <field name='salary_rule_id'  widget='many2many_tags'/>
-				</xpath>
+                      <field name='grade_type_id' />
+                      <field name='emp_type' />
+                </xpath>
             </field>
 		</record>
   </data>

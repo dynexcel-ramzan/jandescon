@@ -5,7 +5,7 @@ from odoo import models, fields, api, _
 class ProductProduct(models.Model):
     _inherit = 'product.product'
     
-    ora_category_id = fields.Many2one('ora.expense.category', string='Expense Category', required=True, copy=True)
+    ora_category_id = fields.Many2one('ora.expense.category', string='Expense Category', required=False, copy=True)
     sub_category_id = fields.Many2one('expense.sub.category', string='Expense Sub-Category', required=True, copy=True)
     controlled_id = fields.Many2one('controlled.account', string='Control-Account', required=True, copy=True)
 

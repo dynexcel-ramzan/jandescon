@@ -21,7 +21,8 @@
                               <field name="has_vehicle"  widget="radio" options="{'horizontal': true}"/>
                               <field name="has_reading" widget="radio" options="{'horizontal': true}"/>  
                               <field name="has_dependent" widget="radio" options="{'horizontal': true}"/>
-                              <field name="has_description" widget="radio" options="{'horizontal': true}"/>  
+                              <field name="has_description" widget="radio" options="{'horizontal': true}"/> 
+                              <field name="is_amount_limit" />  
                               <field name="is_manager" />
                               <field name="hr_approval" /> 
                               <field name="vehicle_meter_approval" />  

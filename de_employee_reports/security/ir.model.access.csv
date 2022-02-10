@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_leave_balance_wizard,access.leave.balance.wizard,model_leave_balance_wizard,,1,1,1,1
+access_ora_fiscal_year,access.ora.fiscal.year,model_ora_fiscal_year,,1,1,1,1
+access_ora_recruitment_wizard,access.ora.recruitment.wizard,model_ora_recruitment_wizard,,1,1,1,1
+access_ora_retirement_wizard,access.ora.rectirement.wizard,model_ora_retirement_wizard,,1,1,1,1
+access_ora_resignation_wizard,access.ora.resignation.wizard,model_ora_resignation_wizard,,1,1,1,1
+access_ora_location_wise_wizard,access.ora.location.wise.wizard,model_ora_location_wise_wizard,,1,1,1,1
+access_ora_probation_wizard,access.ora.probation.wizard,model_ora_probation_wizard,,1,1,1,1

@@ -11,7 +11,7 @@ class HrTaxSlide(models.Model):
     date = fields.Date(string='Date', required=True)
     month = fields.Many2one('fiscal.year.month', string='Month')
     year = fields.Char(string='Year')
-    tax_range_line_ids = fields.One2many('hr.tax.range.line', 'range_id', string='Tax Range Line')
+    tax_range_line_ids = fields.One2many('hr.tax.range.line', 'range_id', string='Tax Range Line', copy=True)
             
     @api.constrains('date')
     def _check_date(self):

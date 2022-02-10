@@ -2,7 +2,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
-
+from datetime import date, datetime, timedelta
 
 class SalaryAdjustmentAllowance(models.Model):
     _name = 'salary.adjustment.allowance'
@@ -38,21 +38,23 @@ class SalaryAdjustmentAllowance(models.Model):
     def _action_generate_adj(self):
         for line in self:
             start_month = line.date.month
+            adjustment_start_date = line.date
             fiscal_month = line.company_id.fiscal_month.id
             if line.company_id.fiscalyear_last_day in (30,31,28,29):
                 fiscal_month =  fiscal_month + 1   
             month_passed = (line.date.month - fiscal_month)
             remaining_month = (12 - month_passed) - 1
             for adjustment in range(remaining_month):
-                start_month = start_month + 1  
+                start_month = start_month + 1
+                adjustment_start_date = adjustment_start_date + timedelta(31)   
                 vals={
                     'employee_id': line.employee_id.id,
                     'date':  line.date,
                     'rule_id': line.rule_id.id,
-                    'amount':  round((line.amount/remaining_month),0),
+                    'amount':  round((line.amount/remaining_month),2),
                     'with_effect': 'add',
                     'fiscal_month': int(start_month),
-                    'tax_year':   line.date.year,
+                    'tax_year':   adjustment_start_date.year,
                     'adjustment_id': line.id,
                     'company_id': line.employee_id.company_id.id,
                 } 
@@ -98,7 +100,7 @@ class AdjustmentLine(models.Model):
         ('add', 'Add'),
         ], string="With Effect",
         default="less")
-    amount= fields.Float(string='Amount', digits=(12, 0))
+    amount= fields.Float(string='Amount', digits=(12, 2))
     tax_year = fields.Char(string='Year')
     post = fields.Boolean(string='Post')
     company_id=fields.Many2one('res.company', string='Company')

@@ -39,7 +39,7 @@ class AccountAccount(models.Model):
             reference1 = ref1
             ref2 = 'Journal Import Odoo' + ' '+  str(inv.move_id.journal_id.name)
             reference2 = ref2
-            ref4 = 'JV'+ ' '+ 'March-21'+ ' '+ 'Odoo'+ ' '  +  str(inv.move_id.journal_id.name)+ ' '  +  str(inv.move_id.name)
+            ref4 = 'JV'+ ' '+ str(inv.date.strftime('%b-%y')) + ' '+ 'Odoo'+ ' '  +  str(inv.move_id.journal_id.name)+ ' '  +  str(inv.move_id.name)
             reference4 = ref4
             ref5 = 'Journal Import' + ' ' + 'Odoo' + ' ' + ' '  +  str(inv.move_id.journal_id.name)
             reference5 = ref5
@@ -57,7 +57,7 @@ class AccountAccount(models.Model):
             inv_debit = inv.debit
             inv_credit = inv.credit
             inv_date = inv.date
-            conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.7.153:1524/test3')
+            conn = cx_Oracle.connect('xx_odoo/xxodoo123$@//10.8.8.191:1521/PROD')
             cur = conn.cursor()
             statement = 'insert into XX_ODOO_GL_INTERFACE(STATUS,LEDGER_ID, ACCOUNTING_DATE, CURRENCY_CODE,DATE_CREATED,CREATED_BY,ACTUAL_FLAG,USER_JE_CATEGORY_NAME,USER_JE_SOURCE_NAME, SEGMENT1, SEGMENT2, SEGMENT3, SEGMENT4, SEGMENT5, SEGMENT6, ENTERED_CR, ENTERED_DR, ACCOUNTED_CR, ACCOUNTED_DR, REFERENCE1, REFERENCE2, REFERENCE4, REFERENCE5, REFERENCE6, REFERENCE10, GROUP_ID, PERIOD_NAME, CONTEXT, ATTRIBUTE1) values(: 2,:3,: 4,:5,: 6,:7,: 8,:9,: 10,:11,: 12,:13,: 14,:15,: 16,:17,: 18,:19,: 20,:21,: 22,:23,: 24,:25,: 26,:27,:28,:29,:30)'
             cur.execute(statement, (

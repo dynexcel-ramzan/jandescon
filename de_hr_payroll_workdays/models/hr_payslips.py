@@ -116,7 +116,7 @@ class HrPayslips(models.Model):
                     attendance_day_count += 1
                     if holiday == '1':
                         rest_day_count -=1    
-                elif (working_hours < (current_shift.hours_per_day-1.5)) and (working_hours >(current_shift.hours_per_day/2)):
+                elif (working_hours < (current_shift.hours_per_day-1.5)) and (working_hours >((current_shift.hours_per_day)/2)-1):
                     attendance_day_count += 0.5
                     if holiday != '1':
                         if rectification.state=='approved':
@@ -124,8 +124,11 @@ class HrPayslips(models.Model):
                         elif leave_status=='validate' and leave_total_days >= 0.5:
                             leave_day_count += 0.5                            
                         elif leave_status=='validate' and leave_total_days == 0.25:
-                            leave_day_count += 0.25
-                            absent_day_count += 0.25
+                            if working_hours < (((current_shift.hours_per_day-1)/4)*3):
+                                leave_day_count += 0.25
+                                absent_day_count += 0.25
+                            else:
+                                pass
                         elif rectification.state=='submitted':
                             absent_day_count = 0.5
                         elif not rectification and leave_status=='confirm':
@@ -145,26 +148,24 @@ class HrPayslips(models.Model):
                         elif leave_status=='validate' and leave_total_days >= 1:
                             leave_day_count += 1
                         elif rectification.state=='submitted':
-                            absent_day_count += 1
-                        elif leave_status=='confirm':
-                            if leave_total_days >= 1:
-                                absent_day_count += 1
+                            absent_day_count += 1 
                         elif leave_status=='validate':
                             if leave_total_days >= 0.5:
                                 leave_day_count += 0.5
                                 absent_day_count += 0.5
-                        elif leave_status=='confirm':
-                            if leave_total_days >= 0.5:
+                            else:
                                 absent_day_count += 1
-                        elif leave_status=='validate':
-                            if leave_total_days >= 0.25:
-                                leave_day_count += 0.25
-                                absent_day_count += 0.75
                         elif leave_status=='confirm':
-                            if leave_total_days >= 0.25:
+                            if leave_total_days >= 1:
                                 absent_day_count += 1
+                            elif leave_total_days >= 0.5:
+                                absent_day_count += 1
+                            elif leave_total_days >= 0.25:
+                                absent_day_count += 1 
+                            else:
+                                absent_day_count += 1 
                         else:
-                             absent_day_count += 1  
+                            absent_day_count += 1  
                 start_date = (start_date + timedelta(1))             
             if attendance_day_count >= 0:
                 work_entry_type = self.env['hr.work.entry.type'].sudo().search([('code','=','WORK100')], limit=1)
