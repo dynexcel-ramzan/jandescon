@@ -1,0 +1,9 @@
+<odoo>
+     <report id="apprisal_feedback_report_xlx"
+            model="hr.appraisal.feedback"
+            string="Appraisal Report"
+            report_type="xlsx"
+            name="de_apprisal_objective_report.feedback_xlx"
+            file="de_apprisal_objective_report.feedback_xlx"
+    />
+</odoo>
