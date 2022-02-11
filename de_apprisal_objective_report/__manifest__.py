@@ -32,6 +32,7 @@
     'data': [
         # 'security/ir.model.access.csv',
         'report/objective_setting_report.xml',
+        'report/appraisal_report.xml',
         'views/views.xml',
         'views/templates.xml',
     ],

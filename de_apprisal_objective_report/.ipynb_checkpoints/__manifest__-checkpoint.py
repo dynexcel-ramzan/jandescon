@@ -26,12 +26,13 @@
     'version': '14.0.0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','de_appraisal_enhancement',],
+    'depends': ['base','de_appraisal_enhancement','report_xlsx'],
 
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
         'report/objective_setting_report.xml',
+        'report/appraisal_report.xml',
         'views/views.xml',
         'views/templates.xml',
     ],
